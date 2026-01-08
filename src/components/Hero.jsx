@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Hero() {
     return (
         <section className="relative pt-32 lg:pt-48 pb-20 overflow-hidden bg-white">
@@ -23,13 +25,13 @@ export default function Hero() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <button className="px-10 py-5 rounded-3xl bg-[#d4ff00] text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2 animate-pulse">
+                        <Link to="/signup" className="px-10 py-5 rounded-3xl bg-[#d4ff00] text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2 animate-pulse">
                             I am a Wholesaler
                             <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                        </button>
-                        <button className="px-10 py-5 rounded-3xl bg-[#d4ff00] text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+                        </Link>
+                        <Link to="/signup" className="px-10 py-5 rounded-3xl bg-[#d4ff00] text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
                             I am a Distributor
-                        </button>
+                        </Link>
                     </div>
                 </div>
 

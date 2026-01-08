@@ -1,4 +1,10 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
         <>
             {/* Scrolling Marquee Bar */}
@@ -39,12 +45,12 @@ export default function Footer() {
                                 Secure your business. Simplify orders. Connect your supply chain. The modern standard for B2B commerce in Nigeria.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <button className="px-8 py-4 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] skew-x-[-12deg] animate-pulse">
+                                <Link to="/signup" className="px-8 py-4 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] skew-x-[-12deg] animate-pulse text-center">
                                     <span className="block skew-x-[12deg]">Sign up as Distributor</span>
-                                </button>
-                                <button className="px-8 py-4 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] skew-x-[-12deg]">
+                                </Link>
+                                <Link to="/signup" className="px-8 py-4 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] skew-x-[-12deg] text-center">
                                     <span className="block skew-x-[12deg]">Sign up as Wholesaler</span>
-                                </button>
+                                </Link>
                             </div>
                             <p className="text-slate-500 text-sm mt-12">
                                 © 2024 SalesFunnel NG. Made for Lagos with ❤️.
@@ -59,7 +65,7 @@ export default function Footer() {
                                 <li><a className="text-slate-400 hover:text-white transition-colors" href="#">For Wholesalers</a></li>
                                 <li><a className="text-slate-400 hover:text-white transition-colors" href="#">Pricing Plan (₦)</a></li>
                                 <li><a className="text-slate-400 hover:text-white transition-colors" href="#">Download App</a></li>
-                                <li><a className="text-slate-400 hover:text-white transition-colors" href="#">Login</a></li>
+                                <li><Link to="/login" className="text-slate-400 hover:text-white transition-colors">Login</Link></li>
                             </ul>
                         </div>
 
@@ -73,7 +79,10 @@ export default function Footer() {
                         </div>
 
                         <div className="lg:col-span-2 flex flex-col items-start lg:items-end justify-end">
-                            <button className="h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center text-white transition-all shadow-lg shadow-green-500/30">
+                            <button
+                                onClick={scrollToTop}
+                                className="h-12 w-12 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center text-white transition-all shadow-lg shadow-green-500/30"
+                            >
                                 <span className="material-symbols-outlined">arrow_upward</span>
                             </button>
                         </div>

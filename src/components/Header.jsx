@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -24,12 +25,12 @@ export default function Header() {
 
                 {/* Desktop CTA Buttons */}
                 <div className="hidden md:flex items-center gap-3">
-                    <button className="px-6 py-2.5 bg-transparent text-black font-bold hover:text-slate-600 transition-all skew-x-[-12deg]">
+                    <Link to="/login" className="px-6 py-2.5 bg-transparent text-black font-bold hover:text-slate-600 transition-all skew-x-[-12deg]">
                         <span className="block skew-x-[12deg]">Sign in</span>
-                    </button>
-                    <button className="px-8 py-3 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] skew-x-[-12deg]">
+                    </Link>
+                    <Link to="/signup" className="px-8 py-3 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] skew-x-[-12deg]">
                         <span className="block skew-x-[12deg]">Get Started</span>
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -53,12 +54,12 @@ export default function Header() {
                         <a className="text-base font-bold text-slate-600 hover:text-primary transition-colors py-2" href="#">Contact</a>
 
                         <div className="flex flex-col gap-3 mt-4 pt-4 border-t border-slate-200">
-                            <button className="px-6 py-3 bg-transparent text-black font-bold hover:text-slate-600 transition-all border-2 border-black rounded-lg">
+                            <Link to="/login" className="px-6 py-3 bg-transparent text-black font-bold hover:text-slate-600 transition-all border-2 border-black rounded-lg text-center">
                                 Sign in
-                            </button>
-                            <button className="px-6 py-3 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-lg">
+                            </Link>
+                            <Link to="/signup" className="px-6 py-3 bg-[#d4ff00] text-black font-black border-4 border-black hover:scale-105 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-lg text-center">
                                 Get Started
-                            </button>
+                            </Link>
                         </div>
                     </nav>
                 </div>

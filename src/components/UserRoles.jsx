@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function UserRoles() {
     return (
         <section className="py-24 bg-white">
@@ -37,9 +39,9 @@ export default function UserRoles() {
                                     <span className="text-sm text-black font-bold">Order history & quick re-order</span>
                                 </li>
                             </ul>
-                            <button className="w-full rounded-2xl border-4 border-black bg-black px-6 py-4 text-base font-black text-[#d4ff00] hover:bg-slate-900 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                            <Link to="/signup" className="block w-full rounded-2xl border-4 border-black bg-black px-6 py-4 text-base font-black text-[#d4ff00] hover:bg-slate-900 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
                                 Sign Up as Wholesaler
-                            </button>
+                            </Link>
                         </div>
                     </div>
 
@@ -68,9 +70,9 @@ export default function UserRoles() {
                                     <span className="text-sm text-black font-bold">Real-time inventory management</span>
                                 </li>
                             </ul>
-                            <button className="w-full rounded-2xl border-4 border-black bg-black px-6 py-4 text-base font-black text-[#d4ff00] hover:bg-slate-900 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                            <Link to="/signup" className="block w-full rounded-2xl border-4 border-black bg-black px-6 py-4 text-base font-black text-[#d4ff00] hover:bg-slate-900 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
                                 Sign Up as Distributor
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
