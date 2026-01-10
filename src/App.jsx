@@ -21,6 +21,11 @@ import ReviewPage from './pages/ReviewPage'
 import PaymentPage from './pages/PaymentPage'
 import NotificationsPage from './pages/NotificationsPage'
 import ProfilePage from './pages/ProfilePage'
+import InventoryPage from './pages/InventoryPage'
+import PaymentsPage from './pages/PaymentsPage'
+import SettingsPage from './pages/SettingsPage'
+import DistributorProfilePage from './pages/DistributorProfilePage'
+import DistributorNotificationsPage from './pages/DistributorNotificationsPage'
 
 function HomePage() {
   return (
@@ -65,6 +70,11 @@ function App() {
         <Route path="/checkout/payment" element={<PaymentPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/inventory" element={<InventoryPage />} />
+        <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/distributor-profile" element={<DistributorProfilePage />} />
+        <Route path="/distributor-notifications" element={<DistributorNotificationsPage />} />
       </Routes>
     </CartProvider>
   )
