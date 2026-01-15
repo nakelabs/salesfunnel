@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import WholesalerNavbar from '../components/WholesalerNavbar';
-import { User, Lock, Users, UserPlus, Bell, CreditCard, Download, Trash2, Edit2, Check, X } from 'lucide-react';
+import { User, Lock, Users, UserPlus, Bell, CreditCard, Download, Trash2, Edit2, Check, X, ChevronDown } from 'lucide-react';
 
 const ProfilePage = () => {
     const [activeSection, setActiveSection] = useState('profile');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isEditing, setIsEditing] = useState({
         profile: false,
         personal: false,
@@ -65,20 +66,43 @@ const ProfilePage = () => {
                     <p className="text-slate-500 mt-1">Manage your profile and preferences</p>
                 </div>
 
-                <div className="flex gap-8">
-                    {/* Sidebar */}
-                    <aside className="w-64 flex-shrink-0">
-                        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-3 sticky top-32">
-                            <nav className="space-y-1">
+                <div className="flex flex-col gap-8">
+                    {/* Navigation Dropdown */}
+                    <div className="relative z-20">
+                        <button
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="w-full md:w-64 flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-primary/50 transition-colors"
+                        >
+                            <div className="flex items-center gap-3">
+                                {(() => {
+                                    const activeItem = sidebarItems.find(item => item.id === activeSection);
+                                    const Icon = activeItem?.icon || User;
+                                    return (
+                                        <>
+                                            <Icon size={20} className="text-primary" />
+                                            <span className="font-medium text-slate-900">{activeItem?.label || 'Menu'}</span>
+                                        </>
+                                    );
+                                })()}
+                            </div>
+                            <ChevronDown size={20} className={`text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        {isDropdownOpen && (
+                            <div className="absolute top-full left-0 w-full md:w-64 mt-2 bg-white border border-slate-100 rounded-xl shadow-xl py-2 animate-in fade-in slide-in-from-top-2">
                                 {sidebarItems.map((item) => {
                                     const IconComponent = item.icon;
+                                    const isActive = activeSection === item.id;
                                     return (
                                         <button
                                             key={item.id}
-                                            onClick={() => setActiveSection(item.id)}
-                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${activeSection === item.id
-                                                ? 'bg-primary text-white shadow-sm'
-                                                : 'text-slate-600 hover:bg-slate-50'
+                                            onClick={() => {
+                                                setActiveSection(item.id);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                            className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${isActive
+                                                    ? 'bg-primary/5 text-primary'
+                                                    : 'text-slate-600 hover:bg-slate-50'
                                                 }`}
                                         >
                                             <IconComponent size={18} />
@@ -87,14 +111,17 @@ const ProfilePage = () => {
                                     );
                                 })}
                                 <div className="pt-2 mt-2 border-t border-slate-100">
-                                    <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-all">
+                                    <button
+                                        onClick={() => setIsDropdownOpen(false)}
+                                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                                    >
                                         <Trash2 size={18} />
                                         Delete Account
                                     </button>
                                 </div>
-                            </nav>
-                        </div>
-                    </aside>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Main Content Area */}
                     <main className="flex-1">
@@ -155,7 +182,7 @@ const ProfilePage = () => {
                                     </div>
 
                                     <div className="p-6">
-                                        <div className="grid grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
                                                     First Name
@@ -220,7 +247,7 @@ const ProfilePage = () => {
                                                 )}
                                             </div>
 
-                                            <div className="col-span-2">
+                                            <div className="md:col-span-2">
                                                 <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
                                                     Bio
                                                 </label>
@@ -275,8 +302,8 @@ const ProfilePage = () => {
                                     </div>
 
                                     <div className="p-6">
-                                        <div className="grid grid-cols-2 gap-6">
-                                            <div className="col-span-2">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="md:col-span-2">
                                                 <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
                                                     Street Address
                                                 </label>
