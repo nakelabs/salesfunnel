@@ -1,358 +1,298 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import DistributorNavbar from '../components/DistributorNavbar';
+import { User, Lock, Users, UserPlus, Bell, CreditCard, Download, Trash2, Edit2, Check, X } from 'lucide-react';
 
 const DistributorProfilePage = () => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [activeTab, setActiveTab] = useState('profile');
+    const [activeSection, setActiveSection] = useState('profile');
+    const [isEditing, setIsEditing] = useState({
+        profile: false,
+        personal: false,
+        address: false
+    });
 
-    const tabs = [
-        { id: 'profile', name: 'Profile', icon: 'person' },
-        { id: 'business', name: 'Business', icon: 'business' },
-        { id: 'activity', name: 'Activity', icon: 'history' }
+    const [profileData, setProfileData] = useState({
+        // Profile
+        firstName: 'James',
+        lastName: 'Wilson',
+        role: 'Distributor',
+        location: 'Lagos, Nigeria',
+        email: 'james.wilson@globaldist.com',
+        phone: '+234 803 456 7890',
+        bio: 'Experienced food and beverage distributor',
+
+        // Address
+        street: 'Plot 12, Industrial Estate',
+        city: 'Ikeja',
+        state: 'Lagos State',
+        country: 'Nigeria',
+        zipCode: '101233'
+    });
+
+    const sidebarItems = [
+        { id: 'profile', label: 'My Profile', icon: User },
+        { id: 'security', label: 'Security', icon: Lock },
+        { id: 'teams', label: 'Teams', icon: Users },
+        { id: 'team-member', label: 'Team Member', icon: UserPlus },
+        { id: 'notifications', label: 'Notifications', icon: Bell },
+        { id: 'billing', label: 'Billing', icon: CreditCard },
+        { id: 'data-export', label: 'Data Export', icon: Download },
     ];
 
+    const handleEdit = (section) => {
+        setIsEditing({ ...isEditing, [section]: true });
+    };
+
+    const handleSave = (section) => {
+        setIsEditing({ ...isEditing, [section]: false });
+        // Save to backend here
+    };
+
+    const handleCancel = (section) => {
+        setIsEditing({ ...isEditing, [section]: false });
+    };
+
     return (
-        <div className="bg-background-light font-display flex min-h-screen">
-            {/* Sidebar */}
-            <aside className="w-64 border-r border-slate-200 bg-white flex flex-col shrink-0">
-                {/* Logo */}
-                <div className="p-6">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary rounded-lg p-2 text-white">
-                            <span className="material-symbols-outlined text-2xl">monitoring</span>
-                        </div>
-                        <div className="flex flex-col">
-                            <h1 className="text-slate-900 text-lg font-bold leading-tight">SalesFunnel</h1>
-                            <p className="text-slate-500 text-xs font-medium">Distributor Dashboard</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Navigation */}
-                <nav className="flex-1 px-4 space-y-1">
-                    <Link
-                        to="/distributor-dashboard"
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    >
-                        <span className="material-symbols-outlined">dashboard</span>
-                        <span className="text-sm font-medium">Dashboard</span>
-                    </Link>
-                    <a
-                        href="#"
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    >
-                        <span className="material-symbols-outlined">shopping_bag</span>
-                        <span className="text-sm font-medium">Orders</span>
-                    </a>
-                    <Link
-                        to="/payments"
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    >
-                        <span className="material-symbols-outlined">payments</span>
-                        <span className="text-sm font-medium">Payments</span>
-                    </Link>
-                    <Link
-                        to="/inventory"
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    >
-                        <span className="material-symbols-outlined">inventory_2</span>
-                        <span className="text-sm font-medium">Inventory</span>
-                    </Link>
-                    <div className="pt-4 mt-4 border-t border-slate-100">
-                        <Link
-                            to="/settings"
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                        >
-                            <span className="material-symbols-outlined">settings</span>
-                            <span className="text-sm font-medium">Settings</span>
-                        </Link>
-                    </div>
-                </nav>
-
-                {/* User Profile - Active State */}
-                <div className="p-4 border-t border-slate-200 bg-primary/5">
-                    <Link to="/distributor-profile" className="flex items-center gap-3 p-2">
-                        <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/30">
-                            <span className="material-symbols-outlined text-primary">account_circle</span>
-                        </div>
-                        <div className="overflow-hidden">
-                            <p className="text-sm font-semibold truncate text-primary">Adeola Johnson</p>
-                            <p className="text-xs text-slate-500 truncate">Main Distributor</p>
-                        </div>
-                    </Link>
-                </div>
-            </aside>
+        <div className="bg-slate-50 min-h-screen" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+            {/* Navbar */}
+            <DistributorNavbar />
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto bg-background-light">
-                <div className="max-w-5xl mx-auto px-6 py-8">
-                    {/* Page Header */}
-                    <div className="mb-8">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <Link to="/distributor-dashboard" className="text-slate-500 hover:text-slate-700">
-                                    <span className="material-symbols-outlined">arrow_back</span>
-                                </Link>
-                                <div>
-                                    <h2 className="text-slate-900 text-3xl font-black tracking-tight">My Profile</h2>
-                                    <p className="text-slate-500 mt-1">View and manage your profile information</p>
-                                </div>
-                            </div>
-                            {!isEditing ? (
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                                >
-                                    <span className="material-symbols-outlined text-[20px]">edit</span>
-                                    Edit Profile
-                                </button>
-                            ) : (
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => setIsEditing(false)}
-                                        className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setIsEditing(false);
-                                            alert('Profile updated successfully!');
-                                        }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-                                    >
-                                        <span className="material-symbols-outlined text-[20px]">check</span>
-                                        Save Changes
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Page Title */}
+                <div className="sticky top-16 z-30 bg-slate-50 pb-6 mb-2">
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Account Settings</h1>
+                    <p className="text-slate-500 mt-1">Manage your profile and preferences</p>
+                </div>
 
-                        {/* Verified Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg">
-                            <span className="material-symbols-outlined text-emerald-600">verified</span>
-                            <div>
-                                <p className="text-sm font-semibold text-emerald-800">Verified Distributor</p>
-                                <p className="text-xs text-emerald-700">Since January 2024</p>
-                            </div>
+                <div className="flex gap-8">
+                    {/* Sidebar */}
+                    <aside className="w-64 flex-shrink-0">
+                        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-3 sticky top-32">
+                            <nav className="space-y-1">
+                                {sidebarItems.map((item) => {
+                                    const IconComponent = item.icon;
+                                    return (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => setActiveSection(item.id)}
+                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${activeSection === item.id
+                                                    ? 'bg-primary text-white shadow-sm'
+                                                    : 'text-slate-600 hover:bg-slate-50'
+                                                }`}
+                                        >
+                                            <IconComponent size={18} />
+                                            {item.label}
+                                        </button>
+                                    );
+                                })}
+                            </nav>
                         </div>
-                    </div>
+                    </aside>
 
-                    {/* Tabs */}
-                    <div className="mb-6">
-                        <div className="flex gap-2 border-b border-slate-200">
-                            {tabs.map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${activeTab === tab.id
-                                            ? 'border-primary text-primary'
-                                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                                        }`}
-                                >
-                                    <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
-                                    {tab.name}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Profile Tab */}
-                    {activeTab === 'profile' && (
-                        <div className="space-y-6">
-                            {/* Profile Picture */}
-                            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                                <h3 className="font-bold text-slate-900 text-lg mb-4">Profile Picture</h3>
-                                <div className="flex items-center gap-6">
-                                    <div className="size-24 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <span className="material-symbols-outlined text-primary text-5xl">account_circle</span>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-slate-600 mb-2">Upload a new profile picture</p>
-                                        <div className="flex gap-2">
-                                            <button className="px-4 py-2 bg-primary text-white text-sm rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-                                                Upload Photo
-                                            </button>
-                                            <button className="px-4 py-2 border border-slate-300 text-slate-700 text-sm rounded-lg font-semibold hover:bg-slate-50 transition-colors">
-                                                Remove
-                                            </button>
+                    {/* Main Content Area */}
+                    <div className="flex-1">
+                        {/* My Profile Section */}
+                        {activeSection === 'profile' && (
+                            <div className="space-y-6">
+                                {/* Profile Header Card */}
+                                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-8 text-white shadow-lg">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center text-4xl font-bold backdrop-blur-sm ring-4 ring-white/30">
+                                            {profileData.firstName[0]}{profileData.lastName[0]}
                                         </div>
-                                        <p className="text-xs text-slate-400 mt-2">JPG, PNG or GIF. Max size 2MB.</p>
+                                        <div>
+                                            <h2 className="text-2xl font-bold">{profileData.firstName} {profileData.lastName}</h2>
+                                            <p className="text-blue-100 mt-1">{profileData.role}</p>
+                                            <p className="text-blue-100 text-sm mt-1 flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-lg">location_on</span>
+                                                {profileData.location}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Personal Information */}
-                            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                                <h3 className="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">person</span>
-                                    Personal Information
-                                </h3>
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Personal Information */}
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-lg font-bold text-slate-900">Personal Information</h3>
+                                        {!isEditing.personal ? (
+                                            <button
+                                                onClick={() => handleEdit('personal')}
+                                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-blue-50 rounded-lg transition-colors"
+                                            >
+                                                <Edit2 size={16} />
+                                                Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleSave('personal')}
+                                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors"
+                                                >
+                                                    <Check size={16} />
+                                                    Save
+                                                </button>
+                                                <button
+                                                    onClick={() => handleCancel('personal')}
+                                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                                                >
+                                                    <X size={16} />
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
                                             <input
                                                 type="text"
-                                                defaultValue="Adeola Johnson"
-                                                disabled={!isEditing}
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                                value={profileData.firstName}
+                                                disabled={!isEditing.personal}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                                            <input
+                                                type="text"
+                                                value={profileData.lastName}
+                                                disabled={!isEditing.personal}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
                                             <input
                                                 type="email"
-                                                defaultValue="adeola@distributor.com"
-                                                disabled={!isEditing}
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                                value={profileData.email}
+                                                disabled={!isEditing.personal}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
                                             />
                                         </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
                                             <input
                                                 type="tel"
-                                                defaultValue="+234 801 234 5678"
-                                                disabled={!isEditing}
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                                value={profileData.phone}
+                                                disabled={!isEditing.personal}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
                                             />
                                         </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
-                                            <input
-                                                type="text"
-                                                defaultValue="Main Distributor"
-                                                disabled
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 text-slate-500"
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Bio</label>
+                                            <textarea
+                                                value={profileData.bio}
+                                                disabled={!isEditing.personal}
+                                                rows={3}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
                                             />
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    )}
 
-                    {/* Business Tab */}
-                    {activeTab === 'business' && (
-                        <div className="space-y-6">
-                            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                                <h3 className="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">business</span>
-                                    Business Details
-                                </h3>
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Business Name</label>
-                                        <input
-                                            type="text"
-                                            defaultValue="Premium Trading Co."
-                                            disabled={!isEditing}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Tax ID (TIN)</label>
-                                            <input
-                                                type="text"
-                                                defaultValue="TIN-123456789"
-                                                disabled={!isEditing}
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">RC Number</label>
-                                            <input
-                                                type="text"
-                                                defaultValue="RC-987654321"
-                                                disabled={!isEditing}
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Business Address</label>
-                                        <textarea
-                                            rows="3"
-                                            defaultValue="123 Market Street, Victoria Island, Lagos, Nigeria"
-                                            disabled={!isEditing}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
-                                        ></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                                <h3 className="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">account_balance</span>
-                                    Bank Information
-                                </h3>
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Bank Name</label>
-                                            <input
-                                                type="text"
-                                                defaultValue="Zenith Bank"
-                                                disabled={!isEditing}
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Account Number</label>
-                                            <input
-                                                type="text"
-                                                defaultValue="1234567890"
-                                                disabled={!isEditing}
-                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Account Name</label>
-                                        <input
-                                            type="text"
-                                            defaultValue="Premium Trading Co."
-                                            disabled={!isEditing}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Activity Tab */}
-                    {activeTab === 'activity' && (
-                        <div className="space-y-6">
-                            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                                <h3 className="font-bold text-slate-900 text-lg mb-4">Recent Activity</h3>
-                                <div className="space-y-4">
-                                    {[
-                                        { action: 'Verified payment', details: '#TRX-9821 - ₦245,000', time: '2 hours ago', icon: 'payments', color: 'text-green-600' },
-                                        { action: 'Updated inventory', details: 'Added 15 new products', time: '5 hours ago', icon: 'inventory_2', color: 'text-blue-600' },
-                                        { action: 'Profile updated', details: 'Changed business address', time: '1 day ago', icon: 'edit', color: 'text-amber-600' },
-                                        { action: 'New order received', details: 'Order #SF-1209', time: '2 days ago', icon: 'shopping_bag', color: 'text-purple-600' }
-                                    ].map((item, index) => (
-                                        <div key={index} className="flex items-start gap-4 p-4 border border-slate-200 rounded-lg">
-                                            <div className={`p-2 rounded-lg bg-slate-100`}>
-                                                <span className={`material-symbols-outlined ${item.color}`}>{item.icon}</span>
+                                {/* Address Information */}
+                                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-lg font-bold text-slate-900">Address Information</h3>
+                                        {!isEditing.address ? (
+                                            <button
+                                                onClick={() => handleEdit('address')}
+                                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-blue-50 rounded-lg transition-colors"
+                                            >
+                                                <Edit2 size={16} />
+                                                Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => handleSave('address')}
+                                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors"
+                                                >
+                                                    <Check size={16} />
+                                                    Save
+                                                </button>
+                                                <button
+                                                    onClick={() => handleCancel('address')}
+                                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                                                >
+                                                    <X size={16} />
+                                                    Cancel
+                                                </button>
                                             </div>
-                                            <div className="flex-1">
-                                                <p className="font-semibold text-slate-900">{item.action}</p>
-                                                <p className="text-sm text-slate-600">{item.details}</p>
-                                                <p className="text-xs text-slate-400 mt-1">{item.time}</p>
-                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Street Address</label>
+                                            <input
+                                                type="text"
+                                                value={profileData.street}
+                                                disabled={!isEditing.address}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                            />
                                         </div>
-                                    ))}
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">City</label>
+                                            <input
+                                                type="text"
+                                                value={profileData.city}
+                                                disabled={!isEditing.address}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">State</label>
+                                            <input
+                                                type="text"
+                                                value={profileData.state}
+                                                disabled={!isEditing.address}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Country</label>
+                                            <input
+                                                type="text"
+                                                value={profileData.country}
+                                                disabled={!isEditing.address}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Zip Code</label>
+                                            <input
+                                                type="text"
+                                                value={profileData.zipCode}
+                                                disabled={!isEditing.address}
+                                                className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-slate-50 disabled:text-slate-500"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                        {/* Placeholder for other sections */}
+                        {activeSection !== 'profile' && (
+                            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
+                                <div className="max-w-md mx-auto">
+                                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <span className="material-symbols-outlined text-slate-400 text-3xl">settings</span>
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                                        {sidebarItems.find(item => item.id === activeSection)?.label}
+                                    </h3>
+                                    <p className="text-slate-500">This section is under development</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </main>
+            </div>
         </div>
     );
 };

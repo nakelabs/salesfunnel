@@ -3,7 +3,7 @@ export default function Features() {
         <section className="py-24 bg-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="mb-16 md:text-center max-w-3xl mx-auto">
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl mb-6 animate-pulse">
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl mb-6 animate-pulse" style={{ fontFamily: 'var(--font-heading)' }}>
                         Run your business on <span className="text-primary underline decoration-wavy decoration-accent decoration-2 underline-offset-4">autopilot</span>
                     </h2>
                     <p className="text-xl text-slate-600 font-medium">
@@ -20,7 +20,7 @@ export default function Features() {
                                 Auto
                             </div>
                             <div>
-                                <h3 className="mb-4 text-4xl font-black text-white leading-tight">Instant Bank Transfers</h3>
+                                <h3 className="mb-4 text-4xl font-black text-white leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>Instant Bank Transfers</h3>
                                 <p className="text-white/80 font-medium text-lg leading-relaxed">Direct Naira (₦) payments with automated receipt generation and zero transaction delays.</p>
                             </div>
                             <div className="mt-auto pt-4 flex justify-end">
@@ -37,7 +37,7 @@ export default function Features() {
                                 Live
                             </div>
                             <div>
-                                <h3 className="mb-4 text-4xl font-black text-slate-900 leading-tight">Real-time Tracking</h3>
+                                <h3 className="mb-4 text-4xl font-black text-slate-900 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>Real-time Tracking</h3>
                                 <p className="text-slate-800/80 font-medium text-lg leading-relaxed">Live map view of drivers, ETA updates via SMS, and digital proof of delivery.</p>
                             </div>
                             <div className="mt-auto pt-4 flex justify-end">
@@ -54,7 +54,7 @@ export default function Features() {
                                 Safe
                             </div>
                             <div>
-                                <h3 className="mb-4 text-4xl font-black text-white leading-tight">Secure Payments</h3>
+                                <h3 className="mb-4 text-4xl font-black text-white leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>Secure Payments</h3>
                                 <p className="text-white/70 font-medium text-lg leading-relaxed">Bank-grade data security, funds held in escrow, and dedicated dispute resolution.</p>
                             </div>
                             <div className="mt-auto pt-4 flex justify-end">

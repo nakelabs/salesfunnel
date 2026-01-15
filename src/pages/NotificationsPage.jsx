@@ -1,311 +1,259 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import WholesalerNavbar from '../components/WholesalerNavbar';
+import { Star, FileText, Trash2, Search, Bell, MoreVertical } from 'lucide-react';
 
 const NotificationsPage = () => {
     const [activeTab, setActiveTab] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
     const [notifications, setNotifications] = useState([
         {
             id: 1,
-            type: 'order',
-            icon: 'shopping_bag',
-            iconColor: 'text-green-600',
-            iconBg: 'bg-green-100',
-            title: 'Order Confirmed',
-            message: 'Your order #SF-8821-ORD has been confirmed and is being processed.',
-            time: '5 minutes ago',
-            read: false
+            message: "Order #SF-8821 confirmed! Your order of 50 bags of Dangote Sugar has been processed and will be delivered within 2 hours.",
+            time: 'Just Now',
+            read: false,
+            favorite: false,
+            archived: false
         },
         {
             id: 2,
-            type: 'product',
-            icon: 'local_offer',
-            iconColor: 'text-blue-600',
-            iconBg: 'bg-blue-100',
-            title: 'Price Drop Alert',
-            message: 'Dangote Sugar 50kg is now ₦26,500 (was ₦28,000). Save ₦1,500!',
-            time: '1 hour ago',
-            read: false
+            message: 'Price Drop Alert: Indomie Chicken Noodles 120 Cartons now ₦45,000 (was ₦52,000). Save ₦7,000 on your next order!',
+            time: '30 minutes ago',
+            read: false,
+            favorite: true,
+            archived: false
         },
         {
             id: 3,
-            type: 'product',
-            icon: 'inventory',
-            iconColor: 'text-amber-600',
-            iconBg: 'bg-amber-100',
-            title: 'Stock Alert',
-            message: 'Nestle Milo Pro Pack is back in stock. Order now before it sells out!',
+            message: "Your order #SF-8734 is out for delivery. Expected arrival time: 3:45 PM. Track your delivery in real-time.",
             time: '2 hours ago',
-            read: false
+            read: false,
+            favorite: false,
+            archived: false
         },
         {
             id: 4,
-            type: 'order',
-            icon: 'local_shipping',
-            iconColor: 'text-purple-600',
-            iconBg: 'bg-purple-100',
-            title: 'Order Shipped',
-            message: 'Order #SF-7734-ORD is on its way. Expected delivery: Jan 10, 2026',
+            message: "Stock Alert: Nestle Milo 400g Refill Pack is back in stock! Order now before it runs out again.",
             time: '5 hours ago',
-            read: true
+            read: true,
+            favorite: true,
+            archived: false
         },
         {
             id: 5,
-            type: 'system',
-            icon: 'verified_user',
-            iconColor: 'text-primary',
-            iconBg: 'bg-blue-100',
-            title: 'Account Verified',
-            message: 'Your business documents have been verified. You now have full access to wholesale pricing.',
+            message: "Payment received for order #SF-8621. Amount: ₦285,000. Your account has been credited. Thank you for your business!",
             time: '1 day ago',
-            read: true
+            read: true,
+            favorite: false,
+            archived: false
         },
         {
             id: 6,
-            type: 'order',
-            icon: 'cancel',
-            iconColor: 'text-red-600',
-            iconBg: 'bg-red-100',
-            title: 'Payment Failed',
-            message: 'Payment for order #SF-7621-ORD failed. Please try again or use a different payment method.',
-            time: '1 day ago',
-            read: true
+            message: 'New Product Alert: 25 new beverage products added to our catalog including Golden Morn, Peak Milk, and more. Check them out!',
+            time: '2 days ago',
+            read: true,
+            favorite: false,
+            archived: false
         },
         {
             id: 7,
-            type: 'product',
-            icon: 'new_releases',
-            iconColor: 'text-green-600',
-            iconBg: 'bg-green-100',
-            title: 'New Products Available',
-            message: '15 new products added to the Beverages category. Check them out now!',
-            time: '2 days ago',
-            read: true
+            message: "Delivery completed for order #SF-8512. Please confirm receipt and rate your delivery experience.",
+            time: '3 days ago',
+            read: true,
+            favorite: true,
+            archived: false
         },
         {
             id: 8,
-            type: 'system',
-            icon: 'campaign',
-            iconColor: 'text-orange-600',
-            iconBg: 'bg-orange-100',
-            title: 'Special Promotion',
-            message: 'Flash Sale! Get 20% off on all dry goods. Valid until midnight tonight.',
-            time: '3 days ago',
-            read: true
-        }
+            message: 'Flash Sale Alert: Get 15% off on all Frozen Foods category. Valid until midnight tonight. Shop now and save!',
+            time: '5 days ago',
+            read: true,
+            favorite: false,
+            archived: false
+        },
     ]);
 
-    const tabs = [
-        { id: 'all', name: 'All', icon: 'notifications' },
-        { id: 'order', name: 'Orders', icon: 'shopping_bag' },
-        { id: 'product', name: 'Products', icon: 'inventory' },
-        { id: 'system', name: 'System', icon: 'settings' }
-    ];
-
-    const filteredNotifications = activeTab === 'all'
-        ? notifications
-        : notifications.filter(n => n.type === activeTab);
-
-    const unreadCount = notifications.filter(n => !n.read).length;
-
-    const markAsRead = (id) => {
+    const toggleFavorite = (id) => {
         setNotifications(notifications.map(n =>
-            n.id === id ? { ...n, read: true } : n
+            n.id === id ? { ...n, favorite: !n.favorite } : n
         ));
-    };
-
-    const markAllAsRead = () => {
-        setNotifications(notifications.map(n => ({ ...n, read: true })));
     };
 
     const deleteNotification = (id) => {
         setNotifications(notifications.filter(n => n.id !== id));
     };
 
-    const clearAll = () => {
-        setNotifications([]);
+    const getFilteredNotifications = () => {
+        let filtered = notifications;
+
+        if (activeTab === 'archive') {
+            filtered = filtered.filter(n => n.archived);
+        } else if (activeTab === 'favorite') {
+            filtered = filtered.filter(n => n.favorite);
+        } else {
+            filtered = filtered.filter(n => !n.archived);
+        }
+
+        if (searchQuery) {
+            filtered = filtered.filter(n =>
+                n.message.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        return filtered;
     };
 
-    return (
-        <div className="bg-background-light min-h-screen font-display">
-            {/* Header */}
-            <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center gap-3">
-                            <Link to="/dashboard" className="flex items-center gap-3">
-                                <div className="flex items-center justify-center size-8 rounded-lg bg-primary text-white">
-                                    <span className="material-symbols-outlined">inventory_2</span>
-                                </div>
-                                <h1 className="text-xl font-bold tracking-tight text-slate-900">SalesFunnel</h1>
-                            </Link>
-                        </div>
+    const filteredNotifications = getFilteredNotifications();
+    const allCount = notifications.filter(n => !n.archived && !n.read).length;
+    const archiveCount = notifications.filter(n => n.archived).length;
+    const favoriteCount = notifications.filter(n => n.favorite).length;
 
-                        <div className="flex items-center gap-3">
-                            <div className="text-right hidden sm:block">
-                                <p className="text-xs text-slate-500">Shop 4, Alaba Market</p>
-                                <p className="text-xs text-slate-400">ID: SF-8821</p>
-                            </div>
-                            <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-primary">account_circle</span>
-                            </div>
+    return (
+        <div className="bg-slate-50 min-h-screen font-display" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+            <WholesalerNavbar />
+
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Header */}
+                <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h1 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <Bell size={24} className="text-slate-700" />
+                            List Notification
+                        </h1>
+                        <button className="text-slate-600 hover:text-slate-900">
+                            <MoreVertical size={20} />
+                        </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                        <p className="text-sm text-slate-600 font-medium">
+                            {notifications.length} Notification
+                        </p>
+
+                        <div className="relative w-80">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search by Name Product"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            />
                         </div>
                     </div>
                 </div>
-            </header>
 
-            {/* Main Content */}
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Page Header */}
-                <div className="mb-6">
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                            <Link to="/dashboard" className="text-slate-500 hover:text-slate-700">
-                                <span className="material-symbols-outlined">arrow_back</span>
-                            </Link>
-                            <div>
-                                <h1 className="text-3xl font-black text-slate-900">Notifications</h1>
-                                <p className="text-slate-500 text-sm mt-1">
-                                    {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}` : 'All caught up!'}
-                                </p>
+                {/* Notifications Card */}
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    {/* Tabs */}
+                    <div className="flex justify-between border-b border-slate-200 px-6">
+                        <button
+                            onClick={() => setActiveTab('all')}
+                            className={`relative flex items-center gap-3 px-0 py-4 text-sm font-medium transition-colors ${activeTab === 'all'
+                                ? 'text-slate-900'
+                                : 'text-slate-500 hover:text-slate-700'
+                                }`}
+                        >
+                            {allCount > 0 && (
+                                <span className="bg-red-500 text-white text-xs px-2.5 py-1 rounded-full font-semibold min-w-[32px] text-center">
+                                    {allCount}
+                                </span>
+                            )}
+                            All
+                            {activeTab === 'all' && (
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900"></div>
+                            )}
+                        </button>
+
+                        <button
+                            onClick={() => setActiveTab('archive')}
+                            className={`relative flex items-center gap-2 px-0 py-4 text-sm font-medium transition-colors ${activeTab === 'archive'
+                                ? 'text-slate-900'
+                                : 'text-slate-500 hover:text-slate-700'
+                                }`}
+                        >
+                            <span className="text-sm">{archiveCount}</span>
+                            Archive
+                            {activeTab === 'archive' && (
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900"></div>
+                            )}
+                        </button>
+
+                        <button
+                            onClick={() => setActiveTab('favorite')}
+                            className={`relative flex items-center gap-2 px-0 py-4 text-sm font-medium transition-colors ${activeTab === 'favorite'
+                                ? 'text-slate-900'
+                                : 'text-slate-500 hover:text-slate-700'
+                                }`}
+                        >
+                            <span className="text-sm">{favoriteCount}</span>
+                            Favorite
+                            {activeTab === 'favorite' && (
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900"></div>
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Notifications List */}
+                    <div>
+                        {filteredNotifications.length === 0 ? (
+                            <div className="p-12 text-center">
+                                <p className="text-slate-500">No notifications found</p>
                             </div>
-                        </div>
-
-                        {notifications.length > 0 && (
-                            <div className="flex items-center gap-2">
-                                {unreadCount > 0 && (
-                                    <button
-                                        onClick={markAllAsRead}
-                                        className="text-sm font-medium text-primary hover:text-blue-600 transition-colors"
-                                    >
-                                        Mark all as read
-                                    </button>
-                                )}
-                                <button
-                                    onClick={clearAll}
-                                    className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+                        ) : (
+                            filteredNotifications.map((notification, index) => (
+                                <div
+                                    key={notification.id}
+                                    className={`flex items-center gap-3 px-6 py-4 hover:bg-slate-50 transition-colors ${index !== filteredNotifications.length - 1 ? 'border-b border-slate-100' : ''
+                                        }`}
                                 >
-                                    Clear all
-                                </button>
-                            </div>
+                                    {/* Status Dot */}
+                                    <div className="flex-shrink-0 w-6 flex justify-center">
+                                        <span className={`size-2 rounded-full ${!notification.read ? 'bg-green-500' : 'bg-slate-300'
+                                            }`}></span>
+                                    </div>
+
+                                    {/* Star Icon */}
+                                    <button
+                                        onClick={() => toggleFavorite(notification.id)}
+                                        className="flex-shrink-0 transition-colors"
+                                    >
+                                        {notification.favorite ? (
+                                            <Star size={20} className="fill-slate-900 text-slate-900" />
+                                        ) : (
+                                            <Star size={20} className="text-slate-300 hover:text-slate-400" />
+                                        )}
+                                    </button>
+
+                                    {/* Document Icon */}
+                                    <div className="flex-shrink-0">
+                                        <FileText size={20} className="text-slate-400" />
+                                    </div>
+
+                                    {/* Message */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm text-slate-600 truncate">
+                                            {notification.message}
+                                        </p>
+                                    </div>
+
+                                    {/* Time */}
+                                    <div className="flex-shrink-0 text-xs text-slate-400 w-28 text-right">
+                                        {notification.time}
+                                    </div>
+
+                                    {/* Delete Button */}
+                                    <button
+                                        onClick={() => deleteNotification(notification.id)}
+                                        className="flex-shrink-0 size-9 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            ))
                         )}
                     </div>
                 </div>
-
-                {/* Tabs */}
-                <div className="mb-6">
-                    <div className="flex gap-2 border-b border-slate-200">
-                        {tabs.map((tab) => {
-                            const tabCount = tab.id === 'all'
-                                ? notifications.length
-                                : notifications.filter(n => n.type === tab.id).length;
-
-                            return (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${activeTab === tab.id
-                                            ? 'border-primary text-primary'
-                                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                                        }`}
-                                >
-                                    <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
-                                    {tab.name}
-                                    <span className={`text-xs px-2 py-0.5 rounded-full ${activeTab === tab.id
-                                            ? 'bg-primary/10 text-primary'
-                                            : 'bg-slate-100 text-slate-600'
-                                        }`}>
-                                        {tabCount}
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Notifications List */}
-                <div className="space-y-3">
-                    {filteredNotifications.length === 0 ? (
-                        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-                            <span className="material-symbols-outlined text-6xl text-slate-300 mb-4">notifications_off</span>
-                            <h3 className="text-lg font-bold text-slate-900 mb-2">No notifications</h3>
-                            <p className="text-slate-500">You're all caught up! Check back later for updates.</p>
-                        </div>
-                    ) : (
-                        filteredNotifications.map((notification) => (
-                            <div
-                                key={notification.id}
-                                className={`bg-white rounded-xl border transition-all ${notification.read
-                                        ? 'border-slate-200'
-                                        : 'border-primary/30 shadow-sm'
-                                    }`}
-                            >
-                                <div className="p-4 sm:p-5">
-                                    <div className="flex gap-4">
-                                        {/* Icon */}
-                                        <div className={`flex-shrink-0 size-12 rounded-full ${notification.iconBg} flex items-center justify-center`}>
-                                            <span className={`material-symbols-outlined ${notification.iconColor}`}>
-                                                {notification.icon}
-                                            </span>
-                                        </div>
-
-                                        {/* Content */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div className="flex-1">
-                                                    <div className="flex items-center gap-2 mb-1">
-                                                        <h3 className="font-bold text-slate-900">{notification.title}</h3>
-                                                        {!notification.read && (
-                                                            <span className="size-2 rounded-full bg-primary"></span>
-                                                        )}
-                                                    </div>
-                                                    <p className="text-slate-600 text-sm">{notification.message}</p>
-                                                    <p className="text-slate-400 text-xs mt-2">{notification.time}</p>
-                                                </div>
-
-                                                {/* Actions */}
-                                                <div className="flex items-center gap-1">
-                                                    {!notification.read && (
-                                                        <button
-                                                            onClick={() => markAsRead(notification.id)}
-                                                            className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-blue-50 transition-colors"
-                                                            title="Mark as read"
-                                                        >
-                                                            <span className="material-symbols-outlined text-[20px]">
-                                                                check_circle
-                                                            </span>
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        onClick={() => deleteNotification(notification.id)}
-                                                        className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                                                        title="Delete"
-                                                    >
-                                                        <span className="material-symbols-outlined text-[20px]">
-                                                            close
-                                                        </span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-
-                {/* Back to Dashboard Link */}
-                {filteredNotifications.length > 0 && (
-                    <div className="mt-8 text-center">
-                        <Link
-                            to="/dashboard"
-                            className="inline-flex items-center gap-2 text-primary hover:text-blue-600 font-medium"
-                        >
-                            <span className="material-symbols-outlined text-[20px]">arrow_back</span>
-                            Back to Dashboard
-                        </Link>
-                    </div>
-                )}
             </main>
         </div>
     );

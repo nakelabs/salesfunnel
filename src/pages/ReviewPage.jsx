@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import WholesalerNavbar from '../components/WholesalerNavbar';
 
 const ReviewPage = () => {
     const navigate = useNavigate();
@@ -58,43 +59,8 @@ const ReviewPage = () => {
 
     return (
         <div className="bg-background-light min-h-screen font-display">
-            {/* Header */}
-            <header className="sticky top-0 z-50 bg-white border-b border-slate-200 px-6 py-3 shadow-sm">
-                <div className="max-w-[1440px] mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="size-8 text-primary">
-                            <span className="material-symbols-outlined text-3xl">inventory_2</span>
-                        </div>
-                        <h2 className="text-slate-900 text-xl font-bold">SalesFunnel</h2>
-                    </div>
-
-                    <nav className="hidden md:flex flex-1 justify-end gap-8 items-center">
-                        <div className="flex items-center gap-8">
-                            <Link to="/dashboard" className="text-slate-600 hover:text-primary transition-colors text-sm font-medium">
-                                Dashboard
-                            </Link>
-                            <Link to="/orders" className="text-slate-600 hover:text-primary transition-colors text-sm font-medium">
-                                Orders
-                            </Link>
-                            <a className="text-slate-600 hover:text-primary transition-colors text-sm font-medium" href="#">
-                                Wallet
-                            </a>
-                            <a className="text-slate-600 hover:text-primary transition-colors text-sm font-medium" href="#">
-                                Settings
-                            </a>
-                        </div>
-                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                            <div className="text-right hidden lg:block">
-                                <p className="text-xs font-medium text-slate-900">Shop 4, Alaba Market</p>
-                                <p className="text-[10px] text-slate-500">ID: SF-8821</p>
-                            </div>
-                            <div className="bg-primary/10 rounded-full size-10 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-primary">account_circle</span>
-                            </div>
-                        </div>
-                    </nav>
-                </div>
-            </header>
+            {/* Shared Navbar */}
+            <WholesalerNavbar />
 
             {/* Main Content */}
             <main className="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8">

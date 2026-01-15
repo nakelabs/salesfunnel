@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import WholesalerNavbar from '../components/WholesalerNavbar';
 
 const OrdersPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -59,8 +60,8 @@ const OrdersPage = () => {
                         <div className="flex flex-col items-center relative group/step" title={step.label}>
                             {order.progress >= step.number ? (
                                 <div className={`flex items-center justify-center size-5 rounded-full ${order.progress === step.number
-                                        ? `bg-${step.color}-600 text-white z-10 ring-4 ring-${step.color}-100`
-                                        : `bg-${step.color}-500 text-white z-10`
+                                    ? `bg-${step.color}-600 text-white z-10 ring-4 ring-${step.color}-100`
+                                    : `bg-${step.color}-500 text-white z-10`
                                     }`}>
                                     <span className="material-symbols-outlined text-[12px] font-bold">
                                         {order.progress === step.number ? step.icon : 'check'}
@@ -79,8 +80,8 @@ const OrdersPage = () => {
                         </div>
                         {index < steps.length - 1 && (
                             <div className={`flex-1 h-0.5 min-w-[30px] mx-1 ${order.progress > step.number
-                                    ? `bg-${steps[index + 1].color}-500`
-                                    : 'bg-slate-200'
+                                ? `bg-${steps[index + 1].color}-500`
+                                : 'bg-slate-200'
                                 }`}></div>
                         )}
                     </React.Fragment>
@@ -90,45 +91,9 @@ const OrdersPage = () => {
     };
 
     return (
-        <div className="bg-background-light min-h-screen text-slate-900 font-display transition-colors duration-200">
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
-                                <span className="material-symbols-outlined text-2xl">inventory_2</span>
-                            </div>
-                            <h1 className="text-slate-900 text-lg font-bold tracking-tight">SalesFunnel</h1>
-                        </div>
-
-                        <nav className="hidden md:flex items-center gap-8">
-                            <Link to="/dashboard" className="text-slate-600 hover:text-primary transition-colors text-sm font-medium leading-normal">
-                                Dashboard
-                            </Link>
-                            <a className="text-primary text-sm font-semibold leading-normal border-b-2 border-primary py-5" href="#">
-                                My Orders
-                            </a>
-                            <a className="text-slate-600 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">
-                                Catalog
-                            </a>
-                            <a className="text-slate-600 hover:text-primary transition-colors text-sm font-medium leading-normal" href="#">
-                                Settings
-                            </a>
-                        </nav>
-
-                        <div className="flex items-center gap-4">
-                            <button className="hidden sm:flex items-center justify-center h-10 px-4 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors text-sm font-medium">
-                                <span className="material-symbols-outlined mr-2 text-[20px]">logout</span>
-                                Log Out
-                            </button>
-                            <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                                A
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
+        <div className="bg-background-light min-h-screen text-slate-900 font-display transition-colors duration-200" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+            {/* Shared Navbar */}
+            <WholesalerNavbar />
 
             {/* Main Content */}
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

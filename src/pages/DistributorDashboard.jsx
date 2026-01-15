@@ -1,46 +1,79 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import DistributorNavbar from '../components/DistributorNavbar';
 
 const DistributorDashboard = () => {
     const [activeFilter, setActiveFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
 
+    // Trend data for mini charts
+    const revenueData = [
+        { value: 20 }, { value: 35 }, { value: 25 }, { value: 45 }, { value: 40 }, { value: 55 }, { value: 50 }
+    ];
+
+    const ordersData = [
+        { value: 5 }, { value: 8 }, { value: 12 }, { value: 7 }, { value: 10 }, { value: 15 }, { value: 12 }
+    ];
+
+    const dispatchData = [
+        { value: 3 }, { value: 5 }, { value: 4 }, { value: 6 }, { value: 7 }, { value: 9 }, { value: 8 }
+    ];
+
+    const paymentsData = [
+        { value: 30 }, { value: 45 }, { value: 35 }, { value: 50 }, { value: 55 }, { value: 65 }, { value: 60 }
+    ];
+
     const stats = [
         {
-            icon: 'add_shopping_cart',
-            iconBg: 'bg-blue-50',
-            iconColor: 'text-primary',
             label: 'New Orders (Today)',
             value: '12',
             trend: '+20%',
-            trendUp: true
+            trendUp: true,
+            data: ordersData,
+            color: '#3b82f6'
         },
         {
-            icon: 'pending',
-            iconBg: 'bg-amber-50',
-            iconColor: 'text-amber-600',
             label: 'Pending Payments',
             value: '₦4,500',
-            trend: null
+            trend: null,
+            data: paymentsData,
+            color: '#f59e0b'
         },
         {
-            icon: 'local_shipping',
-            iconBg: 'bg-purple-50',
-            iconColor: 'text-purple-600',
             label: 'Ready for Dispatch',
             value: '8',
             trend: '+5%',
-            trendUp: true
+            trendUp: true,
+            data: dispatchData,
+            color: '#a855f7'
         },
         {
-            icon: 'payments',
-            iconBg: 'bg-emerald-50',
-            iconColor: 'text-emerald-600',
             label: 'Total Revenue (Monthly)',
             value: '₦125k',
             trend: '+12%',
-            trendUp: true
+            trendUp: true,
+            data: revenueData,
+            color: '#10b981'
         }
+    ];
+
+    // Large chart data
+    const monthlyRevenueData = [
+        { month: 'Jan', revenue: 65000 },
+        { month: 'Feb', revenue: 75000 },
+        { month: 'Mar', revenue: 85000 },
+        { month: 'Apr', revenue: 95000 },
+        { month: 'May', revenue: 105000 },
+        { month: 'Jun', revenue: 115000 },
+        { month: 'Jul', revenue: 125000 },
+    ];
+
+    const orderDistributionData = [
+        { name: 'New', value: 12, color: '#3b82f6' },
+        { name: 'Processing', value: 8, color: '#64748b' },
+        { name: 'Shipped', value: 15, color: '#a855f7' },
+        { name: 'Completed', value: 45, color: '#10b981' },
     ];
 
     const orders = [
@@ -123,254 +156,244 @@ const DistributorDashboard = () => {
     };
 
     return (
-        <div className="bg-background-light font-display text-slate-900 flex h-screen overflow-hidden">
-            {/* Sidebar */}
-            <aside className="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
-                {/* Logo */}
-                <div className="p-6 flex items-center gap-3">
-                    <div className="bg-primary/10 text-primary p-2 rounded-lg">
-                        <span className="material-symbols-outlined text-3xl">inventory_2</span>
-                    </div>
-                    <div>
-                        <h1 className="text-slate-900 text-lg font-bold leading-tight">SalesFunnel</h1>
-                        <p className="text-slate-500 text-xs font-medium">Distributor Panel</p>
-                    </div>
-                </div>
-
-                {/* Navigation */}
-                <nav className="flex-1 px-4 flex flex-col gap-2 mt-4 overflow-y-auto">
-                    <Link
-                        to="/distributor-dashboard"
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary text-white shadow-sm"
-                    >
-                        <span className="material-symbols-outlined">dashboard</span>
-                        <span className="text-sm font-medium">Dashboard</span>
-                    </Link>
-                    <Link
-                        to="/inventory"
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    >
-                        <span className="material-symbols-outlined">package_2</span>
-                        <span className="text-sm font-medium">Inventory</span>
-                    </Link>
-                    <Link
-                        to="/payments"
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    >
-                        <span className="material-symbols-outlined">credit_card</span>
-                        <span className="text-sm font-medium">Payments</span>
-                    </Link>
-                    <Link
-                        to="/settings"
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    >
-                        <span className="material-symbols-outlined">settings</span>
-                        <span className="text-sm font-medium">Settings</span>
-                    </Link>
-                </nav>
-
-                {/* User Profile */}
-                <div className="p-4 border-t border-slate-200">
-                    <Link to="/distributor-profile" className="flex items-center gap-3 hover:bg-slate-50 p-2 rounded-lg transition-colors">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-white shadow-sm">
-                            <span className="material-symbols-outlined text-primary">account_circle</span>
-                        </div>
-                        <div className="flex flex-col">
-                            <p className="text-sm font-medium text-slate-900">James Wilson</p>
-                            <p className="text-xs text-slate-500">Global Distributors</p>
-                        </div>
-                    </Link>
-                </div>
-            </aside>
+        <div className="bg-slate-50 min-h-screen" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+            {/* Navbar */}
+            <DistributorNavbar />
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden">
-                {/* Header */}
-                <header className="h-20 bg-white/50 backdrop-blur-md border-b border-slate-200 px-8 flex items-center justify-between shrink-0 sticky top-0 z-10">
-                    <div>
-                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h2>
-                        <p className="text-sm text-slate-500 hidden md:block">Here's your daily overview.</p>
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Stats Grid with Mini Charts */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    {stats.map((stat, index) => (
+                        <div
+                            key={index}
+                            className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all"
+                        >
+                            <div className="flex justify-between items-start mb-3">
+                                <div className="flex-1">
+                                    <p className="text-slate-500 text-sm font-medium mb-2">{stat.label}</p>
+                                    <h3 className="text-3xl font-bold text-slate-900">{stat.value}</h3>
+                                </div>
+                                {stat.trend && (
+                                    <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+                                        <span className="material-symbols-outlined text-[14px] mr-0.5">
+                                            trending_up
+                                        </span>
+                                        {stat.trend}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Mini Chart */}
+                            <div className="h-16 -mb-2 -mx-2">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <AreaChart data={stat.data}>
+                                        <defs>
+                                            <linearGradient id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="5%" stopColor={stat.color} stopOpacity={0.3} />
+                                                <stop offset="95%" stopColor={stat.color} stopOpacity={0} />
+                                            </linearGradient>
+                                        </defs>
+                                        <Area
+                                            type="monotone"
+                                            dataKey="value"
+                                            stroke={stat.color}
+                                            strokeWidth={2}
+                                            fill={`url(#gradient-${index})`}
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Charts Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    {/* Revenue Trend Chart */}
+                    <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="mb-6">
+                            <h3 className="text-lg font-bold text-slate-900">Revenue Trend</h3>
+                            <p className="text-sm text-slate-500 mt-1">Monthly revenue overview</p>
+                        </div>
+                        <div className="h-64">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={monthlyRevenueData}>
+                                    <defs>
+                                        <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <Area
+                                        type="monotone"
+                                        dataKey="revenue"
+                                        stroke="#3b82f6"
+                                        strokeWidth={3}
+                                        fill="url(#revenueGradient)"
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-4">
+
+                    {/* Order Distribution Chart */}
+                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="mb-6">
+                            <h3 className="text-lg font-bold text-slate-900">Order Status</h3>
+                            <p className="text-sm text-slate-500 mt-1">Current distribution</p>
+                        </div>
+                        <div className="h-64 flex flex-col items-center justify-center">
+                            <div className="w-full h-48">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={orderDistributionData}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={45}
+                                            outerRadius={70}
+                                            paddingAngle={2}
+                                            dataKey="value"
+                                        >
+                                            {orderDistributionData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                            ))}
+                                        </Pie>
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 mt-4 w-full">
+                                {orderDistributionData.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                                        <span className="text-xs text-slate-600 font-medium">{item.name}: {item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Orders */}
+                <div className="flex flex-col gap-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h3 className="text-xl font-bold text-slate-900"> Orders</h3>
+
                         {/* Search Bar */}
-                        <div className="hidden md:flex relative group">
+                        <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span className="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">
+                                <span className="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">
                                     search
                                 </span>
                             </div>
                             <input
                                 type="text"
                                 placeholder="Search by Order ID or Wholesaler..."
-                                className="block w-full min-w-[320px] pl-10 pr-3 py-2.5 border-none rounded-lg bg-slate-100 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary focus:bg-white transition-all text-sm"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="block w-full sm:w-80 pl-10 pr-3 py-2.5 border border-slate-200 rounded-lg bg-white text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                             />
                         </div>
-
-                        {/* Notifications */}
-                        <Link to="/distributor-notifications" className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors">
-                            <span className="material-symbols-outlined">notifications</span>
-                            <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                            </span>
-                        </Link>
                     </div>
-                </header>
 
-                {/* Content */}
-                <div className="flex-1 overflow-y-auto p-8 scroll-smooth">
-                    <div className="max-w-7xl mx-auto flex flex-col gap-8">
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {stats.map((stat, index) => (
-                                <div
-                                    key={index}
-                                    className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
-                                >
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div className={`p-2 ${stat.iconBg} rounded-lg`}>
-                                            <span className={`material-symbols-outlined ${stat.iconColor}`}>
-                                                {stat.icon}
-                                            </span>
-                                        </div>
-                                        {stat.trend && (
-                                            <span className="flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                                                <span className="material-symbols-outlined text-[14px] mr-1">
-                                                    trending_up
-                                                </span>
-                                                {stat.trend}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="text-slate-500 text-sm font-medium mb-1">{stat.label}</p>
-                                    <h3 className="text-3xl font-bold text-slate-900">{stat.value}</h3>
-                                </div>
-                            ))}
+                    {/* Filter Pills */}
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                        {filters.map((filter) => (
+                            <button
+                                key={filter.id}
+                                onClick={() => setActiveFilter(filter.id)}
+                                className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === filter.id
+                                    ? 'bg-primary text-white shadow-sm'
+                                    : 'text-slate-600 bg-white border border-slate-200 hover:bg-slate-50'
+                                    }`}
+                            >
+                                {filter.label}
+                                {filter.badge && (
+                                    <span className="ml-2 px-1.5 py-0.5 rounded-full bg-white/20 text-xs">
+                                        {filter.badge}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Orders Table */}
+                    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                        <th className="px-6 py-4 font-semibold text-slate-700">Order ID</th>
+                                        <th className="px-6 py-4 font-semibold text-slate-700">Wholesaler</th>
+                                        <th className="px-6 py-4 font-semibold text-slate-700">Date</th>
+                                        <th className="px-6 py-4 font-semibold text-slate-700">Amount</th>
+                                        <th className="px-6 py-4 font-semibold text-slate-700">Payment</th>
+                                        <th className="px-6 py-4 font-semibold text-slate-700">Status</th>
+                                        <th className="px-6 py-4 font-semibold text-slate-700 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {orders
+                                        .filter(order => {
+                                            const matchesSearch = searchQuery === '' ||
+                                                order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                order.wholesaler.toLowerCase().includes(searchQuery.toLowerCase());
+                                            return matchesSearch;
+                                        })
+                                        .map((order, index) => (
+                                            <tr key={index} className="group hover:bg-slate-50 transition-colors">
+                                                <td className="px-6 py-4 font-medium text-slate-900">{order.id}</td>
+                                                <td className="px-6 py-4 text-slate-600">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                                                            {order.wholesaler[0]}
+                                                        </div>
+                                                        {order.wholesaler}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-500">{order.date}</td>
+                                                <td className="px-6 py-4 font-semibold text-slate-900">{order.amount}</td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border ${getPaymentBadgeClasses(order.paymentColor)}`}>
+                                                        <span className="material-symbols-outlined text-[14px]">
+                                                            {order.paymentColor === 'green' ? 'check_circle' : 'hourglass_top'}
+                                                        </span>
+                                                        {order.paymentStatus}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold ${getStatusBadgeClasses(order.statusColor)} ${order.statusColor === 'blue' ? 'relative pl-4' : ''}`}>
+                                                        {order.statusColor === 'blue' && (
+                                                            <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
+                                                        )}
+                                                        {order.statusColor === 'purple' && (
+                                                            <span className="material-symbols-outlined text-[14px]">local_shipping</span>
+                                                        )}
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button className="text-slate-400 hover:text-primary transition-colors p-1.5 hover:bg-blue-50 rounded-lg">
+                                                        <span className="material-symbols-outlined">visibility</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>
                         </div>
 
-                        {/* Recent Orders */}
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-4">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <h3 className="text-xl font-bold text-slate-900">Recent Orders</h3>
-
-                                    {/* Search Bar */}
-                                    <div className="relative group">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <span className="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-[20px]">
-                                                search
-                                            </span>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            placeholder="Search by Order ID or Wholesaler..."
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="block w-full sm:w-80 pl-10 pr-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Filter Pills */}
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-                                        {filters.map((filter) => (
-                                            <button
-                                                key={filter.id}
-                                                onClick={() => setActiveFilter(filter.id)}
-                                                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${activeFilter === filter.id
-                                                    ? 'bg-primary text-white shadow-sm ring-1 ring-primary'
-                                                    : 'text-slate-600 bg-white border border-slate-200 hover:bg-slate-50'
-                                                    }`}
-                                            >
-                                                {filter.label}
-                                                {filter.badge && (
-                                                    <span className="ml-1 px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px]">
-                                                        {filter.badge}
-                                                    </span>
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Orders Table */}
-                                <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left text-sm">
-                                            <thead className="bg-slate-50 border-b border-slate-200">
-                                                <tr>
-                                                    <th className="px-6 py-4 font-semibold text-slate-700">Order ID</th>
-                                                    <th className="px-6 py-4 font-semibold text-slate-700">Wholesaler</th>
-                                                    <th className="px-6 py-4 font-semibold text-slate-700">Date</th>
-                                                    <th className="px-6 py-4 font-semibold text-slate-700">Amount</th>
-                                                    <th className="px-6 py-4 font-semibold text-slate-700">Payment</th>
-                                                    <th className="px-6 py-4 font-semibold text-slate-700">Status</th>
-                                                    <th className="px-6 py-4 font-semibold text-slate-700 text-right">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-slate-200">
-                                                {orders
-                                                    .filter(order => {
-                                                        const matchesSearch = searchQuery === '' ||
-                                                            order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                                            order.wholesaler.toLowerCase().includes(searchQuery.toLowerCase());
-                                                        return matchesSearch;
-                                                    })
-                                                    .map((order, index) => (
-                                                        <tr key={index} className="group hover:bg-slate-50 transition-colors">
-                                                            <td className="px-6 py-4 font-medium text-slate-900">{order.id}</td>
-                                                            <td className="px-6 py-4 text-slate-600">
-                                                                <div className="flex items-center gap-2">
-                                                                    <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden"></div>
-                                                                    {order.wholesaler}
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-6 py-4 text-slate-500">{order.date}</td>
-                                                            <td className="px-6 py-4 font-medium text-slate-900">{order.amount}</td>
-                                                            <td className="px-6 py-4">
-                                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getPaymentBadgeClasses(order.paymentColor)}`}>
-                                                                    <span className="material-symbols-outlined text-[14px]">
-                                                                        {order.paymentColor === 'green' ? 'check_circle' : 'hourglass_top'}
-                                                                    </span>
-                                                                    {order.paymentStatus}
-                                                                </span>
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${getStatusBadgeClasses(order.statusColor)} ${order.statusColor === 'blue' ? 'relative pl-4' : ''}`}>
-                                                                    {order.statusColor === 'blue' && (
-                                                                        <span className="absolute left-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-current"></span>
-                                                                    )}
-                                                                    {order.statusColor === 'purple' && (
-                                                                        <span className="material-symbols-outlined text-[14px]">local_shipping</span>
-                                                                    )}
-                                                                    {order.status}
-                                                                </span>
-                                                            </td>
-                                                            <td className="px-6 py-4 text-right">
-                                                                <button className="text-slate-400 hover:text-primary transition-colors">
-                                                                    <span className="material-symbols-outlined">visibility</span>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    {/* Pagination Footer */}
-                                    <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex items-center justify-between">
-                                        <p className="text-sm text-slate-500">Showing 5 of 12 new orders</p>
-                                        <div className="flex gap-2">
-                                            <button className="px-3 py-1 text-sm border border-slate-200 rounded bg-white hover:bg-slate-50 transition-colors text-slate-600">
-                                                Previous
-                                            </button>
-                                            <button className="px-3 py-1 text-sm border border-slate-200 rounded bg-white hover:bg-slate-50 transition-colors text-slate-600">
-                                                Next
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                        {/* Pagination Footer */}
+                        <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex items-center justify-between">
+                            <p className="text-sm text-slate-500">Showing 5 of 12 new orders</p>
+                            <div className="flex gap-2">
+                                <button className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 font-medium">
+                                    Previous
+                                </button>
+                                <button className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 font-medium">
+                                    Next
+                                </button>
                             </div>
                         </div>
                     </div>

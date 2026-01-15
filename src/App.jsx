@@ -26,10 +26,20 @@ import PaymentsPage from './pages/PaymentsPage'
 import SettingsPage from './pages/SettingsPage'
 import DistributorProfilePage from './pages/DistributorProfilePage'
 import DistributorNotificationsPage from './pages/DistributorNotificationsPage'
+import AdminLogin from './pages/admin/AdminLogin'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import WholesalerDirectory from './pages/admin/WholesalerDirectory'
+import DistributorProfiles from './pages/admin/DistributorProfiles'
+import ApprovalQueue from './pages/admin/ApprovalQueue'
+import LiveOrderTicker from './pages/admin/LiveOrderTicker'
+import PaymentReconciliation from './pages/admin/PaymentReconciliation'
+import SLAMonitor from './pages/admin/SLAMonitor'
+import ManualOverride from './pages/admin/ManualOverride'
+import CodeReset from './pages/admin/CodeReset'
 
 function HomePage() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden font-display bg-background-light text-slate-900 transition-colors duration-200">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden font-display bg-background-light text-slate-900 transition-colors duration-200" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
       <Header />
 
       {/* Welcome Text Overlay */}
@@ -75,6 +85,18 @@ function App() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/distributor-profile" element={<DistributorProfilePage />} />
         <Route path="/distributor-notifications" element={<DistributorNotificationsPage />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/wholesalers" element={<WholesalerDirectory />} />
+        <Route path="/admin/distributors" element={<DistributorProfiles />} />
+        <Route path="/admin/approvals" element={<ApprovalQueue />} />
+        <Route path="/admin/orders" element={<LiveOrderTicker />} />
+        <Route path="/admin/payments" element={<PaymentReconciliation />} />
+        <Route path="/admin/sla" element={<SLAMonitor />} />
+        <Route path="/admin/override" element={<ManualOverride />} />
+        <Route path="/admin/codes" element={<CodeReset />} />
       </Routes>
     </CartProvider>
   )

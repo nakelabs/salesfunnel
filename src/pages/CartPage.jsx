@@ -1,7 +1,9 @@
 
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import WholesalerNavbar from '../components/WholesalerNavbar';
 
 const CartPage = () => {
     const { cartItems, updateQuantity, removeFromCart: removeItem, clearCart, getCartTotal } = useCart();
@@ -14,45 +16,9 @@ const CartPage = () => {
     const subtotal = getCartTotal();
 
     return (
-        <div className="bg-background-light min-h-screen font-display">
-            {/* Header */}
-            <header className="bg-white border-b border-slate-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center justify-center size-8 rounded-lg bg-primary text-white">
-                                <span className="material-symbols-outlined">inventory_2</span>
-                            </div>
-                            <h1 className="text-xl font-bold tracking-tight text-slate-900">SalesFunnel</h1>
-                        </div>
-
-                        <nav className="hidden md:flex items-center gap-8">
-                            <Link to="/dashboard" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">
-                                Dashboard
-                            </Link>
-                            <Link to="/orders" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">
-                                Orders
-                            </Link>
-                            <a className="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">
-                                Wallet
-                            </a>
-                            <a className="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">
-                                Settings
-                            </a>
-                        </nav>
-
-                        <div className="flex items-center gap-3">
-                            <div className="text-right hidden sm:block">
-                                <p className="text-xs text-slate-500">Shop 4, Alaba Market</p>
-                                <p className="text-xs text-slate-400">ID: SF-8821</p>
-                            </div>
-                            <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-primary">account_circle</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
+        <div className="bg-background-light min-h-screen font-display" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+            {/* Shared Navbar */}
+            <WholesalerNavbar />
 
             {/* Progress Steps */}
             <div className="bg-white border-b border-slate-200">
