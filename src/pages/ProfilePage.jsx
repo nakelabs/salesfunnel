@@ -14,20 +14,20 @@ const ProfilePage = () => {
 
     const [profileData, setProfileData] = useState({
         // Profile
-        firstName: 'Chinedu',
-        lastName: 'Okafor',
-        role: 'Wholesaler',
-        location: 'Lagos, Nigeria',
-        email: 'chinedu.okafor@wholesaleltd.com',
-        phone: '+234 801 234 5678',
-        bio: 'Experienced wholesaler specializing in FMCG products',
+        firstName: '',
+        lastName: '',
+        role: '',
+        location: '',
+        email: '',
+        phone: '',
+        bio: '',
 
         // Address
-        street: 'Shop 4, Alaba International Market',
-        city: 'Ojo',
-        state: 'Lagos State',
-        country: 'Nigeria',
-        zipCode: '102102'
+        street: '',
+        city: '',
+        state: '',
+        country: '',
+        zipCode: ''
     });
 
     const sidebarItems = [
@@ -101,8 +101,8 @@ const ProfilePage = () => {
                                                 setIsDropdownOpen(false);
                                             }}
                                             className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${isActive
-                                                    ? 'bg-primary/5 text-primary'
-                                                    : 'text-slate-600 hover:bg-slate-50'
+                                                ? 'bg-primary/5 text-primary'
+                                                : 'text-slate-600 hover:bg-slate-50'
                                                 }`}
                                         >
                                             <IconComponent size={18} />

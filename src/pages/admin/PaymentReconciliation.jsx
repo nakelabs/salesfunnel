@@ -3,13 +3,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import StatusBadge from '../../components/admin/StatusBadge';
 
 const PaymentReconciliation = () => {
-    const payments = [
-        { id: 1, txnId: '#TRX-9821', orderId: '#SF-1209', wholesaler: 'Aliko Trading', amount: 245000, reference: 'SF-PAY-AB22X', uploadTime: '10 mins ago', hasProof: true },
-        { id: 2, txnId: '#TRX-9820', orderId: '#SF-1207', wholesaler: 'Quick Buy', amount: 85000, reference: 'SF-PAY-QZ891', uploadTime: '25 mins ago', hasProof: true },
-        { id: 3, txnId: '#TRX-9819', orderId: '#SF-1205', wholesaler: 'Ade Ventures', amount: 175000, reference: 'SF-PAY-XY219', uploadTime: '1 hr ago', hasProof: true },
-        { id: 4, txnId: '#TRX-9818', orderId: '#SF-1203', wholesaler: 'City Market', amount: 95000, reference: 'SF-PAY-KL552', uploadTime: '2 hrs ago', hasProof: false },
-        { id: 5, txnId: '#TRX-9817', orderId: '#SF-1201', wholesaler: 'New York Traders', amount: 450000, reference: 'SF-PAY-PL883', uploadTime: '3 hrs ago', hasProof: true },
-    ];
+    const payments = [];
 
     const [selected, setSelected] = useState(null);
 

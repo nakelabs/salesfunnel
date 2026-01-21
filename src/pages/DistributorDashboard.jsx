@@ -8,130 +8,26 @@ const DistributorDashboard = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Trend data for mini charts
-    const revenueData = [
-        { value: 20 }, { value: 35 }, { value: 25 }, { value: 45 }, { value: 40 }, { value: 55 }, { value: 50 }
-    ];
+    const revenueData = [];
 
-    const ordersData = [
-        { value: 5 }, { value: 8 }, { value: 12 }, { value: 7 }, { value: 10 }, { value: 15 }, { value: 12 }
-    ];
+    const ordersData = [];
 
-    const dispatchData = [
-        { value: 3 }, { value: 5 }, { value: 4 }, { value: 6 }, { value: 7 }, { value: 9 }, { value: 8 }
-    ];
+    const dispatchData = [];
 
-    const paymentsData = [
-        { value: 30 }, { value: 45 }, { value: 35 }, { value: 50 }, { value: 55 }, { value: 65 }, { value: 60 }
-    ];
+    const paymentsData = [];
 
-    const stats = [
-        {
-            label: 'New Orders (Today)',
-            value: '12',
-            trend: '+20%',
-            trendUp: true,
-            data: ordersData,
-            color: '#3b82f6'
-        },
-        {
-            label: 'Pending Payments',
-            value: '₦4,500',
-            trend: null,
-            data: paymentsData,
-            color: '#f59e0b'
-        },
-        {
-            label: 'Ready for Dispatch',
-            value: '8',
-            trend: '+5%',
-            trendUp: true,
-            data: dispatchData,
-            color: '#a855f7'
-        },
-        {
-            label: 'Total Revenue (Monthly)',
-            value: '₦125k',
-            trend: '+12%',
-            trendUp: true,
-            data: revenueData,
-            color: '#10b981'
-        }
-    ];
+    const stats = [];
 
     // Large chart data
-    const monthlyRevenueData = [
-        { month: 'Jan', revenue: 65000 },
-        { month: 'Feb', revenue: 75000 },
-        { month: 'Mar', revenue: 85000 },
-        { month: 'Apr', revenue: 95000 },
-        { month: 'May', revenue: 105000 },
-        { month: 'Jun', revenue: 115000 },
-        { month: 'Jul', revenue: 125000 },
-    ];
+    const monthlyRevenueData = [];
 
-    const orderDistributionData = [
-        { name: 'New', value: 12, color: '#3b82f6' },
-        { name: 'Processing', value: 8, color: '#64748b' },
-        { name: 'Shipped', value: 15, color: '#a855f7' },
-        { name: 'Completed', value: 45, color: '#10b981' },
-    ];
+    const orderDistributionData = [];
 
-    const orders = [
-        {
-            id: '#ORD-2024-001',
-            wholesaler: 'Acme Wholesale',
-            date: 'Oct 24, 2024',
-            amount: '₦1,200.00',
-            paymentStatus: 'Paid (Instant)',
-            paymentColor: 'green',
-            status: 'New',
-            statusColor: 'blue'
-        },
-        {
-            id: '#ORD-2024-002',
-            wholesaler: 'City Supplies',
-            date: 'Oct 24, 2024',
-            amount: '₦540.50',
-            paymentStatus: 'Pending',
-            paymentColor: 'amber',
-            status: 'Processing',
-            statusColor: 'gray'
-        },
-        {
-            id: '#ORD-2024-003',
-            wholesaler: 'Global Mart',
-            date: 'Oct 23, 2024',
-            amount: '₦2,890.00',
-            paymentStatus: 'Paid (Instant)',
-            paymentColor: 'green',
-            status: 'New',
-            statusColor: 'blue'
-        },
-        {
-            id: '#ORD-2024-004',
-            wholesaler: 'Urban Retailers',
-            date: 'Oct 22, 2024',
-            amount: '₦850.00',
-            paymentStatus: 'Paid',
-            paymentColor: 'green',
-            status: 'Shipped',
-            statusColor: 'purple'
-        },
-        {
-            id: '#ORD-2024-005',
-            wholesaler: 'Westside Grocers',
-            date: 'Oct 20, 2024',
-            amount: '₦3,210.00',
-            paymentStatus: 'Paid',
-            paymentColor: 'green',
-            status: 'Completed',
-            statusColor: 'slate'
-        }
-    ];
+    const orders = [];
 
     const filters = [
         { id: 'all', label: 'All Orders', badge: null },
-        { id: 'new', label: 'New', badge: 12 },
+        { id: 'new', label: 'New', badge: null },
         { id: 'processing', label: 'Processing', badge: null },
         { id: 'shipped', label: 'Shipped', badge: null },
         { id: 'completed', label: 'Completed', badge: null }

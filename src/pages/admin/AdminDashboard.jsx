@@ -4,31 +4,13 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import StatusBadge from '../../components/admin/StatusBadge';
 
 const AdminDashboard = () => {
-    const metrics = [
-        { label: 'Total Active Users', value: '1,247', change: '+12%', icon: 'group', color: 'text-blue-600', bg: 'bg-blue-50' },
-        { label: 'Pending Orders', value: '18', change: '< 2hrs', icon: 'shopping_cart', color: 'text-orange-600', bg: 'bg-orange-50' },
-        { label: 'Awaiting Verification', value: '5', change: '3 flagged', icon: 'payments', color: 'text-purple-600', bg: 'bg-purple-50' },
-        { label: 'SLA Breaches (Today)', value: '2', change: '-50%', icon: 'warning', color: 'text-red-600', bg: 'bg-red-50' }
-    ];
+    const metrics = [];
 
-    const recentOrders = [
-        { id: '#SF-1209', wholesaler: 'Aliko Trading', distributor: 'Premium Co.', amount: 245000, status: 'paid', time: '5 mins ago' },
-        { id: '#SF-1208', wholesaler: 'Lagos Retail', distributor: 'Global Dist.', amount: 120500, status: 'approved', time: '12 mins ago' },
-        { id: '#SF-1207', wholesaler: 'Quick Buy', distributor: 'Premium Co.', amount: 85000, status: 'pending', time: '25 mins ago' },
-        { id: '#SF-1206', wholesaler: 'Golden Star', distributor: 'Metro Dist.', amount: 500000, status: 'completed', time: '1 hr ago' },
-        { id: '#SF-1205', wholesaler: 'Ade Ventures', distributor: 'Premium Co.', amount: 175000, status: 'paid', time: '1.5 hrs ago' }
-    ];
+    const recentOrders = [];
 
-    const pendingApprovals = [
-        { name: 'New York Traders', type: 'Wholesaler', submitted: '2 hrs ago' },
-        { name: 'Premium Distributors Ltd', type: 'Distributor', submitted: '5 hrs ago' },
-        { name: 'Lagos Central Market', type: 'Wholesaler', submitted: '1 day ago' }
-    ];
+    const pendingApprovals = [];
 
-    const criticalAlerts = [
-        { type: 'SLA', message: 'Order #SF-1203 has 15 minutes remaining', severity: 'high' },
-        { type: 'Payment', message: '3 payments flagged for review', severity: 'medium' }
-    ];
+    const criticalAlerts = [];
 
     return (
         <AdminLayout>
@@ -43,11 +25,6 @@ const AdminDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     {metrics.map((metric, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className={`p-3 rounded-lg ${metric.bg}`}>
-                                    <span className={`material-symbols-outlined ${metric.color}`}>{metric.icon}</span>
-                                </div>
-                            </div>
                             <p className="text-sm font-medium text-slate-600 mb-1">{metric.label}</p>
                             <p className="text-3xl font-black text-slate-900 mb-2">{metric.value}</p>
                             <p className="text-xs text-slate-500">{metric.change}</p>
@@ -58,8 +35,7 @@ const AdminDashboard = () => {
                 {/* Critical Alerts */}
                 {criticalAlerts.length > 0 && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8">
-                        <div className="flex items-center gap-2 mb-3">
-                            <span className="material-symbols-outlined text-red-600">notification_important</span>
+                        <div className="mb-3">
                             <h3 className="font-bold text-red-900">Critical Alerts</h3>
                         </div>
                         <div className="space-y-2">

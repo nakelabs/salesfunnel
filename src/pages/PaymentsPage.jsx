@@ -7,72 +7,19 @@ const PaymentsPage = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
 
-    const payments = [
-        {
-            id: '#TRX-9821',
-            order: '#SF-1209',
-            wholesaler: 'Aliko & Sons Ent.',
-            location: 'Lagos Branch',
-            amount: 245000,
-            date: 'Oct 24, 2023',
-            time: '10:45 AM',
-            reference: 'SF-PAY-AB22X',
-            status: 'unverified'
-        },
-        {
-            id: '#TRX-9819',
-            order: '#SF-1205',
-            wholesaler: 'Lagos Retail Hub',
-            location: 'Ikeja Main',
-            amount: 120500,
-            date: 'Oct 24, 2023',
-            time: '09:12 AM',
-            reference: 'SF-PAY-XY991',
-            status: 'verified'
-        },
-        {
-            id: '#TRX-9815',
-            order: '#SF-1192',
-            wholesaler: 'Golden Star Stores',
-            location: 'Abuja Central',
-            amount: 500000,
-            date: 'Oct 23, 2023',
-            time: '04:30 PM',
-            reference: 'SF-PAY-JK882',
-            status: 'flagged'
-        },
-        {
-            id: '#TRX-9814',
-            order: '#SF-1191',
-            wholesaler: 'Quick-Buy Vendors',
-            location: 'Kano City',
-            amount: 85000,
-            date: 'Oct 23, 2023',
-            time: '03:15 PM',
-            reference: 'SF-PAY-QQ129',
-            status: 'unverified'
-        }
-    ];
+    const payments = [];
 
     // Chart Data
-    const revenueData = [
-        { value: 40 }, { value: 35 }, { value: 55 }, { value: 45 }, { value: 60 }, { value: 55 }, { value: 75 }
-    ];
-
-    const pendingData = [
-        { value: 12 }, { value: 15 }, { value: 10 }, { value: 18 }, { value: 14 }, { value: 16 }, { value: 18 }
-    ];
-
-    const verifiedData = [
-        { value: 20 }, { value: 22 }, { value: 25 }, { value: 28 }, { value: 24 }, { value: 30 }, { value: 35 }
-    ];
+    const revenueData = [];
+    const pendingData = [];
+    const verifiedData = [];
 
     const stats = {
-        totalRevenue: 4520000,
-        revenueChange: '+12.5%',
-        pendingVerifications: 18,
-        verifiedToday: 24,
-        verifiedChange: '+5%'
+        totalRevenue: 0,
+        revenueChange: '+0%',
+        pendingVerifications: 0,
+        verifiedToday: 0,
+        verifiedChange: '+0%'
     };
 
     const tabs = [

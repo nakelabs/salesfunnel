@@ -4,50 +4,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 const ApprovalQueue = () => {
     const [tab, setTab] = useState('all'); // all, wholesalers, distributors
 
-    const pendingApprovals = [
-        {
-            id: 1,
-            type: 'wholesaler',
-            name: 'Adebayo Traders',
-            owner: 'Adebayo Williams',
-            email: 'williams@adebayo.com',
-            phone: '+234 805 123 4567',
-            taxId: 'TIN-987654321',
-            rcNumber: 'RC-123456789',
-            bankName: 'First Bank',
-            accountNumber: '1234567890',
-            submittedDate: '2 hours ago',
-            documents: 2
-        },
-        {
-            id: 2,
-            type: 'distributor',
-            name: 'Fast Delivery Services',
-            owner: 'Ibrahim Hassan',
-            email: 'ibrahim@fastdelivery.com',
-            phone: '+234 806 234 5678',
-            taxId: 'TIN-876543210',
-            rcNumber: 'RC-987654321',
-            bankName: 'GTBank',
-            accountNumber: '0987654321',
-            submittedDate: '5 hours ago',
-            documents: 3
-        },
-        {
-            id: 3,
-            type: 'wholesaler',
-            name: 'City Market Supplies',
-            owner: 'Grace Ojo',
-            email: 'grace@citymarket.com',
-            phone: '+234 807 345 6789',
-            taxId: 'TIN-765432109',
-            rcNumber: 'RC-876543210',
-            bankName: 'Zenith Bank',
-            accountNumber: '2345678901',
-            submittedDate: '1 day ago',
-            documents: 2
-        }
-    ];
+    const pendingApprovals = [];
 
     const filtered = tab === 'all' ? pendingApprovals : pendingApprovals.filter(a => a.type === tab.slice(0, -1));
 

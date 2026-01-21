@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { getProductById } from '../data/products';
+import WholesalerNavbar from '../components/WholesalerNavbar';
 
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const product = getProductById(id);
+
+    // Product will come from API
+    const product = null;
 
     const [quantity, setQuantity] = useState(10);
     const [selectedImage, setSelectedImage] = useState(0);
@@ -31,59 +33,9 @@ const ProductDetail = () => {
     };
 
     return (
-        <div className="bg-background-light min-h-screen text-slate-900 font-display">
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
-                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center gap-8">
-                        <Link to="/dashboard" className="flex items-center gap-2 group">
-                            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-white">
-                                <span className="material-symbols-outlined">inventory_2</span>
-                            </div>
-                            <span className="text-xl font-bold tracking-tight text-slate-900">SalesFunnel</span>
-                        </Link>
-                        <nav className="hidden md:flex items-center gap-6">
-                            <Link to="/dashboard" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">
-                                Catalog
-                            </Link>
-                            <a className="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">
-                                Distributors
-                            </a>
-                            <Link to="/orders" className="text-sm font-medium text-slate-600 hover:text-primary transition-colors">
-                                My Orders
-                            </Link>
-                            <a className="text-sm font-medium text-slate-600 hover:text-primary transition-colors" href="#">
-                                Dashboard
-                            </a>
-                        </nav>
-                    </div>
-                    <div className="flex flex-1 justify-end gap-4">
-                        <div className="hidden md:flex w-full max-w-xs items-center">
-                            <div className="relative w-full">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
-                                </div>
-                                <input
-                                    className="block w-full rounded-lg border-0 bg-slate-100 py-2 pl-10 pr-3 text-sm leading-6 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-primary"
-                                    placeholder="Search products, brands..."
-                                    type="text"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button className="relative flex size-10 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">
-                                <span className="material-symbols-outlined">shopping_cart</span>
-                                <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                                    3
-                                </span>
-                            </button>
-                            <button className="flex size-10 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">
-                                <span className="material-symbols-outlined">account_circle</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
+        <div className="bg-background-light min-h-screen text-slate-900" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+            {/* Navbar */}
+            <WholesalerNavbar />
 
             <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 {/* Breadcrumb */}

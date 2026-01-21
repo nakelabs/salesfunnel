@@ -40,35 +40,7 @@ const PaymentPage = () => {
 
     const formatPrice = (price) => `₦${price.toLocaleString()}`;
 
-    const paymentMethods = [
-        {
-            id: 'bank_transfer',
-            name: 'Instant Bank Transfer',
-            description: 'Pay directly from your bank account. Confirmation in minutes.',
-            icon: 'account_balance',
-            recommended: true,
-            disabled: false
-        },
-        {
-            id: 'card',
-            name: 'Debit or Credit Card',
-            description: 'Secure payment via Paystack. Supports Visa, Mastercard, and Verve.',
-            icon: 'credit_card',
-            recommended: false,
-            disabled: false,
-            badges: ['VISA', 'Mastercard', 'Verve']
-        },
-        {
-            id: 'wallet',
-            name: 'SalesFunnel Wallet',
-            description: 'Use your available wallet balance.',
-            icon: 'account_balance_wallet',
-            balance: walletBalance,
-            recommended: false,
-            disabled: walletBalance < total,
-            error: 'Insufficient balance for this order.'
-        }
-    ];
+    const paymentMethods = [];
 
     const handleProcessPayment = () => {
         // In a real app, this would initiate payment processing

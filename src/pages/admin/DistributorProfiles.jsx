@@ -3,49 +3,9 @@ import AdminLayout from '../../components/admin/AdminLayout';
 
 const DistributorProfiles = () => {
     const [viewMode, setViewMode] = useState('grid'); // grid or table
+    const [selectedDistributor, setSelectedDistributor] = useState(null);
 
-    const distributors = [
-        {
-            id: 1,
-            name: 'Premium Trading Co.',
-            location: 'Lagos, Nigeria',
-            status: 'active',
-            avgFulfillmentTime: '1.2 hrs',
-            slaCompliance: 98,
-            totalOrdersFulfilled: 156,
-            rating: 4.9
-        },
-        {
-            id: 2,
-            name: 'Global Distributors Ltd',
-            location: 'Abuja, Nigeria',
-            status: 'active',
-            avgFulfillmentTime: '1.5 hrs',
-            slaCompliance: 94,
-            totalOrdersFulfilled: 128,
-            rating: 4.7
-        },
-        {
-            id: 3,
-            name: 'Metro Distribution',
-            location: 'Port Harcourt, Nigeria',
-            status: 'active',
-            avgFulfillmentTime: '0.9 hrs',
-            slaCompliance: 99,
-            totalOrdersFulfilled: 203,
-            rating: 5.0
-        },
-        {
-            id: 4,
-            name: 'Express Logistics',
-            location: 'Kano, Nigeria',
-            status: 'inactive',
-            avgFulfillmentTime: '1.8 hrs',
-            slaCompliance: 78,
-            totalOrdersFulfilled: 45,
-            rating: 3.8
-        }
-    ];
+    const distributors = [];
 
     const getPerformanceColor = (compliance) => {
         if (compliance >= 95) return { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' };
@@ -110,7 +70,8 @@ const DistributorProfiles = () => {
                             return (
                                 <div
                                     key={distributor.id}
-                                    className={`bg-white rounded-xl border-2 ${perfColor.border} p-6 shadow-sm hover:shadow-md transition-shadow`}
+                                    onClick={() => setSelectedDistributor(distributor)}
+                                    className={`bg-white rounded-xl border-2 ${perfColor.border} p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
                                 >
                                     <div className="flex items-start justify-between mb-4">
                                         <div>
@@ -126,7 +87,7 @@ const DistributorProfiles = () => {
                                         </span>
                                     </div>
 
-                                    <div className="space-y-3 mb-4">
+                                    <div className="space-y-3">
                                         <div className="flex justify-between items-center">
                                             <span className="text-sm text-slate-600">Avg. Fulfillment:</span>
                                             <span className="font-bold text-slate-900">{distributor.avgFulfillmentTime}</span>
@@ -151,10 +112,6 @@ const DistributorProfiles = () => {
                                             </div>
                                         </div>
                                     </div>
-
-                                    <button className="w-full px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-                                        View Details
-                                    </button>
                                 </div>
                             );
                         })}
@@ -173,14 +130,17 @@ const DistributorProfiles = () => {
                                     <th className="px-6 py-4 text-right">Avg. Fulfillment</th>
                                     <th className="px-6 py-4 text-right">SLA %</th>
                                     <th className="px-6 py-4 text-right">Orders</th>
-                                    <th className="px-6 py-4 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {distributors.map((distributor) => {
                                     const perfColor = getPerformanceColor(distributor.slaCompliance);
                                     return (
-                                        <tr key={distributor.id} className="hover:bg-slate-50">
+                                        <tr
+                                            key={distributor.id}
+                                            onClick={() => setSelectedDistributor(distributor)}
+                                            className="hover:bg-slate-50 cursor-pointer"
+                                        >
                                             <td className="px-6 py-4 font-semibold text-slate-900">
                                                 {distributor.name}
                                             </td>
@@ -204,16 +164,6 @@ const DistributorProfiles = () => {
                                             <td className="px-6 py-4 text-right font-semibold text-slate-900">
                                                 {distributor.totalOrdersFulfilled}
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center justify-center gap-2">
-                                                    <button className="p-1.5 text-primary hover:bg-primary/10 rounded">
-                                                        <span className="material-symbols-outlined text-[20px]">visibility</span>
-                                                    </button>
-                                                    <button className="p-1.5 text-slate-600 hover:bg-slate-100 rounded">
-                                                        <span className="material-symbols-outlined text-[20px]">edit</span>
-                                                    </button>
-                                                </div>
-                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -222,6 +172,89 @@ const DistributorProfiles = () => {
                     </div>
                 )}
             </div>
+
+            {/* Distributor Details Modal */}
+            {selectedDistributor && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                        {/* Modal Header */}
+                        <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                            <div>
+                                <h2 className="text-2xl font-black text-slate-900">{selectedDistributor.name}</h2>
+                                <p className="text-sm text-slate-600 flex items-center gap-1 mt-1">
+                                    <span className="material-symbols-outlined text-[16px]">location_on</span>
+                                    {selectedDistributor.location}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setSelectedDistributor(null)}
+                                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                            >
+                                <span className="material-symbols-outlined text-slate-600">close</span>
+                            </button>
+                        </div>
+
+                        {/* Modal Content */}
+                        <div className="p-6 space-y-6">
+                            {/* Status Badge */}
+                            <div>
+                                <span className={`px-3 py-1.5 rounded-lg text-sm font-bold ${selectedDistributor.status === 'active'
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-slate-100 text-slate-600'
+                                    }`}>
+                                    {selectedDistributor.status.toUpperCase()}
+                                </span>
+                            </div>
+
+                            {/* Performance Metrics */}
+                            <div>
+                                <h3 className="text-lg font-bold text-slate-900 mb-3">Performance Metrics</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-slate-50 rounded-lg p-4">
+                                        <p className="text-sm font-medium text-slate-600 mb-1">Avg. Fulfillment Time</p>
+                                        <p className="text-2xl font-black text-slate-900">{selectedDistributor.avgFulfillmentTime}</p>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-lg p-4">
+                                        <p className="text-sm font-medium text-slate-600 mb-1">SLA Compliance</p>
+                                        <p className={`text-2xl font-black ${selectedDistributor.slaCompliance >= 95 ? 'text-green-600' :
+                                            selectedDistributor.slaCompliance >= 80 ? 'text-amber-600' :
+                                                'text-red-600'
+                                            }`}>
+                                            {selectedDistributor.slaCompliance}%
+                                        </p>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-lg p-4">
+                                        <p className="text-sm font-medium text-slate-600 mb-1">Orders Fulfilled</p>
+                                        <p className="text-2xl font-black text-slate-900">{selectedDistributor.totalOrdersFulfilled}</p>
+                                    </div>
+                                    <div className="bg-slate-50 rounded-lg p-4">
+                                        <p className="text-sm font-medium text-slate-600 mb-1">Rating</p>
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-amber-500 text-2xl" style={{ fontVariationSettings: '"FILL" 1' }}>
+                                                star
+                                            </span>
+                                            <p className="text-2xl font-black text-slate-900">{selectedDistributor.rating}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-3 pt-4 border-t border-slate-200">
+                                <button className="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                                    Edit Details
+                                </button>
+                                <button className={`flex-1 px-4 py-2.5 rounded-lg font-semibold transition-colors ${selectedDistributor.status === 'active'
+                                    ? 'bg-red-600 text-white hover:bg-red-700'
+                                    : 'bg-green-600 text-white hover:bg-green-700'
+                                    }`}>
+                                    {selectedDistributor.status === 'active' ? 'Deactivate' : 'Activate'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AdminLayout>
     );
 };

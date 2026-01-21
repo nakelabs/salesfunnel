@@ -11,8 +11,8 @@ const ShippingPage = () => {
     const [timeRemaining, setTimeRemaining] = useState(14 * 60 + 32); // 14:32 in seconds
 
     const [contactInfo, setContactInfo] = useState({
-        name: 'Chinedu Okafor',
-        phone: '+234 801 234 5678',
+        name: '',
+        phone: '',
         instructions: ''
     });
 
@@ -37,44 +37,9 @@ const ShippingPage = () => {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const addresses = [
-        {
-            id: 'primary',
-            name: 'Shop 4, Alaba International Market (Primary)',
-            address: 'Ojo, Lagos State, Nigeria',
-            phone: '+234 801 234 5678'
-        },
-        {
-            id: 'warehouse',
-            name: 'Warehouse B, Trade Fair Complex',
-            address: 'Badagry Expressway, Lagos, Nigeria',
-            phone: '+234 809 876 5432'
-        }
-    ];
+    const addresses = [];
 
-    const shippingMethods = [
-        {
-            id: 'express',
-            name: 'Express Delivery',
-            duration: '2-3 Business Days',
-            fee: 5000,
-            icon: 'rocket_launch'
-        },
-        {
-            id: 'standard',
-            name: 'Standard Delivery',
-            duration: '5-7 Business Days',
-            fee: 2500,
-            icon: 'local_shipping'
-        },
-        {
-            id: 'pickup',
-            name: 'Self Pickup',
-            duration: 'Pick up from our central warehouse in Ikeja (Mon-Fri, 9am-5pm)',
-            fee: 0,
-            icon: 'storefront'
-        }
-    ];
+    const shippingMethods = [];
 
     const subtotal = getCartTotal();
     const vatRate = 0.075;

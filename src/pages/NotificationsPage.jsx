@@ -6,72 +6,7 @@ import { Star, FileText, Trash2, Search, Bell, MoreVertical } from 'lucide-react
 const NotificationsPage = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
-    const [notifications, setNotifications] = useState([
-        {
-            id: 1,
-            message: "Order #SF-8821 confirmed! Your order of 50 bags of Dangote Sugar has been processed and will be delivered within 2 hours.",
-            time: 'Just Now',
-            read: false,
-            favorite: false,
-            archived: false
-        },
-        {
-            id: 2,
-            message: 'Price Drop Alert: Indomie Chicken Noodles 120 Cartons now ₦45,000 (was ₦52,000). Save ₦7,000 on your next order!',
-            time: '30 minutes ago',
-            read: false,
-            favorite: true,
-            archived: false
-        },
-        {
-            id: 3,
-            message: "Your order #SF-8734 is out for delivery. Expected arrival time: 3:45 PM. Track your delivery in real-time.",
-            time: '2 hours ago',
-            read: false,
-            favorite: false,
-            archived: false
-        },
-        {
-            id: 4,
-            message: "Stock Alert: Nestle Milo 400g Refill Pack is back in stock! Order now before it runs out again.",
-            time: '5 hours ago',
-            read: true,
-            favorite: true,
-            archived: false
-        },
-        {
-            id: 5,
-            message: "Payment received for order #SF-8621. Amount: ₦285,000. Your account has been credited. Thank you for your business!",
-            time: '1 day ago',
-            read: true,
-            favorite: false,
-            archived: false
-        },
-        {
-            id: 6,
-            message: 'New Product Alert: 25 new beverage products added to our catalog including Golden Morn, Peak Milk, and more. Check them out!',
-            time: '2 days ago',
-            read: true,
-            favorite: false,
-            archived: false
-        },
-        {
-            id: 7,
-            message: "Delivery completed for order #SF-8512. Please confirm receipt and rate your delivery experience.",
-            time: '3 days ago',
-            read: true,
-            favorite: true,
-            archived: false
-        },
-        {
-            id: 8,
-            message: 'Flash Sale Alert: Get 15% off on all Frozen Foods category. Valid until midnight tonight. Shop now and save!',
-            time: '5 days ago',
-            read: true,
-            favorite: false,
-            archived: false
-        },
-    ]);
+    const [notifications, setNotifications] = useState([]);
 
     const toggleFavorite = (id) => {
         setNotifications(notifications.map(n =>

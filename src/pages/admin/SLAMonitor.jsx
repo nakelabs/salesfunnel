@@ -2,12 +2,7 @@ import React from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 
 const SLAMonitor = () => {
-    const criticalOrders = [
-        { id: '#SF-1207', wholesaler: 'Quick Buy', distributor: 'Premium Co.', amount: 85000, timeLeft: '00:14:32', status: 'paid', severity: 'critical' },
-        { id: '#SF-1205', wholesaler: 'Ade Ventures', distributor: 'Premium Co.', amount: 175000, timeLeft: '00:25:18', status: 'paid', severity: 'warning' },
-        { id: '#SF-1208', wholesaler: 'Lagos Retail', distributor: 'Global Dist.', amount: 120500, timeLeft: '00:45:22', status: 'approved', severity: 'normal' },
-        { id: '#SF-1209', wholesaler: 'Aliko Trading', distributor: 'Premium Co.', amount: 245000, timeLeft: '01:35:45', status: 'paid', severity: 'normal' },
-    ];
+    const criticalOrders = [];
 
     const getSeverityStyles = (severity) => {
         if (severity === 'critical') return 'bg-red-50 border-red-300 border-2';

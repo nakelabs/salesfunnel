@@ -14,20 +14,20 @@ const DistributorProfilePage = () => {
 
     const [profileData, setProfileData] = useState({
         // Profile
-        firstName: 'James',
-        lastName: 'Wilson',
-        role: 'Distributor',
-        location: 'Lagos, Nigeria',
-        email: 'james.wilson@globaldist.com',
-        phone: '+234 803 456 7890',
-        bio: 'Experienced food and beverage distributor',
+        firstName: '',
+        lastName: '',
+        role: '',
+        location: '',
+        email: '',
+        phone: '',
+        bio: '',
 
         // Address
-        street: 'Plot 12, Industrial Estate',
-        city: 'Ikeja',
-        state: 'Lagos State',
-        country: 'Nigeria',
-        zipCode: '101233'
+        street: '',
+        city: '',
+        state: '',
+        country: '',
+        zipCode: ''
     });
 
     const sidebarItems = [
@@ -101,8 +101,8 @@ const DistributorProfilePage = () => {
                                                 setIsDropdownOpen(false);
                                             }}
                                             className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${isActive
-                                                    ? 'bg-primary/5 text-primary'
-                                                    : 'text-slate-600 hover:bg-slate-50'
+                                                ? 'bg-primary/5 text-primary'
+                                                : 'text-slate-600 hover:bg-slate-50'
                                                 }`}
                                         >
                                             <IconComponent size={18} />

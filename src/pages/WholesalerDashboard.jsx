@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 
 import WholesalerNavbar from '../components/WholesalerNavbar';
@@ -13,6 +12,9 @@ const WholesalerDashboard = () => {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [showInStockOnly, setShowInStockOnly] = useState(false);
     const [quantities, setQuantities] = useState({});
+
+    // Products will come from API
+    const products = [];
 
     const categories = [
         { id: 'all', name: 'All Products', icon: 'grid_view' },
