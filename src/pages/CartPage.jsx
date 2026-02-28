@@ -105,18 +105,24 @@ const CartPage = () => {
                                                 {/* Product Info */}
                                                 <div className="md:col-span-5 flex items-center gap-4">
                                                     <div className="flex-shrink-0 size-20 rounded-lg bg-slate-100 overflow-hidden border border-slate-200">
-                                                        <img
-                                                            src={item.image}
-                                                            alt={item.name}
-                                                            className="w-full h-full object-cover"
-                                                        />
+                                                        {item.image ? (
+                                                            <img
+                                                                src={item.image}
+                                                                alt={item.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center">
+                                                                <span className="material-symbols-outlined text-3xl text-slate-300">inventory_2</span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <h3 className="font-bold text-slate-900 truncate">{item.name}</h3>
-                                                        <p className="text-xs text-slate-500">SKU: {item.sku}</p>
-                                                        <p className={`text-xs font-medium mt-1 ${item.stockStatus.includes('Low') ? 'text-amber-600' : 'text-green-600'
+                                                        {item.sku && <p className="text-xs text-slate-500">SKU: {item.sku}</p>}
+                                                        <p className={`text-xs font-medium mt-1 ${(item.stockStatus || '').includes('Low') ? 'text-amber-600' : (item.stockStatus || '').includes('Out') ? 'text-red-500' : 'text-green-600'
                                                             }`}>
-                                                            {item.stockStatus}
+                                                            {item.stockStatus || 'In Stock'}
                                                         </p>
                                                     </div>
                                                 </div>

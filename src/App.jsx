@@ -56,7 +56,7 @@ function HomePage() {
       <main className="flex-grow animate-[fadeIn_1s_ease-in_4s] opacity-0 [animation-fill-mode:forwards]">
         <Hero />
         <Features />
-        <PerformanceInsights />
+        {/* <PerformanceInsights /> */}
         <HowItWorks />
         <UserRoles />
       </main>

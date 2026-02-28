@@ -1,30 +1,38 @@
 import api from './api';
 
 const profileService = {
-    // Get User Profile (Unified for Wholesaler/Distributor)
+    // GET /v1/auth/users/profile — Get User Profile
+    getProfile: async () => {
+        const response = await api.get('/v1/auth/users/profile');
+        return response.data;
+    },
+
+    // PATCH /v1/auth/users/profile — Update User Profile
+    updateProfile: async (data) => {
+        const response = await api.put('/v1/auth/users/profile', data);
+        return response.data;
+    },
+
+    // Aliases for backward compatibility
     getWholesalerProfile: async () => {
         const response = await api.get('/v1/auth/users/profile');
         return response.data;
     },
 
-    // Update Wholesaler Profile
-    updateWholesalerProfile: async (data, section) => {
-        // Assuming PATCH on the same endpoint for updates
-        const response = await api.patch('/v1/auth/users/profile', data);
+    updateWholesalerProfile: async (data) => {
+        const response = await api.put('/v1/auth/users/profile', data);
         return response.data;
     },
 
-    // Get Distributor Profile
     getDistributorProfile: async () => {
         const response = await api.get('/v1/auth/users/profile');
         return response.data;
     },
 
-    // Update Distributor Profile
-    updateDistributorProfile: async (data, section) => {
-        const response = await api.patch('/v1/auth/users/profile', data);
+    updateDistributorProfile: async (data) => {
+        const response = await api.put('/v1/auth/users/profile', data);
         return response.data;
-    }
+    },
 };
 
 export default profileService;

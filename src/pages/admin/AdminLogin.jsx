@@ -23,10 +23,7 @@ const AdminLogin = () => {
                 {/* Logo Card */}
                 <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
                     <div className="flex flex-col items-center mb-8">
-                        <div className="bg-primary rounded-xl p-4 mb-4">
-                            <span className="material-symbols-outlined text-white text-5xl">admin_panel_settings</span>
-                        </div>
-                        <h1 className="text-2xl font-black text-slate-900">SalesFunnel Admin</h1>
+                        <img src="/images/logo.png" alt="SalesFunnel" className="h-20 w-auto mb-4" />
                         <p className="text-sm text-slate-500 mt-1">Internal Staff Portal</p>
                     </div>
 

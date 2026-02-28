@@ -36,10 +36,7 @@ export default function Footer() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
                         <div className="lg:col-span-5">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-primary to-accent text-white shadow-lg">
-                                    <span className="material-symbols-outlined text-[24px]">inventory_2</span>
-                                </div>
-                                <span className="text-2xl font-black tracking-tight text-white">SalesFunnel</span>
+                                <img src="/images/logo.png" alt="SalesFunnel" className="h-14 w-auto" />
                             </div>
                             <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-md">
                                 Secure your business. Simplify orders. Connect your supply chain. The modern standard for B2B commerce in Nigeria.
@@ -53,8 +50,8 @@ export default function Footer() {
                                 </Link>
                             </div>
                             <p className="text-slate-500 text-sm mt-12">
-                                © 2024 SalesFunnel NG. Made for Lagos with ❤️.
-                                <br />(RC: 8420460)
+                                © 2026 SalesFunnel NG. Made for Nigeria by SalesFunnel.
+                                <br />(RC: 9109427)
                             </p>
                         </div>
 
@@ -64,8 +61,9 @@ export default function Footer() {
                                 <li><a className="text-slate-400 hover:text-white transition-colors" href="#">For Distributors</a></li>
                                 <li><a className="text-slate-400 hover:text-white transition-colors" href="#">For Wholesalers</a></li>
                                 <li><a className="text-slate-400 hover:text-white transition-colors" href="#">Pricing Plan (₦)</a></li>
-                                <li><a className="text-slate-400 hover:text-white transition-colors" href="#">Download App</a></li>
+                                {/* <li><a className="text-slate-400 hover:text-white transition-colors" href="#">Download App</a></li> */}
                                 <li><Link to="/login" className="text-slate-400 hover:text-white transition-colors">Login</Link></li>
+                                <li><Link to="/signup" className="text-slate-400 hover:text-white transition-colors">signup</Link></li>
                             </ul>
                         </div>
 

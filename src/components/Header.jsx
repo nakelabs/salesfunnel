@@ -9,19 +9,16 @@ export default function Header() {
             <div className="mx-auto flex h-20 md:h-24 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
                 <div className="flex items-center gap-2 bg-white/80 backdrop-blur rounded-full px-3 py-1.5 md:px-4 md:py-2 shadow-sm border border-slate-100">
-                    <div className="flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-lg bg-primary text-white shadow-sm">
-                        <span className="material-symbols-outlined text-[16px] md:text-[18px]">inventory_2</span>
-                    </div>
-                    <span className="text-base md:text-lg font-black tracking-tight text-slate-900">SalesFunnel</span>
+                    <img src="/images/logo.png" alt="SalesFunnel" className="h-12 md:h-14 w-auto" />
                 </div>
 
-                {/* Desktop Navigation */}
+                {/* Desktop Navigation
                 <nav className="hidden md:flex items-center gap-8 rounded-full bg-white/80 backdrop-blur-md px-8 py-3 shadow-sm border border-slate-100">
                     <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">Features</a>
                     <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">Pricing</a>
                     <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">About</a>
                     <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">Contact</a>
-                </nav>
+                </nav> */}
 
                 {/* Desktop CTA Buttons */}
                 <div className="hidden md:flex items-center gap-3">

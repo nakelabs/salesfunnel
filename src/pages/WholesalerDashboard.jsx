@@ -45,55 +45,32 @@ const WholesalerDashboard = () => {
         fetchDistributors();
     }, []);
 
-    // Fetch products — uses different endpoints based on distributor selection
+    // Fetch products from /v1/products with server-side filters including distributor_id
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
                 setError(null);
-                let productList = [];
 
-                if (selectedDistributor === 'all') {
-                    // No distributor selected → GET /v1/products (all products)
-                    const params = { page_size: 100 };
-                    if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
-                    if (selectedCategory !== 'all') params.category = selectedCategory;
-                    if (showInStockOnly) params.available_only = true;
+                const params = { page_size: 100 };
+                if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
+                if (selectedCategory !== 'all') params.category = selectedCategory;
+                if (showInStockOnly) params.available_only = true;
+                if (selectedDistributor !== 'all') params.distributor_id = selectedDistributor;
 
-                    const data = await productService.getAll(params);
-                    productList = Array.isArray(data) ? data : (data.products || data.data || []);
-                } else {
-                    // Specific distributor → GET /v1/distributors/{distributor_id}/products
-                    const params = { page_size: 100 };
-                    if (showInStockOnly) params.available_only = true;
-
-                    const data = await distributorService.getDistributorProducts(selectedDistributor, params);
-                    productList = Array.isArray(data) ? data : (data.products || data.data || []);
-
-                    // Apply client-side search filter (this endpoint may not support search param)
-                    if (debouncedSearch.trim()) {
-                        const query = debouncedSearch.toLowerCase();
-                        productList = productList.filter(p =>
-                            (p.name || '').toLowerCase().includes(query)
-                        );
-                    }
-                    // Apply client-side category filter
-                    if (selectedCategory !== 'all') {
-                        productList = productList.filter(p =>
-                            (p.category || '').toLowerCase() === selectedCategory.toLowerCase()
-                        );
-                    }
-                }
+                const data = await productService.getAll(params);
+                let productList = Array.isArray(data) ? data : (data.products || data.data || []);
 
                 setProducts(productList);
 
-                // Build category list from initial unfiltered load
-                if (!debouncedSearch && selectedCategory === 'all' && selectedDistributor === 'all' && !showInStockOnly) {
+                // Rebuild category list from the full unfiltered product set
+                if (!debouncedSearch && selectedCategory === 'all' && !showInStockOnly) {
                     const cats = [...new Set(productList.map(p => p.category).filter(Boolean))];
                     setAllCategories(cats);
                 }
             } catch (err) {
                 console.error('Failed to fetch products:', err);
+                setProducts([]);
                 setError('Failed to load products. Please try again later.');
             } finally {
                 setLoading(false);
@@ -199,7 +176,7 @@ const WholesalerDashboard = () => {
                     >
                         <option value="all">All Distributors</option>
                         {distributors.map(d => {
-                            const dId = d.id || d.distributor_id;
+                            const dId = d.user_id || d.id || d.distributor_id;
                             const dName = d.business_name || d.name || `Distributor ${String(dId).slice(0, 8)}`;
                             return <option key={dId} value={dId}>{dName}</option>;
                         })}

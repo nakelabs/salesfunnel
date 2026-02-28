@@ -44,13 +44,8 @@ const AdminNavbar = () => {
             <div className="flex h-16 items-center justify-between px-6 lg:px-8">
                 {/* Logo */}
                 <Link to="/admin" className="flex items-center gap-3">
-                    <div className="flex items-center justify-center size-10 rounded-lg bg-primary text-white">
-                        <span className="material-symbols-outlined text-2xl">admin_panel_settings</span>
-                    </div>
-                    <div>
-                        <h1 className="text-lg font-black tracking-tight text-slate-900">SalesFunnel</h1>
-                        <p className="text-xs font-medium text-slate-500">Admin Portal</p>
-                    </div>
+                    <img src="/images/logo.png" alt="SalesFunnel" className="h-14 w-auto" />
+                    <p className="text-xs font-medium text-slate-500">Admin Portal</p>
                 </Link>
 
                 {/* Navigation */}
@@ -58,8 +53,8 @@ const AdminNavbar = () => {
                     <Link
                         to="/admin/dashboard"
                         className={`text-sm font-semibold transition-colors ${location.pathname === '/admin' || location.pathname === '/admin/dashboard'
-                                ? 'text-slate-900'
-                                : 'text-slate-600 hover:text-primary'
+                            ? 'text-slate-900'
+                            : 'text-slate-600 hover:text-primary'
                             }`}
                     >
                         Dashboard

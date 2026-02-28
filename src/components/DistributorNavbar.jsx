@@ -20,13 +20,8 @@ const DistributorNavbar = () => {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 text-primary p-2 rounded-lg">
-                            <span className="material-symbols-outlined text-2xl">inventory_2</span>
-                        </div>
-                        <div>
-                            <h1 className="text-slate-900 text-lg font-bold leading-tight">SalesFunnel</h1>
-                            <p className="text-slate-500 text-xs font-medium">Distributor Panel</p>
-                        </div>
+                        <img src="/images/logo.png" alt="SalesFunnel" className="h-14 w-auto" />
+                        <p className="text-slate-500 text-xs font-medium">Distributor Panel</p>
                     </div>
 
                     {/* Navigation Links */}
