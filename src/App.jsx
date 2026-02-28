@@ -22,10 +22,14 @@ import PaymentPage from './pages/PaymentPage'
 import NotificationsPage from './pages/NotificationsPage'
 import ProfilePage from './pages/ProfilePage'
 import InventoryPage from './pages/InventoryPage'
+import EditProductPage from './pages/EditProductPage'
+import AddProductPage from './pages/AddProductPage'
 import PaymentsPage from './pages/PaymentsPage'
 import SettingsPage from './pages/SettingsPage'
 import DistributorProfilePage from './pages/DistributorProfilePage'
 import DistributorNotificationsPage from './pages/DistributorNotificationsPage'
+import DistributorOrderDetailPage from './pages/DistributorOrderDetailPage'
+import DistributorOrdersPage from './pages/DistributorOrdersPage'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import WholesalerDirectory from './pages/admin/WholesalerDirectory'
@@ -81,10 +85,14 @@ function App() {
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/inventory" element={<InventoryPage />} />
+        <Route path="/inventory/add" element={<AddProductPage />} />
+        <Route path="/inventory/edit/:productId" element={<EditProductPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/distributor-profile" element={<DistributorProfilePage />} />
         <Route path="/distributor-notifications" element={<DistributorNotificationsPage />} />
+        <Route path="/distributor-orders" element={<DistributorOrdersPage />} />
+        <Route path="/distributor-orders/:orderId" element={<DistributorOrderDetailPage />} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />

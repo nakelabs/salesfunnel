@@ -7,6 +7,7 @@ const DistributorNavbar = () => {
 
     const navItems = [
         { path: '/distributor-dashboard', label: 'Dashboard' },
+        { path: '/distributor-orders', label: 'Orders' },
         { path: '/inventory', label: 'Inventory' },
         { path: '/payments', label: 'Payments' },
     ];

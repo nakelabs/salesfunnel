@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import authService from '../services/auth.service';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -9,14 +10,42 @@ const Login = () => {
         password: ''
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Login submitted:', formData);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-        if (formData.userType === 'wholesaler') {
-            navigate('/dashboard');
-        } else if (formData.userType === 'distributor') {
-            navigate('/distributor-dashboard');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
+
+        try {
+            await authService.login(formData.email, formData.password, formData.userType);
+
+            // Redirect based on user type (assuming successful login)
+            if (formData.userType === 'wholesaler') {
+                navigate('/dashboard');
+            } else if (formData.userType === 'distributor') {
+                navigate('/distributor-dashboard');
+            }
+        } catch (err) {
+            console.error('Login failed:', err);
+            let errorMessage = 'Login failed. Please check your credentials.';
+
+            // Safely parse potentially complex error objects (like Pydantic validation errors)
+            if (err.response?.data?.detail) {
+                const detail = err.response.data.detail;
+                if (Array.isArray(detail)) {
+                    errorMessage = detail.map(e => e.msg || 'Error').join(', ');
+                } else if (typeof detail === 'object') {
+                    errorMessage = JSON.stringify(detail);
+                } else {
+                    errorMessage = String(detail);
+                }
+            }
+
+            setError(errorMessage);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -82,6 +111,12 @@ const Login = () => {
                         </h1>
                         <p className="text-slate-600 text-lg">Log in to continue your journey</p>
                     </div>
+
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-200">
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* User Type Selection */}
@@ -156,9 +191,10 @@ const Login = () => {
                         {/* Login Button */}
                         <button
                             type="submit"
-                            className="w-full py-4 bg-slate-900 text-white font-bold text-base rounded-lg hover:bg-slate-800 transition-all mt-6"
+                            disabled={isLoading}
+                            className="w-full py-4 bg-slate-900 text-white font-bold text-base rounded-lg hover:bg-slate-800 transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            Login
+                            {isLoading ? 'Logging in...' : 'Login'}
                         </button>
 
                         {/* Sign Up Link */}

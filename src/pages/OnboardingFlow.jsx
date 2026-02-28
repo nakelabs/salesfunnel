@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import authService from '../services/auth.service';
 
 const OnboardingFlow = () => {
     const navigate = useNavigate();
-    const [currentStep, setCurrentStep] = useState(1);
+    const location = useLocation();
+    const initialData = location.state?.initialData || {};
+
+    // Start at Step 2 (Company Info) if we already have the User Type from Sign Up
+    const [currentStep, setCurrentStep] = useState(initialData.userType ? 2 : 1);
     const [isAnimating, setIsAnimating] = useState(false);
-    const [userType, setUserType] = useState('');
+    const [userType, setUserType] = useState(initialData.userType || '');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const [formData, setFormData] = useState({
         userType: '',
@@ -27,6 +34,8 @@ const OnboardingFlow = () => {
         utilityBill: null,
         idType: '',
         idDocument: null,
+        password: '', // Needed for registration
+        ...initialData // Merge passed data (includes password, email, userType)
     });
 
     const steps = [
@@ -41,13 +50,14 @@ const OnboardingFlow = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
         if (files && files[0]) {
-            setFormData({ ...formData, [name]: files[0] });
+            console.log(`File selected for ${name}:`, files[0].name);
+            setFormData(prev => ({ ...prev, [name]: files[0] }));
         }
     };
 
@@ -71,10 +81,84 @@ const OnboardingFlow = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Onboarding completed:', formData);
-        navigate('/pending-approval');
+        setIsLoading(true);
+        setError('');
+
+        console.log('Final FormData State:', formData);
+
+        try {
+            // Prepare FormData for multipart/form-data submission
+            const submissionData = new FormData();
+
+            // Map frontend fields to backend expected fields
+            // Backend expects snake_case, frontend uses camelCase
+
+            // Common fields
+            submissionData.append('password', formData.password);
+            submissionData.append('business_name', formData.businessName);
+            submissionData.append('cac_registration_number', formData.cacNumber);
+            submissionData.append('business_address', formData.businessAddress);
+            submissionData.append('business_phone', formData.businessPhone);
+            submissionData.append('business_email', formData.businessEmail);
+            submissionData.append('tin', formData.tin);
+            submissionData.append('owner_full_name', formData.ownerFullName);
+            submissionData.append('owner_phone', formData.ownerPhone);
+            submissionData.append('owner_email', formData.ownerEmail);
+            submissionData.append('bank_name', formData.bankName);
+            submissionData.append('account_name', formData.accountName);
+            submissionData.append('account_number', formData.accountNumber);
+
+            // Files - check if they exist before appending
+            if (formData.cacCertificate) submissionData.append('cac_certificate', formData.cacCertificate);
+            if (formData.tinCertificate) submissionData.append('tin_certificate', formData.tinCertificate); // Note: Backend schema asks for tin_certificate, usually tax doc
+            if (formData.utilityBill) submissionData.append('utility_bill', formData.utilityBill);
+
+            // Note: Backend might not have ID Document in the specific register endpoint shown in screenshot?
+            // The screenshot showed register-wholesaler taking:
+            // password, business_name, cac_registration_number, business_address, business_phone, business_email,
+            // tin, owner_full_name, owner_phone, owner_email, bank_name, account_name, account_number, 
+            // cac_certificate, tin_certificate, utility_bill.
+            // It did NOT explicitly list 'id_document' in the visible part of the schema, 
+            // but the Onboarding Flow has it. 
+            // We will append it just in case, or ignore if backend doesn't support it yet.
+            // Let's assume the 'tin_certificate' might be the tax document from Step 3.
+
+            // Also taxDocument from Step 3 -> maps to tin_certificate in backend schema likely?
+            if (formData.taxDocument && !formData.tinCertificate) {
+                submissionData.append('tin_certificate', formData.taxDocument);
+            }
+
+            console.log('Submitting registration for:', formData.userType);
+
+            await authService.register(submissionData, formData.userType);
+
+            navigate('/pending-approval');
+        } catch (err) {
+            console.error('Onboarding failed:', err);
+            let errorMessage = 'Registration failed. Please check your information and try again.';
+
+            if (err.response?.data?.detail) {
+                const detail = err.response.data.detail;
+                if (Array.isArray(detail)) {
+                    // Pydantic validation error array
+                    errorMessage = detail.map(e => `${e.msg || 'Error'} (Field: ${e.loc?.join('.') || 'Unknown'})`).join(', ');
+                } else if (typeof detail === 'object') {
+                    // Catch-all for other object types
+                    errorMessage = JSON.stringify(detail);
+                } else {
+                    // Simple string
+                    errorMessage = String(detail);
+                }
+            }
+
+            setError(errorMessage);
+            // Scroll to top to see error
+            window.scrollTo(0, 0);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const renderStepContent = () => {
@@ -172,6 +256,13 @@ const OnboardingFlow = () => {
                         {/* Step Indicator */}
                         <p className="text-sm font-semibold text-primary mb-2">STEP {currentStep} OF {steps.length}</p>
 
+                        {error && (
+                            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-200 text-sm">
+                                <p className="font-bold mb-1">Registration Error</p>
+                                {error}
+                            </div>
+                        )}
+
                         {/* Form */}
                         <form onSubmit={handleSubmit}>
                             <div className={`transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
@@ -203,9 +294,10 @@ const OnboardingFlow = () => {
                                 ) : (
                                     <button
                                         type="submit"
-                                        className="px-8 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all"
+                                        disabled={isLoading}
+                                        className="px-8 py-3 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        Complete setup →
+                                        {isLoading ? 'Completing setup...' : 'Complete setup →'}
                                     </button>
                                 )}
                             </div>

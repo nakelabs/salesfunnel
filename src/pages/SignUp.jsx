@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import authService from '../services/auth.service';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -86,6 +87,9 @@ const SignUp = () => {
         });
     };
 
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleContinue = (e) => {
         e.preventDefault();
         if (step === 1) {
@@ -93,10 +97,20 @@ const SignUp = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Signup submitted:', formData);
-        navigate('/onboarding');
+        // Instead of registering here, we pass the data to the Onboarding Flow
+        // because the backend requires full business details to create the account.
+        navigate('/onboarding', {
+            state: {
+                initialData: {
+                    ...formData,
+                    // Map fullName to ownerFullName for the onboarding form consistency if needed
+                    ownerFullName: formData.fullName,
+                    ownerEmail: formData.email
+                }
+            }
+        });
     };
 
     return (
@@ -123,6 +137,12 @@ const SignUp = () => {
                             {step === 1 ? 'Sign up to start your journey with SalesFunnel' : 'Create a strong password to continue'}
                         </p>
                     </div>
+
+                    {error && (
+                        <div className="mb-6 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-200">
+                            {error}
+                        </div>
+                    )}
 
                     {/* Step 1: Basic Info */}
                     {step === 1 && (
@@ -230,9 +250,10 @@ const SignUp = () => {
                             {/* Create Account Button */}
                             <button
                                 type="submit"
-                                className="w-full py-4 bg-slate-900 text-white font-bold text-base rounded-lg hover:bg-slate-800 transition-all mt-6"
+                                disabled={isLoading}
+                                className="w-full py-4 bg-slate-900 text-white font-bold text-base rounded-lg hover:bg-slate-800 transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                Create Account
+                                {isLoading ? 'Creating Account...' : 'Create Account'}
                             </button>
 
                             {/* Back Button */}
