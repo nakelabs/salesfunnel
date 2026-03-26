@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Bell } from 'lucide-react';
+import authService from '../services/auth.service';
+import profileService from '../services/profile.service';
 
 const DistributorNavbar = () => {
     const location = useLocation();
+    const [userData, setUserData] = useState({ fullName: '', businessName: '' });
+
+    useEffect(() => {
+        const user = authService.getCurrentUser();
+        if (user?.full_name) {
+            setUserData({ fullName: user.full_name, businessName: user.business_name || '' });
+        }
+        profileService.getDistributorProfile().then((data) => {
+            const name = data.full_name || '';
+            const biz = data.distributor_profile?.business_name || '';
+            setUserData({ fullName: name, businessName: biz });
+            // Update localStorage so it's cached for next load
+            const stored = authService.getCurrentUser() || {};
+            localStorage.setItem('user', JSON.stringify({ ...stored, full_name: name, business_name: biz }));
+        }).catch(() => { });
+    }, []);
 
     const navItems = [
         { path: '/distributor-dashboard', label: 'Dashboard' },
@@ -57,8 +75,8 @@ const DistributorNavbar = () => {
                                 <span className="material-symbols-outlined text-primary text-[20px]">account_circle</span>
                             </div>
                             <div className="hidden lg:block">
-                                <p className="text-sm font-semibold text-slate-900">James Wilson</p>
-                                <p className="text-xs text-slate-500">Global Distributors</p>
+                                <p className="text-sm font-semibold text-slate-900">{userData.fullName || 'My Account'}</p>
+                                <p className="text-xs text-slate-500">{userData.businessName || 'Distributor'}</p>
                             </div>
                         </Link>
                     </div>

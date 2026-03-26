@@ -11,7 +11,15 @@ const distributorService = {
 
     // POST /v1/distributors/{distributor_id}/products — Add Product To Distributor Catalog
     addProductToCatalog: async (distributorId, productData) => {
-        const response = await api.post(`/v1/distributors/${distributorId}/products`, productData);
+        const formData = new FormData();
+        Object.entries(productData).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== '') {
+                formData.append(key, value);
+            }
+        });
+        const response = await api.post(`/v1/distributors/${distributorId}/products`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
         return response.data;
     },
 

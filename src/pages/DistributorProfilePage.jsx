@@ -11,9 +11,10 @@ const DistributorProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState({ type: '', text: '' });
     const [isEditing, setIsEditing] = useState({
-        profile: false,
         personal: false,
-        address: false
+        business: false,
+        owner: false,
+        bank: false
     });
 
     const [profileData, setProfileData] = useState({
@@ -124,6 +125,7 @@ const DistributorProfilePage = () => {
 
     const handleSave = async (section) => {
         try {
+            setLoading(true);
             await profileService.updateDistributorProfile(profileData, section);
             setIsEditing({ ...isEditing, [section]: false });
             setMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -131,7 +133,9 @@ const DistributorProfilePage = () => {
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch (err) {
             console.error('Failed to update profile:', err);
-            setMessage({ type: 'error', text: 'Failed to update profile.' });
+            setMessage({ type: 'error', text: err.response?.data?.detail || 'Failed to update profile.' });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -234,11 +238,29 @@ const DistributorProfilePage = () => {
                                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-lg font-bold text-slate-900">Personal Information</h3>
+                                        {!isEditing.personal ? (
+                                            <button onClick={() => handleEdit('personal')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors">
+                                                <Edit2 size={15} /> Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <button onClick={() => handleSave('personal')} disabled={loading} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50">
+                                                    <Check size={15} /> Save
+                                                </button>
+                                                <button onClick={() => handleCancel('personal')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                                                    <X size={15} /> Cancel
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.fullName || 'N/A'}</p>
+                                            {isEditing.personal ? (
+                                                <input type="text" value={profileData.fullName} onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.fullName || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
@@ -246,7 +268,11 @@ const DistributorProfilePage = () => {
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.phone || 'N/A'}</p>
+                                            {isEditing.personal ? (
+                                                <input type="text" value={profileData.phone} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.phone || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Account Status</label>
@@ -261,31 +287,69 @@ const DistributorProfilePage = () => {
                                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-lg font-bold text-slate-900">Business Information</h3>
+                                        {!isEditing.business ? (
+                                            <button onClick={() => handleEdit('business')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors">
+                                                <Edit2 size={15} /> Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <button onClick={() => handleSave('business')} disabled={loading} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50">
+                                                    <Check size={15} /> Save
+                                                </button>
+                                                <button onClick={() => handleCancel('business')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                                                    <X size={15} /> Cancel
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Business Name</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.businessName || 'N/A'}</p>
+                                            {isEditing.business ? (
+                                                <input type="text" value={profileData.businessName} onChange={(e) => setProfileData({ ...profileData, businessName: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.businessName || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">CAC Registration Number</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.cacRegistrationNumber || 'N/A'}</p>
+                                            {isEditing.business ? (
+                                                <input type="text" value={profileData.cacRegistrationNumber} onChange={(e) => setProfileData({ ...profileData, cacRegistrationNumber: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.cacRegistrationNumber || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Business Address</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.businessAddress || 'N/A'}</p>
+                                            {isEditing.business ? (
+                                                <input type="text" value={profileData.businessAddress} onChange={(e) => setProfileData({ ...profileData, businessAddress: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.businessAddress || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Business Phone</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.businessPhone || 'N/A'}</p>
+                                            {isEditing.business ? (
+                                                <input type="text" value={profileData.businessPhone} onChange={(e) => setProfileData({ ...profileData, businessPhone: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.businessPhone || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Business Email</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.businessEmail || 'N/A'}</p>
+                                            {isEditing.business ? (
+                                                <input type="email" value={profileData.businessEmail} onChange={(e) => setProfileData({ ...profileData, businessEmail: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.businessEmail || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">TIN</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.tin || 'N/A'}</p>
+                                            {isEditing.business ? (
+                                                <input type="text" value={profileData.tin} onChange={(e) => setProfileData({ ...profileData, tin: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.tin || 'N/A'}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -294,19 +358,45 @@ const DistributorProfilePage = () => {
                                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-lg font-bold text-slate-900">Owner Information</h3>
+                                        {!isEditing.owner ? (
+                                            <button onClick={() => handleEdit('owner')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors">
+                                                <Edit2 size={15} /> Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <button onClick={() => handleSave('owner')} disabled={loading} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50">
+                                                    <Check size={15} /> Save
+                                                </button>
+                                                <button onClick={() => handleCancel('owner')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                                                    <X size={15} /> Cancel
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Owner Full Name</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.ownerFullName || 'N/A'}</p>
+                                            {isEditing.owner ? (
+                                                <input type="text" value={profileData.ownerFullName} onChange={(e) => setProfileData({ ...profileData, ownerFullName: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.ownerFullName || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Owner Phone</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.ownerPhone || 'N/A'}</p>
+                                            {isEditing.owner ? (
+                                                <input type="text" value={profileData.ownerPhone} onChange={(e) => setProfileData({ ...profileData, ownerPhone: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.ownerPhone || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Owner Email</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.ownerEmail || 'N/A'}</p>
+                                            {isEditing.owner ? (
+                                                <input type="email" value={profileData.ownerEmail} onChange={(e) => setProfileData({ ...profileData, ownerEmail: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.ownerEmail || 'N/A'}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -315,19 +405,45 @@ const DistributorProfilePage = () => {
                                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-lg font-bold text-slate-900">Bank Details</h3>
+                                        {!isEditing.bank ? (
+                                            <button onClick={() => handleEdit('bank')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors">
+                                                <Edit2 size={15} /> Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <button onClick={() => handleSave('bank')} disabled={loading} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary hover:bg-blue-600 rounded-lg transition-colors disabled:opacity-50">
+                                                    <Check size={15} /> Save
+                                                </button>
+                                                <button onClick={() => handleCancel('bank')} className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                                                    <X size={15} /> Cancel
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Bank Name</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.bankName || 'N/A'}</p>
+                                            {isEditing.bank ? (
+                                                <input type="text" value={profileData.bankName} onChange={(e) => setProfileData({ ...profileData, bankName: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.bankName || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Account Name</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.accountName || 'N/A'}</p>
+                                            {isEditing.bank ? (
+                                                <input type="text" value={profileData.accountName} onChange={(e) => setProfileData({ ...profileData, accountName: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.accountName || 'N/A'}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Account Number</label>
-                                            <p className="text-slate-900 font-medium py-2.5">{profileData.accountNumber || 'N/A'}</p>
+                                            {isEditing.bank ? (
+                                                <input type="text" value={profileData.accountNumber} onChange={(e) => setProfileData({ ...profileData, accountNumber: e.target.value })} className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm" />
+                                            ) : (
+                                                <p className="text-slate-900 font-medium py-2.5">{profileData.accountNumber || 'N/A'}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

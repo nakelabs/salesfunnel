@@ -181,6 +181,10 @@ const DistributorOrderDetailPage = () => {
                                         <dt className="text-slate-500">Distributor</dt>
                                         <dd className="font-medium text-slate-900">{order.distributor_name || '—'}</dd>
                                     </div>
+                                    <div className="flex justify-between">
+                                        <dt className="text-slate-500">Wholesaler</dt>
+                                        <dd className="font-medium text-slate-900">{order.wholesaler_name || '—'}</dd>
+                                    </div>
                                 </dl>
                             </div>
 

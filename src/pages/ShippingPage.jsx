@@ -2,19 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import WholesalerNavbar from '../components/WholesalerNavbar';
+import profileService from '../services/profile.service';
 
 const ShippingPage = () => {
     const navigate = useNavigate();
     const { cartItems, getCartTotal } = useCart();
-    const [selectedAddress, setSelectedAddress] = useState('primary');
-    const [selectedShipping, setSelectedShipping] = useState('express');
-    const [timeRemaining, setTimeRemaining] = useState(14 * 60 + 32); // 14:32 in seconds
+    const [selectedAddress, setSelectedAddress] = useState('business');
+    const [selectedShipping, setSelectedShipping] = useState('delivery');
+    const [timeRemaining, setTimeRemaining] = useState(14 * 60 + 32);
+
+    const [businessAddress, setBusinessAddress] = useState('');
+    const [profileLoading, setProfileLoading] = useState(true);
+
+    const [customAddress, setCustomAddress] = useState({
+        street: '',
+        city: '',
+        state: '',
+        landmark: '',
+    });
 
     const [contactInfo, setContactInfo] = useState({
         name: '',
         phone: '',
         instructions: ''
     });
+
+    // Fetch wholesaler profile to get business address
+    useEffect(() => {
+        profileService.getWholesalerProfile().then((data) => {
+            const profile = data.wholesaler_profile || {};
+            setBusinessAddress(profile.business_address || data.address || '');
+            if (data.full_name && !contactInfo.name) {
+                setContactInfo(prev => ({ ...prev, name: data.full_name }));
+            }
+            if ((data.phone || profile.business_phone) && !contactInfo.phone) {
+                setContactInfo(prev => ({ ...prev, phone: data.phone || profile.business_phone || '' }));
+            }
+        }).catch(() => { }).finally(() => setProfileLoading(false));
+    }, []);
 
     // Countdown timer
     useEffect(() => {
@@ -37,20 +62,24 @@ const ShippingPage = () => {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const addresses = [];
-
-    const shippingMethods = [];
+    const shippingMethods = [
+        { id: 'delivery', name: 'Delivery', icon: 'local_shipping', duration: 'Delivered to your address', fee: 0 },
+    ];
 
     const subtotal = getCartTotal();
     const vatRate = 0.075;
     const vat = subtotal * vatRate;
-    const shippingFee = shippingMethods.find(m => m.id === selectedShipping)?.fee || 0;
+    const shippingFee = selectedShipping === 'pickup' ? 0 : (shippingMethods.find(m => m.id === selectedShipping)?.fee || 0);
     const total = subtotal + vat + shippingFee;
 
     const formatPrice = (price) => `₦${price.toLocaleString()}`;
 
+    const getDeliveryAddress = () => {
+        if (selectedAddress === 'business') return businessAddress;
+        return [customAddress.street, customAddress.city, customAddress.state].filter(Boolean).join(', ');
+    };
+
     const handleProceed = () => {
-        // Navigate to review page (to be created)
         navigate('/checkout/review');
     };
 
@@ -93,53 +122,6 @@ const ShippingPage = () => {
                             <p className="text-slate-500 text-base">Select your delivery address and preferred shipping method.</p>
                         </div>
 
-                        {/* Delivery Address Section */}
-                        <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                            <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">location_on</span>
-                                    <h3 className="text-slate-900 font-bold text-lg">Delivery Address</h3>
-                                </div>
-                                <button className="text-primary hover:text-blue-600 text-sm font-semibold flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-base">add</span>
-                                    Add New Address
-                                </button>
-                            </div>
-                            <div className="p-6 grid gap-4">
-                                {addresses.map((address) => (
-                                    <label
-                                        key={address.id}
-                                        className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-colors ${selectedAddress === address.id
-                                            ? 'border-primary bg-blue-50/30'
-                                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                            }`}
-                                    >
-                                        <div className="flex items-center h-5">
-                                            <input
-                                                type="radio"
-                                                name="address"
-                                                checked={selectedAddress === address.id}
-                                                onChange={() => setSelectedAddress(address.id)}
-                                                className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
-                                            />
-                                        </div>
-                                        <div className="ml-3 text-sm flex-1">
-                                            <div className="flex justify-between">
-                                                <span className="font-bold text-slate-900 block">{address.name}</span>
-                                                {selectedAddress === address.id && (
-                                                    <span className="material-symbols-outlined text-primary">check_circle</span>
-                                                )}
-                                            </div>
-                                            <span className="text-slate-500 block mt-1">
-                                                {address.address}<br />
-                                                {address.phone}
-                                            </span>
-                                        </div>
-                                    </label>
-                                ))}
-                            </div>
-                        </section>
-
                         {/* Shipping Method Section */}
                         <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
@@ -149,69 +131,176 @@ const ShippingPage = () => {
                                 </div>
                             </div>
                             <div className="p-6 grid gap-4 sm:grid-cols-2">
-                                {shippingMethods.slice(0, 2).map((method) => (
-                                    <label
-                                        key={method.id}
-                                        className={`relative flex flex-col p-4 cursor-pointer rounded-lg border-2 transition-colors h-full ${selectedShipping === method.id
-                                            ? 'border-primary bg-blue-50/30'
-                                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                            }`}
-                                    >
-                                        <div className="flex justify-between items-start mb-2">
-                                            <span className={`material-symbols-outlined text-2xl ${selectedShipping === method.id ? 'text-primary' : 'text-slate-400'
-                                                }`}>
-                                                {method.icon}
-                                            </span>
-                                            <input
-                                                type="radio"
-                                                name="shipping_method"
-                                                checked={selectedShipping === method.id}
-                                                onChange={() => setSelectedShipping(method.id)}
-                                                className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
-                                            />
-                                        </div>
-                                        <span className="block text-sm font-bold text-slate-900 mb-1">{method.name}</span>
-                                        <span className="block text-xs text-slate-500 mb-3">{method.duration}</span>
-                                        <div className="mt-auto pt-2 border-t border-slate-200 flex justify-between items-center">
-                                            <span className="text-xs font-medium text-slate-500">Fee</span>
-                                            <span className="text-sm font-bold text-slate-900">{formatPrice(method.fee)}</span>
-                                        </div>
-                                    </label>
-                                ))}
-
-                                {/* Self Pickup - Full Width */}
+                                {/* Delivery Option */}
                                 <label
-                                    className={`relative flex flex-col p-4 cursor-pointer rounded-lg border-2 transition-colors sm:col-span-2 ${selectedShipping === 'pickup'
+                                    className={`relative flex flex-col p-4 cursor-pointer rounded-lg border-2 transition-colors h-full ${selectedShipping === 'delivery'
                                         ? 'border-primary bg-blue-50/30'
                                         : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                                         }`}
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex items-center h-5">
-                                            <input
-                                                type="radio"
-                                                name="shipping_method"
-                                                checked={selectedShipping === 'pickup'}
-                                                onChange={() => setSelectedShipping('pickup')}
-                                                className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="material-symbols-outlined text-slate-400">storefront</span>
-                                                    <span className="block text-sm font-bold text-slate-900">Self Pickup</span>
-                                                </div>
-                                                <span className="text-sm font-bold text-green-600">Free</span>
-                                            </div>
-                                            <span className="block text-xs text-slate-500 mt-1 ml-8">
-                                                Pick up from our central warehouse in Ikeja (Mon-Fri, 9am-5pm)
-                                            </span>
-                                        </div>
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className={`material-symbols-outlined text-2xl ${selectedShipping === 'delivery' ? 'text-primary' : 'text-slate-400'}`}>
+                                            local_shipping
+                                        </span>
+                                        <input
+                                            type="radio"
+                                            name="shipping_method"
+                                            checked={selectedShipping === 'delivery'}
+                                            onChange={() => setSelectedShipping('delivery')}
+                                            className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
+                                        />
+                                    </div>
+                                    <span className="block text-sm font-bold text-slate-900 mb-1">Delivery</span>
+                                    <span className="block text-xs text-slate-500 mb-3">Delivered to your address</span>
+                                    <div className="mt-auto pt-2 border-t border-slate-200 flex justify-between items-center">
+                                        <span className="text-xs font-medium text-slate-500">Fee</span>
+                                        <span className="text-sm font-bold text-green-600">Free</span>
+                                    </div>
+                                </label>
+
+                                {/* Self Pickup Option */}
+                                <label
+                                    className={`relative flex flex-col p-4 cursor-pointer rounded-lg border-2 transition-colors h-full ${selectedShipping === 'pickup'
+                                        ? 'border-primary bg-blue-50/30'
+                                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                        }`}
+                                >
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className={`material-symbols-outlined text-2xl ${selectedShipping === 'pickup' ? 'text-primary' : 'text-slate-400'}`}>
+                                            storefront
+                                        </span>
+                                        <input
+                                            type="radio"
+                                            name="shipping_method"
+                                            checked={selectedShipping === 'pickup'}
+                                            onChange={() => setSelectedShipping('pickup')}
+                                            className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
+                                        />
+                                    </div>
+                                    <span className="block text-sm font-bold text-slate-900 mb-1">Self Pickup</span>
+                                    <span className="block text-xs text-slate-500 mb-3">Pick up from warehouse</span>
+                                    <div className="mt-auto pt-2 border-t border-slate-200 flex justify-between items-center">
+                                        <span className="text-xs font-medium text-slate-500">Fee</span>
+                                        <span className="text-sm font-bold text-green-600">Free</span>
                                     </div>
                                 </label>
                             </div>
                         </section>
+
+                        {/* Delivery Address Section — only shown when delivery is selected */}
+                        {selectedShipping === 'delivery' && (
+                            <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
+                                    <div className="flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">location_on</span>
+                                        <h3 className="text-slate-900 font-bold text-lg">Delivery Address</h3>
+                                    </div>
+                                </div>
+                                <div className="p-6 grid gap-4">
+                                    {/* Business Address Option */}
+                                    <label
+                                        className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-colors ${selectedAddress === 'business'
+                                            ? 'border-primary bg-blue-50/30'
+                                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center h-5">
+                                            <input
+                                                type="radio"
+                                                name="address"
+                                                checked={selectedAddress === 'business'}
+                                                onChange={() => setSelectedAddress('business')}
+                                                className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
+                                            />
+                                        </div>
+                                        <div className="ml-3 text-sm flex-1">
+                                            <div className="flex justify-between">
+                                                <span className="font-bold text-slate-900 block">Business Address</span>
+                                                {selectedAddress === 'business' && (
+                                                    <span className="material-symbols-outlined text-primary">check_circle</span>
+                                                )}
+                                            </div>
+                                            <span className="text-slate-500 block mt-1">
+                                                {profileLoading ? 'Loading...' : (businessAddress || 'No business address on file — please update your profile')}
+                                            </span>
+                                        </div>
+                                    </label>
+
+                                    {/* Custom Address Option */}
+                                    <label
+                                        className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-colors ${selectedAddress === 'custom'
+                                            ? 'border-primary bg-blue-50/30'
+                                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center h-5">
+                                            <input
+                                                type="radio"
+                                                name="address"
+                                                checked={selectedAddress === 'custom'}
+                                                onChange={() => setSelectedAddress('custom')}
+                                                className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
+                                            />
+                                        </div>
+                                        <div className="ml-3 text-sm flex-1">
+                                            <div className="flex justify-between">
+                                                <span className="font-bold text-slate-900 block">Use a Different Address</span>
+                                                {selectedAddress === 'custom' && (
+                                                    <span className="material-symbols-outlined text-primary">check_circle</span>
+                                                )}
+                                            </div>
+                                            <span className="text-slate-500 block mt-1">Enter a custom delivery address</span>
+                                        </div>
+                                    </label>
+
+                                    {/* Custom Address Form */}
+                                    {selectedAddress === 'custom' && (
+                                        <div className="border border-slate-200 rounded-lg p-5 bg-slate-50/50 grid md:grid-cols-2 gap-4 mt-1">
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">Street Address</label>
+                                                <input
+                                                    type="text"
+                                                    value={customAddress.street}
+                                                    onChange={(e) => setCustomAddress({ ...customAddress, street: e.target.value })}
+                                                    placeholder="e.g. 12 Broad Street"
+                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
+                                                <input
+                                                    type="text"
+                                                    value={customAddress.city}
+                                                    onChange={(e) => setCustomAddress({ ...customAddress, city: e.target.value })}
+                                                    placeholder="e.g. Lagos"
+                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">State</label>
+                                                <input
+                                                    type="text"
+                                                    value={customAddress.state}
+                                                    onChange={(e) => setCustomAddress({ ...customAddress, state: e.target.value })}
+                                                    placeholder="e.g. Lagos State"
+                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-slate-700 mb-1">Landmark (Optional)</label>
+                                                <input
+                                                    type="text"
+                                                    value={customAddress.landmark}
+                                                    onChange={(e) => setCustomAddress({ ...customAddress, landmark: e.target.value })}
+                                                    placeholder="e.g. Opposite GTBank"
+                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </section>
+                        )}
 
                         {/* Contact Person Section */}
                         <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">

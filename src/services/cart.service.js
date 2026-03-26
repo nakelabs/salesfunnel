@@ -19,13 +19,13 @@ const cartService = {
         return response.data;
     },
 
-    // GET /v1/wholesaler/cart — Get cart items (if endpoint exists)
+    // GET /v1/wholesaler/cart — Get cart items 
     getCart: async () => {
         const response = await api.get('/v1/wholesaler/cart');
         return response.data;
     },
 
-    // DELETE /v1/wholesaler/cart/remove — Remove item from cart (if endpoint exists)
+    // DELETE /v1/wholesaler/cart/remove — Remove item from cart 
     removeFromCart: async (productId) => {
         const response = await api.delete('/v1/wholesaler/cart/remove', {
             data: { product_id: productId },

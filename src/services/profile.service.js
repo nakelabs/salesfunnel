@@ -29,8 +29,44 @@ const profileService = {
         return response.data;
     },
 
-    updateDistributorProfile: async (data) => {
-        const response = await api.put('/v1/auth/users/profile', data);
+    updateDistributorProfile: async (profileData, section) => {
+        let payload = {};
+
+        if (section === 'personal') {
+            payload = {
+                full_name: profileData.fullName,
+                phone: profileData.phone,
+            };
+        } else if (section === 'business') {
+            payload = {
+                distributor_profile: {
+                    business_name: profileData.businessName,
+                    cac_registration_number: profileData.cacRegistrationNumber,
+                    business_address: profileData.businessAddress,
+                    business_phone: profileData.businessPhone,
+                    business_email: profileData.businessEmail,
+                    tin: profileData.tin,
+                },
+            };
+        } else if (section === 'owner') {
+            payload = {
+                distributor_profile: {
+                    owner_full_name: profileData.ownerFullName,
+                    owner_phone: profileData.ownerPhone,
+                    owner_email: profileData.ownerEmail,
+                },
+            };
+        } else if (section === 'bank') {
+            payload = {
+                distributor_profile: {
+                    bank_name: profileData.bankName,
+                    account_name: profileData.accountName,
+                    account_number: profileData.accountNumber,
+                },
+            };
+        }
+
+        const response = await api.put('/v1/auth/users/profile', payload);
         return response.data;
     },
 };
