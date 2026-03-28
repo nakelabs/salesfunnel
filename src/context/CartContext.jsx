@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import cartService from '../services/cart.service';
 import productService from '../services/product.service';
+import authService from '../services/auth.service';
 
 const CartContext = createContext();
 
@@ -20,6 +21,11 @@ export const CartProvider = ({ children }) => {
     // Fetch actual cart from backend on mount
     useEffect(() => {
         const fetchCart = async () => {
+            if (!authService.isAuthenticated()) {
+                setIsCartLoading(false);
+                return;
+            }
+
             try {
                 const response = await cartService.getCart();
                 const items = response.cart_items || response.items || (Array.isArray(response) ? response : []);
