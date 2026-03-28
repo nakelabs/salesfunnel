@@ -1,9 +1,8 @@
 import api from './api';
 
 const orderService = {
-    // Get orders for current user
     getMyOrders: async (params = {}) => {
-        const response = await api.get('/orders', { params });
+        const response = await api.get('/v1/wholesaler/orders', { params });
         return response.data;
     },
 

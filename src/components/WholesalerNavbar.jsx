@@ -40,6 +40,11 @@ const WholesalerNavbar = () => {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
+                        {/* Mobile-only Orders link since the text links are hidden on mobile */}
+                        <Link to="/orders" className="lg:hidden rounded-lg p-2.5 text-slate-600 hover:bg-slate-100 hover:text-primary transition-colors">
+                            <span className="material-symbols-outlined">receipt_long</span>
+                        </Link>
+
                         <Link to="/cart" className="relative rounded-lg p-2.5 text-slate-600 hover:bg-slate-100 hover:text-primary transition-colors">
                             <span className="material-symbols-outlined">shopping_cart</span>
                             {getCartItemsCount() > 0 && (

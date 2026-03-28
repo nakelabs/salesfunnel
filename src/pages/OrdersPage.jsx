@@ -1,31 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import WholesalerNavbar from '../components/WholesalerNavbar';
+import orderService from '../services/order.service';
 
 const OrdersPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalOrders, setTotalOrders] = useState(0);
 
-    const orders = [];
+    const fetchOrders = async () => {
+        setLoading(true);
+        try {
+            const params = {
+                page,
+                page_size: 10,
+            };
+            if (activeFilter !== 'all') {
+                params.status_filter = activeFilter;
+            }
+            
+            const response = await orderService.getMyOrders(params);
+            setOrders(response.orders || []);
+            setTotalPages(response.total_pages || 1);
+            setTotalOrders(response.total || 0);
+            setError(null);
+        } catch (err) {
+            console.error("Failed to fetch orders:", err);
+            setError("Failed to load orders. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrders();
+    }, [page, activeFilter]);
+
+    // Handle search manually or by API if supported. For now, client-side if missing API param.
+    const filteredOrders = orders.filter(order => 
+        order.id?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        order.order_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        order.distributor_name?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const getStatusInfo = (status) => {
+        switch (status) {
+            case 'pending': return { label: 'Pending Payment', cls: 'bg-amber-100 text-amber-700' };
+            case 'paid': return { label: 'Paid', cls: 'bg-blue-100 text-blue-700' };
+            case 'approved': return { label: 'Approved', cls: 'bg-purple-100 text-purple-700' };
+            case 'ready_for_pickup': return { label: 'Ready for Pickup', cls: 'bg-emerald-100 text-emerald-700' };
+            case 'completed': return { label: 'Completed', cls: 'bg-green-100 text-green-700' };
+            case 'cancelled': return { label: 'Cancelled', cls: 'bg-red-100 text-red-700' };
+            default: return { label: status, cls: 'bg-slate-100 text-slate-700' };
+        }
+    };
 
     const getProgressIndicator = (order) => {
-        const steps = [
-            { number: 1, label: 'Pending', color: 'amber' },
-            { number: 2, label: 'Paid', color: 'blue' },
-            { number: 3, label: 'Approved', color: 'purple' },
-            { number: 4, label: 'Ready for Pickup', color: 'emerald' }
-        ];
-
-        const currentStep = steps.find(s => s.number === order.progress);
-
+        const info = getStatusInfo(order.status);
         return (
             <div className="flex items-center gap-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.progress === 1 ? 'bg-amber-100 text-amber-700' :
-                    order.progress === 2 ? 'bg-blue-100 text-blue-700' :
-                        order.progress === 3 ? 'bg-purple-100 text-purple-700' :
-                            'bg-emerald-100 text-emerald-700'
-                    }`}>
-                    {currentStep?.label}
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${info.cls}`}>
+                    {info.label}
                 </span>
             </div>
         );
@@ -102,29 +142,36 @@ const OrdersPage = () => {
 
                     <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0 w-full lg:w-auto">
                         <button
-                            onClick={() => setActiveFilter('all')}
+                            onClick={() => {setActiveFilter('all'); setPage(1);}}
                             className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors ${activeFilter === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                 }`}
                         >
                             All Orders
                         </button>
                         <button
-                            onClick={() => setActiveFilter('pending')}
+                            onClick={() => {setActiveFilter('pending'); setPage(1);}}
                             className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === 'pending' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                 }`}
                         >
                             Pending Payment
                         </button>
                         <button
-                            onClick={() => setActiveFilter('processing')}
-                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === 'processing' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            onClick={() => {setActiveFilter('paid'); setPage(1);}}
+                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === 'paid' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                 }`}
                         >
-                            Processing
+                            Paid
                         </button>
                         <button
-                            onClick={() => setActiveFilter('ready')}
-                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === 'ready' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            onClick={() => {setActiveFilter('approved'); setPage(1);}}
+                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === 'approved' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                }`}
+                        >
+                            Approved
+                        </button>
+                        <button
+                            onClick={() => {setActiveFilter('ready_for_pickup'); setPage(1);}}
+                            className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === 'ready_for_pickup' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                 }`}
                         >
                             Ready for Pickup
@@ -147,28 +194,38 @@ const OrdersPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200">
-                                {orders.map((order) => (
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-8 text-center text-slate-500">Loading orders...</td>
+                                    </tr>
+                                ) : filteredOrders.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-8 text-center text-slate-500">No orders found.</td>
+                                    </tr>
+                                ) : filteredOrders.map((order) => (
                                     <tr key={order.id} className="hover:bg-slate-50 transition-colors group">
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="text-sm font-bold text-slate-900">{order.id}</span>
+                                            <span className="text-sm font-bold text-slate-900">{order.order_number || order.id.substring(0, 8)}</span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{order.date}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                                            {new Date(order.created_at).toLocaleDateString()}
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className={`size-6 rounded-full bg-${order.distributor.color}-100 flex items-center justify-center text-${order.distributor.color}-600 text-xs font-bold mr-2`}>
-                                                    {order.distributor.initial}
+                                                <div className={`size-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-bold mr-2`}>
+                                                    {order.distributor_name ? order.distributor_name.charAt(0).toUpperCase() : 'D'}
                                                 </div>
-                                                <span className="text-sm text-slate-900 font-medium">{order.distributor.name}</span>
+                                                <span className="text-sm text-slate-900 font-medium">{order.distributor_name || 'Unknown'}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">
-                                            ₦{order.amount.toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                                            ₦{parseFloat(order.total_amount || 0).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             {getProgressIndicator(order)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            {order.requiresAction ? (
+                                            {order.status === 'pending' ? (
                                                 <button className="text-primary hover:text-blue-700 font-semibold">
                                                     Pay Now
                                                 </button>
@@ -186,12 +243,20 @@ const OrdersPage = () => {
 
                     {/* Pagination */}
                     <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
-                        <span className="text-sm text-slate-500">Showing 1-4 of 12 orders</span>
+                        <span className="text-sm text-slate-500">
+                            Showing Page {page} of {totalPages} ({totalOrders} total orders)
+                        </span>
                         <div className="flex gap-2">
-                            <button className="px-3 py-1 text-sm border border-slate-300 rounded bg-white text-slate-500 disabled:opacity-50">
+                            <button 
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                disabled={page === 1}
+                                className="px-3 py-1 text-sm border border-slate-300 rounded bg-white text-slate-500 disabled:opacity-50 hover:bg-slate-50 disabled:hover:bg-white transition-colors">
                                 Prev
                             </button>
-                            <button className="px-3 py-1 text-sm border border-slate-300 rounded bg-white text-slate-900 hover:bg-slate-50">
+                            <button 
+                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                disabled={page === totalPages || totalPages === 0}
+                                className="px-3 py-1 text-sm border border-slate-300 rounded bg-white text-slate-900 hover:bg-slate-50 disabled:opacity-50 disabled:text-slate-500 disabled:hover:bg-white transition-colors">
                                 Next
                             </button>
                         </div>
