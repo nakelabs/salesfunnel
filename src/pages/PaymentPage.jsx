@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import WholesalerNavbar from '../components/WholesalerNavbar';
+import paymentService from '../services/payment.service';
+import authService from '../services/auth.service';
 
 const PaymentPage = () => {
     const navigate = useNavigate();
-    const { cartItems, getCartTotal } = useCart();
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('bank_transfer');
+    const location = useLocation();
+    const { cartItems, getCartTotal, isCartLoading } = useCart();
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
     const [billingIsSameAsShipping, setBillingIsSameAsShipping] = useState(true);
     const [timeRemaining, setTimeRemaining] = useState(12 * 60 + 5); // 12:05 in seconds
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [paymentError, setPaymentError] = useState(null);
 
     // Countdown timer
     useEffect(() => {
@@ -40,16 +45,94 @@ const PaymentPage = () => {
 
     const formatPrice = (price) => `₦${price.toLocaleString()}`;
 
-    const paymentMethods = [];
+    const paymentMethods = [
+        {
+            id: 'card',
+            name: 'Card Payment (Paystack)',
+            icon: 'credit_card',
+            description: 'Pay securely with your Visa, Verve, or Mastercard.',
+            badges: ['Visa', 'Mastercard', 'Verve'],
+            recommended: true
+        },
+        {
+            id: 'bank_transfer',
+            name: 'Bank Transfer',
+            icon: 'account_balance',
+            description: 'Transfer directly to a dedicated SalesFunnel account.',
+            disabled: true,
+            error: 'Currently disabled. Please use Card Payment.'
+        },
+        {
+            id: 'wallet',
+            name: 'SalesFunnel Wallet',
+            icon: 'account_balance_wallet',
+            description: 'Use your existing wallet balance.',
+            disabled: true,
+            error: 'Insufficient funds.'
+        }
+    ];
 
-    const handleProcessPayment = () => {
-        // In a real app, this would initiate payment processing
-        alert('Payment processing would happen here. Order will be created.');
-        // navigate('/order-success');
+    const handleProcessPayment = async () => {
+        try {
+            setIsProcessing(true);
+            setPaymentError(null);
+
+            const user = authService.getCurrentUser();
+            
+            // As requested, fetching the raw JWT token instead of the email address
+            const token = localStorage.getItem('token');
+            const emailOrToken = token || (user?.email || 'user@example.com');
+            
+            // Amount in kobo (100 kobo = 1 Naira)
+            const amountInKobo = Math.round(total * 100);
+
+            // Using the distributor ID of the first item for the subaccount code field
+            // if an actual Paystack subaccount code is needed, the backend will need to map this/provide it.
+            const distributorId = cartItems.length > 0 && cartItems[0]._raw ? cartItems[0]._raw.distributor_id : "";
+
+            const payload = {
+                email: emailOrToken,
+                amount: amountInKobo,
+                subaccount: distributorId || "string"
+            };
+
+            const response = await paymentService.initializePayment(payload);
+            
+            if (response && response.authorization_url) {
+                // Redirect to Paystack
+                window.location.href = response.authorization_url;
+            } else if (response && response.data && response.data.authorization_url) {
+                // If it's wrapped in a data object
+                window.location.href = response.data.authorization_url;
+            } else if (typeof response === 'string' && response.startsWith('http')) {
+                // If it's just a raw URL string
+                window.location.href = response;
+            } else {
+                setPaymentError(`Unexpected API Response: ${JSON.stringify(response)}`);
+                setIsProcessing(false);
+            }
+        } catch (error) {
+            console.error('Payment initialization failed:', error);
+            setPaymentError('An error occurred while initializing your payment. Please try again.');
+            setIsProcessing(false);
+        }
     };
 
+    useEffect(() => {
+        if (!isCartLoading && cartItems.length === 0) {
+            navigate('/cart');
+        }
+    }, [cartItems.length, isCartLoading, navigate]);
+
+    if (isCartLoading) {
+        return (
+            <div className="min-h-screen font-display flex items-center justify-center bg-background-light">
+                <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
     if (cartItems.length === 0) {
-        navigate('/cart');
         return null;
     }
 
@@ -312,12 +395,30 @@ const PaymentPage = () => {
                                         </div>
                                     </div>
 
+                                    {paymentError && (
+                                        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-200">
+                                            {paymentError}
+                                        </div>
+                                    )}
+
                                     <button
                                         onClick={handleProcessPayment}
-                                        className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-md transition-all transform active:scale-[0.99] flex items-center justify-center gap-2"
+                                        disabled={isProcessing}
+                                        className={`w-full text-white font-bold py-4 px-6 rounded-lg shadow-md transition-all transform flex items-center justify-center gap-2 ${
+                                            isProcessing || selectedPaymentMethod !== 'card' ? 'bg-slate-400 cursor-not-allowed' : 'bg-primary hover:bg-blue-600 active:scale-[0.99]'
+                                        }`}
                                     >
-                                        <span>Pay {formatPrice(total)}</span>
-                                        <span className="material-symbols-outlined">lock</span>
+                                        {isProcessing ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                <span>Initializing...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Pay {formatPrice(total)}</span>
+                                                <span className="material-symbols-outlined">lock</span>
+                                            </>
+                                        )}
                                     </button>
 
                                     <div className="mt-4 flex flex-col items-center justify-center gap-2 text-slate-400 text-xs text-center">

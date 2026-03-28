@@ -6,7 +6,7 @@ import profileService from '../services/profile.service';
 
 const ShippingPage = () => {
     const navigate = useNavigate();
-    const { cartItems, getCartTotal } = useCart();
+    const { cartItems, getCartTotal, isCartLoading } = useCart();
     const [selectedAddress, setSelectedAddress] = useState('business');
     const [selectedShipping, setSelectedShipping] = useState('delivery');
     const [timeRemaining, setTimeRemaining] = useState(14 * 60 + 32);
@@ -80,11 +80,35 @@ const ShippingPage = () => {
     };
 
     const handleProceed = () => {
-        navigate('/checkout/review');
+        const deliveryDetails = {
+            address: selectedAddress === 'business' ? 'Business Address' : customAddress.street || 'Custom Address',
+            city: selectedAddress === 'business' ? businessAddress : [customAddress.city, customAddress.state].filter(Boolean).join(', '),
+            phone: contactInfo.phone,
+            name: contactInfo.name,
+            instructions: contactInfo.instructions,
+            method: selectedShipping === 'pickup' ? 'Self Pickup' : 'Delivery',
+            methodDuration: selectedShipping === 'pickup' ? 'Pick up from warehouse' : 'Delivered to your address',
+            shippingFee: shippingFee,
+            selectedShipping
+        };
+        navigate('/checkout/review', { state: { deliveryDetails } });
     };
 
+    useEffect(() => {
+        if (!isCartLoading && cartItems.length === 0) {
+            navigate('/cart');
+        }
+    }, [cartItems.length, isCartLoading, navigate]);
+
+    if (isCartLoading) {
+        return (
+            <div className="min-h-screen font-display flex items-center justify-center bg-background-light">
+                <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
     if (cartItems.length === 0) {
-        navigate('/cart');
         return null;
     }
 

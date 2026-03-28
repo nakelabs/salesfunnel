@@ -15,7 +15,7 @@ const orderService = {
 
     // Create new order
     create: async (orderData) => {
-        const response = await api.post('/orders', orderData);
+        const response = await api.post('/v1/wholesaler/orders', orderData);
         return response.data;
     },
 

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import WholesalerNavbar from '../components/WholesalerNavbar';
+import orderService from '../services/order.service';
 
 const ReviewPage = () => {
     const navigate = useNavigate();
-    const { cartItems, getCartTotal } = useCart();
+    const location = useLocation();
+    const { cartItems, getCartTotal, clearCart, isCartLoading } = useCart();
     const [timeRemaining, setTimeRemaining] = useState(14 * 60 + 32); // 14:32 in seconds
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
 
     // Countdown timer
     useEffect(() => {
@@ -29,15 +33,17 @@ const ReviewPage = () => {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    // Mock shipping details - in real app, would come from previous step
-    const deliveryDetails = {
-        address: 'Shop 4, Alaba International Market',
-        city: 'Ojo, Lagos State, Nigeria',
-        phone: '+234 801 234 5678',
-        method: 'Express Delivery',
-        methodDuration: '2-3 Business Days',
-        shippingFee: 5000
-    };
+    // Use shipping details from previous step
+    const deliveryDetails = location.state?.deliveryDetails;
+
+    // If no delivery details are found in state, redirect back to shipping
+    useEffect(() => {
+        if (!deliveryDetails && cartItems.length > 0) {
+            navigate('/checkout/shipping');
+        }
+    }, [deliveryDetails, cartItems, navigate]);
+
+    if (!deliveryDetails) return null;
 
     const subtotal = getCartTotal();
     const shipping = deliveryDetails.shippingFee;
@@ -47,13 +53,56 @@ const ReviewPage = () => {
 
     const formatPrice = (price) => `₦${price.toLocaleString()}`;
 
-    const handleConfirmOrder = () => {
-        // Navigate to payment page (to be created)
-        navigate('/checkout/payment');
+    const handleConfirmOrder = async () => {
+        try {
+            setIsSubmitting(true);
+            setSubmitError(null);
+            
+            const isDelivery = deliveryDetails.selectedShipping === 'delivery';
+            const fullAddress = deliveryDetails.address 
+                ? `${deliveryDetails.address}${deliveryDetails.city ? ', ' + deliveryDetails.city : ''}`
+                : '';
+
+            const payload = {
+                notes: deliveryDetails.instructions || "",
+                delivery_address: fullAddress,
+                is_delivery: isDelivery,
+                contact_name: deliveryDetails.name || "",
+                contact_phone_no: deliveryDetails.phone || ""
+            };
+
+            const response = await orderService.create(payload);
+            
+            // DO NOT clear the local cart context here, because PaymentPage currently relies 
+            // on local cartItems to display the order summary and total price!
+            // clearCart();
+            
+            // Navigate to payment page, pass the created order id 
+            navigate('/checkout/payment', { state: { orderId: response.id || response.order_id } });
+        } catch (error) {
+            console.error('Failed to create order:', error);
+            setSubmitError('An error occurred while creating your order. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
-    if (cartItems.length === 0) {
-        navigate('/cart');
+    useEffect(() => {
+        if (!isCartLoading && cartItems.length === 0 && !isSubmitting) {
+            navigate('/cart');
+        }
+    }, [cartItems.length, isCartLoading, isSubmitting, navigate]);
+
+    if (isCartLoading) {
+        return (
+            <div className="min-h-screen font-display flex items-center justify-center bg-background-light">
+                <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (cartItems.length === 0 && !isSubmitting) {
+        // If we just submitted the cart, cartItems might become 0, so wait for redirect.
         return null;
     }
 
@@ -225,12 +274,30 @@ const ReviewPage = () => {
                                         </div>
                                     </div>
 
+                                    {submitError && (
+                                        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-200">
+                                            {submitError}
+                                        </div>
+                                    )}
+
                                     <button
                                         onClick={handleConfirmOrder}
-                                        className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-md transition-all transform active:scale-[0.99] flex items-center justify-center gap-2"
+                                        disabled={isSubmitting}
+                                        className={`w-full text-white font-bold py-4 px-6 rounded-lg shadow-md transition-all transform flex items-center justify-center gap-2 ${
+                                            isSubmitting ? 'bg-slate-400 cursor-not-allowed' : 'bg-primary hover:bg-blue-600 active:scale-[0.99]'
+                                        }`}
                                     >
-                                        <span>Confirm Order & Pay</span>
-                                        <span className="material-symbols-outlined">arrow_forward</span>
+                                        {isSubmitting ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                <span>Processing...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Confirm Order & Pay</span>
+                                                <span className="material-symbols-outlined">arrow_forward</span>
+                                            </>
+                                        )}
                                     </button>
 
                                     <div className="mt-4 flex items-center justify-center gap-2 text-slate-400 text-xs">

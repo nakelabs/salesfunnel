@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import cartService from '../services/cart.service';
+import productService from '../services/product.service';
 
 const CartContext = createContext();
 
@@ -12,16 +13,62 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-    // Load cart from localStorage on initial render
-    const [cartItems, setCartItems] = useState(() => {
-        const savedCart = localStorage.getItem('salesfunnel_cart');
-        return savedCart ? JSON.parse(savedCart) : [];
-    });
+    // Initialize cart state (loaded from API on mount)
+    const [cartItems, setCartItems] = useState([]);
+    const [isCartLoading, setIsCartLoading] = useState(true);
 
-    // Save cart to localStorage whenever it changes
+    // Fetch actual cart from backend on mount
     useEffect(() => {
-        localStorage.setItem('salesfunnel_cart', JSON.stringify(cartItems));
-    }, [cartItems]);
+        const fetchCart = async () => {
+            try {
+                const response = await cartService.getCart();
+                const items = response.cart_items || response.items || (Array.isArray(response) ? response : []);
+                
+                if (items) {
+                    const mappedItems = await Promise.all(items.map(async item => {
+                        let product = item.product || item.product_details || item;
+                        
+                        // If the backend only returned an ID and quantity, fetch the full product details
+                        const hasNoDetails = !product.name && !item.name && !product.product_name && !item.product_name && !product.title;
+                        const productId = item.product_id || product.id || product.product_id || item.id;
+                        
+                        // Wait, backend explicitly provides product_name.
+                        let finalProduct = { ...product };
+                        if (hasNoDetails && productId) {
+                            try {
+                                const fullProduct = await productService.getById(productId);
+                                if (fullProduct) {
+                                    finalProduct = { ...finalProduct, ...fullProduct };
+                                }
+                            } catch (error) {
+                                console.error(`Failed to fetch details for product ${productId}:`, error);
+                            }
+                        }
+
+                        return {
+                            id: productId,
+                            name: item.product_name || finalProduct.name || finalProduct.product_name || finalProduct.title || item.name || 'Untitled',
+                            sku: item.product_sku || finalProduct.sku || item.sku || '',
+                            image: item.product_image_url || finalProduct.image_url || finalProduct.image || finalProduct.product_image || item.image_url || item.image || '',
+                            unitPrice: Number(item.unit_price) || Number(finalProduct.price) || Number(finalProduct.price_per_case) || Number(item.price) || 0,
+                            quantity: Number(item.quantity) || Number(finalProduct.quantity) || 1,
+                            stockStatus: (finalProduct.is_available === false || item.is_available === false) ? 'Out of Stock' : 'In Stock',
+                            _raw: item
+                        };
+                    }));
+                    setCartItems(mappedItems);
+                }
+            } catch (err) {
+                console.error('Failed to fetch cart from server:', err);
+            } finally {
+                setIsCartLoading(false);
+            }
+        };
+
+        fetchCart();
+    }, []);
+
+
 
     const addToCart = async (product, quantity = 1) => {
         const productId = product.id || product.product_id;
@@ -99,6 +146,7 @@ export const CartProvider = ({ children }) => {
 
     const value = {
         cartItems,
+        isCartLoading,
         addToCart,
         removeFromCart,
         updateQuantity,
