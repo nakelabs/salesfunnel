@@ -12,6 +12,7 @@ const Login = () => {
 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -69,9 +70,11 @@ const Login = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-purple-900/30 to-amber-900/40"></div>
 
                 {/* Logo */}
-                <div className="absolute top-8 left-8 z-10 flex items-center gap-3">
-                    <img src="/images/logo.png" alt="SalesFunnel" className="h-14 w-auto" />
-                </div>
+                <Link to="/" className="absolute top-8 left-8 z-20 flex items-center gap-3 group">
+                    <div className="bg-white border-2 border-black p-2 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-0.5 transition-all">
+                        <img src="/images/logo.png" alt="SalesFunnel" className="h-10 w-auto" />
+                    </div>
+                </Link>
 
                 {/* Quote/Tagline */}
                 <div className="absolute bottom-12 left-8 right-8 z-10">
@@ -87,9 +90,11 @@ const Login = () => {
             {/* Right Side - Login Form */}
             <div className="flex-1 flex items-center justify-center p-8 bg-slate-50 relative overflow-hidden">
                 {/* Mobile Logo */}
-                <div className="lg:hidden absolute top-6 left-6 flex items-center gap-2">
-                    <img src="/images/logo.png" alt="SalesFunnel" className="h-12 w-auto" />
-                </div>
+                <Link to="/" className="lg:hidden absolute top-6 left-6 flex items-center gap-3 group z-20">
+                    <div className="bg-white border-2 border-black p-2 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-0.5 transition-all">
+                        <img src="/images/logo.png" alt="SalesFunnel" className="h-8 w-auto" />
+                    </div>
+                </Link>
 
                 {/* Form Container */}
 
@@ -118,9 +123,9 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, userType: 'wholesaler' })}
-                                    className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${formData.userType === 'wholesaler'
-                                        ? 'bg-primary text-white'
-                                        : 'bg-white border border-slate-300 text-slate-700 hover:border-slate-400'
+                                    className={`px-4 py-3 font-black text-sm border-2 border-black transition-all ${formData.userType === 'wholesaler'
+                                        ? 'bg-[#137fec] text-white rounded-xl shadow-[options_4px_4px_0px_0px_rgba(0,0,0,0.2)] translate-y-[2px]'
+                                        : 'bg-white text-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                                         }`}
                                 >
                                     Wholesaler
@@ -128,9 +133,9 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, userType: 'distributor' })}
-                                    className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${formData.userType === 'distributor'
-                                        ? 'bg-primary text-white'
-                                        : 'bg-white border border-slate-300 text-slate-700 hover:border-slate-400'
+                                    className={`px-4 py-3 font-black text-sm border-2 border-black transition-all ${formData.userType === 'distributor'
+                                        ? 'bg-[#137fec] text-white rounded-xl shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)] translate-y-[2px]'
+                                        : 'bg-white text-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                                         }`}
                                 >
                                     Distributor
@@ -140,7 +145,7 @@ const Login = () => {
 
                         {/* Email */}
                         <div>
-                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                            <label className="block text-sm font-black text-slate-900 mb-2">
                                 Email*
                             </label>
                             <input
@@ -150,24 +155,37 @@ const Login = () => {
                                 onChange={handleChange}
                                 placeholder="Enter your email"
                                 required
-                                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                className="w-full px-4 py-3 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all font-bold"
                             />
                         </div>
 
                         {/* Password */}
                         <div>
-                            <label className="block text-sm font-semibold text-slate-700 mb-2">
+                            <label className="block text-sm font-black text-slate-900 mb-2">
                                 Password*
                             </label>
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="Enter your password"
-                                required
-                                className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    placeholder="Enter your password"
+                                    required
+                                    className="w-full px-4 py-3 pr-12 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all font-bold"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 transition-colors p-1 flex items-center justify-center focus:outline-none"
+                                    tabIndex="-1"
+                                    title={showPassword ? "Hide password" : "Show password"}
+                                >
+                                    <span className="material-symbols-outlined text-xl">
+                                        {showPassword ? "visibility_off" : "visibility"}
+                                    </span>
+                                </button>
+                            </div>
                             <div className="flex justify-end mt-2">
                                 <Link
                                     to="/forgot-password"
@@ -182,7 +200,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-4 bg-slate-900 text-white font-bold text-base rounded-lg hover:bg-slate-800 transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full py-4 bg-[#137fec] text-white font-black text-lg border-4 border-black rounded-2xl hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                         >
                             {isLoading ? 'Logging in...' : 'Login'}
                         </button>

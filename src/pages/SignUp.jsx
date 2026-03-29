@@ -6,6 +6,7 @@ const SignUp = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -13,69 +14,69 @@ const SignUp = () => {
         password: ''
     });
 
-    // Performance metric cards for continuous slideshow
+    // Service highlight cards for continuous slideshow
     const performanceCards = [
         {
             type: 'user',
-            name: 'Oluwaseun Adebayo',
-            role: 'Wholesaler'
+            name: 'Verified Distributors',
+            role: 'Nationwide Network'
         },
         {
             type: 'metric',
-            title: 'WHOLESALERS',
-            value: '+8,500',
-            subtitle: 'active users',
-            description: 'Growing network of verified wholesalers across Nigeria',
+            title: 'LOGISTICS',
+            value: '2-Hour',
+            subtitle: 'Delivery SLA',
+            description: 'Lightning-fast delivery for local orders to keep your shelves stocked.',
+            chart: 'bar'
+        },
+        {
+            type: 'metric',
+            title: 'PAYMENTS',
+            value: 'Instant',
+            subtitle: 'Settlements',
+            description: 'Secure B2B payment processing with automated escrow protection.',
+            chart: 'line'
+        },
+        {
+            type: 'user',
+            name: 'Direct Sourcing',
+            role: 'Zero Middlemen'
+        },
+        {
+            type: 'metric',
+            title: 'TRACKING',
+            value: 'Real-Time',
+            subtitle: 'Order Updates',
+            description: 'Track your inventory from the distributor warehouse to your storefront.',
             chart: 'line'
         },
         {
             type: 'metric',
-            title: 'TRANSACTIONS',
-            value: '₦2.5B+',
-            subtitle: 'monthly volume',
-            description: 'Secure payment processing with instant transfers',
+            title: 'CATALOG',
+            value: 'Digital',
+            subtitle: 'Ordering',
+            description: 'Browse wholesale prices and place bulk orders with a single click.',
             chart: 'bar'
         },
         {
             type: 'user',
-            name: 'Chioma Okafor',
-            role: 'Distributor'
+            name: 'Supply Chain',
+            role: 'Management'
         },
         {
             type: 'metric',
-            title: 'ORDERS',
-            value: '+150k',
-            subtitle: 'fulfilled',
-            description: 'Orders processed across 12 major product categories',
+            title: 'SUPPORT',
+            value: '24/7',
+            subtitle: 'Dedicated Help',
+            description: 'Round-the-clock support for all your business and supply needs.',
             chart: 'line'
         },
         {
             type: 'metric',
-            title: 'DELIVERY TIME',
-            value: '2 Hours',
-            subtitle: 'average',
-            description: 'Fast turnaround to keep your business moving',
-            chart: 'bar'
-        },
-        {
-            type: 'user',
-            name: 'Ahmed Ibrahim',
-            role: 'Supply Manager'
-        },
-        {
-            type: 'metric',
-            title: 'SLA COMPLIANCE',
-            value: '+96%',
-            subtitle: 'on-time rate',
-            description: 'Reliable delivery within our 2-hour promise',
-            chart: 'line'
-        },
-        {
-            type: 'metric',
-            title: 'DISTRIBUTORS',
-            value: '450+',
-            subtitle: 'verified',
-            description: 'Trusted partners ready to serve nationwide',
+            title: 'NETWORK',
+            value: 'Pan-Nigeria',
+            subtitle: 'Coverage',
+            description: 'Connecting businesses across all states with reliable distribution.',
             chart: 'bar'
         }
     ];
@@ -119,9 +120,11 @@ const SignUp = () => {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
                 <div className="w-full max-w-md">
                     {/* Logo */}
-                    <div className="flex items-center gap-3 mb-12">
-                        <img src="/images/logo.png" alt="SalesFunnel" className="h-14 w-auto" />
-                    </div>
+                    <Link to="/" className="inline-flex items-center gap-3 mb-12 group relative z-20">
+                        <div className="bg-white border-2 border-black p-2 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-0.5 transition-all">
+                            <img src="/images/logo.png" alt="SalesFunnel" className="h-10 w-auto" />
+                        </div>
+                    </Link>
 
                     {/* Heading */}
                     <div className="mb-8">
@@ -144,7 +147,7 @@ const SignUp = () => {
                         <form onSubmit={handleContinue} className="space-y-6">
                             {/* Name */}
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                <label className="block text-sm font-black text-slate-900 mb-2">
                                     Name*
                                 </label>
                                 <input
@@ -154,13 +157,13 @@ const SignUp = () => {
                                     onChange={handleChange}
                                     placeholder="Enter your name"
                                     required
-                                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                    className="w-full px-4 py-3 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all font-bold"
                                 />
                             </div>
 
                             {/* Email */}
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                <label className="block text-sm font-black text-slate-900 mb-2">
                                     Email*
                                 </label>
                                 <input
@@ -170,22 +173,22 @@ const SignUp = () => {
                                     onChange={handleChange}
                                     placeholder="Enter your email"
                                     required
-                                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                                    className="w-full px-4 py-3 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all font-bold"
                                 />
                             </div>
 
                             {/* User Type */}
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                <label className="block text-sm font-black text-slate-900 mb-2">
                                     I am a*
                                 </label>
                                 <div className="grid grid-cols-2 gap-3">
                                     <button
                                         type="button"
                                         onClick={() => setFormData({ ...formData, userType: 'wholesaler' })}
-                                        className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${formData.userType === 'wholesaler'
-                                            ? 'bg-primary text-white'
-                                            : 'bg-white border border-slate-300 text-slate-700 hover:border-slate-400'
+                                        className={`px-4 py-3 font-black text-sm border-2 border-black transition-all ${formData.userType === 'wholesaler'
+                                            ? 'bg-[#137fec] text-white rounded-xl shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)] translate-y-[2px]'
+                                            : 'bg-white text-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                                             }`}
                                     >
                                         Wholesaler
@@ -193,9 +196,9 @@ const SignUp = () => {
                                     <button
                                         type="button"
                                         onClick={() => setFormData({ ...formData, userType: 'distributor' })}
-                                        className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all ${formData.userType === 'distributor'
-                                            ? 'bg-primary text-white'
-                                            : 'bg-white border border-slate-300 text-slate-700 hover:border-slate-400'
+                                        className={`px-4 py-3 font-black text-sm border-2 border-black transition-all ${formData.userType === 'distributor'
+                                            ? 'bg-[#137fec] text-white rounded-xl shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)] translate-y-[2px]'
+                                            : 'bg-white text-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
                                             }`}
                                     >
                                         Distributor
@@ -206,7 +209,7 @@ const SignUp = () => {
                             {/* Continue Button */}
                             <button
                                 type="submit"
-                                className="w-full py-4 bg-slate-900 text-white font-bold text-base rounded-lg hover:bg-slate-800 transition-all mt-6"
+                                className="w-full py-4 bg-[#137fec] text-white font-black text-lg border-4 border-black rounded-2xl hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all mt-6"
                             >
                                 Continue
                             </button>
@@ -226,27 +229,40 @@ const SignUp = () => {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Password */}
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                                <label className="block text-sm font-black text-slate-900 mb-2">
                                     Password*
                                 </label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    placeholder="Enter your password"
-                                    required
-                                    minLength={8}
-                                    className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                                />
-                                <p className="text-xs text-slate-500 mt-2">Must be at least 8 characters</p>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder="Enter your password"
+                                        required
+                                        minLength={8}
+                                        className="w-full px-4 py-3 pr-12 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[2px] focus:translate-y-[2px] transition-all font-bold"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 transition-colors p-1 flex items-center justify-center focus:outline-none"
+                                        tabIndex="-1"
+                                        title={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        <span className="material-symbols-outlined text-xl">
+                                            {showPassword ? "visibility_off" : "visibility"}
+                                        </span>
+                                    </button>
+                                </div>
+                                <p className="text-xs font-bold text-slate-500 mt-2">Must be at least 8 characters.</p>
                             </div>
 
                             {/* Create Account Button */}
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full py-4 bg-slate-900 text-white font-bold text-base rounded-lg hover:bg-slate-800 transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="w-full py-4 bg-[#137fec] text-white font-black text-lg border-4 border-black rounded-2xl hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
                             >
                                 {isLoading ? 'Creating Account...' : 'Create Account'}
                             </button>
@@ -255,7 +271,7 @@ const SignUp = () => {
                             <button
                                 type="button"
                                 onClick={() => setStep(1)}
-                                className="w-full py-3 text-slate-600 font-semibold hover:text-slate-900 transition-colors"
+                                className="w-full py-4 mt-3 bg-white text-black border-2 border-black font-black text-base rounded-2xl hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                             >
                                 ← Back
                             </button>
@@ -264,11 +280,10 @@ const SignUp = () => {
                 </div>
             </div>
 
-            {/* Right Side - Gradient with Continuous Scrolling Cards */}
-            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-purple-400 via-pink-400 to-purple-500">
-                {/* Animated gradient blobs */}
-                <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            {/* Right Side - Solid Neo-Brutalist Blue with Continuous Scrolling Cards */}
+            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#137fec]">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-[0.1]" style={{ backgroundImage: 'radial-gradient(#000 2px, transparent 2px)', backgroundSize: '32px 32px' }}></div>
 
                 {/* Continuous Scrolling Container */}
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
@@ -278,17 +293,17 @@ const SignUp = () => {
                             {performanceCards.map((card, index) => (
                                 <div key={`card-1-${index}`} className="mb-6">
                                     {card.type === 'user' ? (
-                                        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-lg">
+                                        <div className="bg-white border-4 border-black rounded-2xl p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3">
+                                            <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-[#137fec] font-black text-lg shadow-[2px_2px_0px_0px_rgba(255,255,255,0.4)]">
                                                 {card.name.charAt(0)}
                                             </div>
                                             <div>
-                                                <p className="font-bold text-slate-900 text-sm">{card.name}</p>
-                                                <p className="text-xs text-slate-600">{card.role}</p>
+                                                <p className="font-black text-slate-900 text-sm">{card.name}</p>
+                                                <p className="text-xs font-bold text-slate-600">{card.role}</p>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl">
+                                        <div className="bg-white border-4 border-black rounded-3xl p-6 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
                                             <p className="text-xs font-bold text-slate-600 tracking-wider mb-2">{card.title}</p>
                                             <h3 className="text-5xl font-black text-slate-900 mb-1" style={{ fontFamily: 'var(--font-heading)' }}>
                                                 {card.value}
@@ -330,17 +345,17 @@ const SignUp = () => {
                             {performanceCards.map((card, index) => (
                                 <div key={`card-2-${index}`} className="mb-6">
                                     {card.type === 'user' ? (
-                                        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-xl flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-lg">
+                                        <div className="bg-white border-4 border-black rounded-2xl p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3">
+                                            <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-[#137fec] font-black text-lg shadow-[2px_2px_0px_0px_rgba(255,255,255,0.4)]">
                                                 {card.name.charAt(0)}
                                             </div>
                                             <div>
-                                                <p className="font-bold text-slate-900 text-sm">{card.name}</p>
-                                                <p className="text-xs text-slate-600">{card.role}</p>
+                                                <p className="font-black text-slate-900 text-sm">{card.name}</p>
+                                                <p className="text-xs font-bold text-slate-600">{card.role}</p>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-2xl">
+                                        <div className="bg-white border-4 border-black rounded-3xl p-6 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
                                             <p className="text-xs font-bold text-slate-600 tracking-wider mb-2">{card.title}</p>
                                             <h3 className="text-5xl font-black text-slate-900 mb-1" style={{ fontFamily: 'var(--font-heading)' }}>
                                                 {card.value}

@@ -18,18 +18,18 @@ export default function Hero() {
                 <div className="text-center max-w-4xl mx-auto mb-16">
                     <h1 className="text-5xl md:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
                         Restock Faster. <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">Sell More.</span>
+                        <span className="bg-[#137fec] px-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg text-white inline-block mt-2">Sell More.</span>
                     </h1>
                     <p className="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
                         SalesFunnel automates restocking and payments for Nigerian businesses, speeding up deliveries while keeping your cash flow secure.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link to="/signup" className="px-10 py-5 rounded-3xl bg-[#d4ff00] text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2 animate-pulse">
+                        <Link to="/signup?role=wholesaler" className="px-10 py-5 rounded-3xl bg-[#137fec] text-white font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
                             I am a Wholesaler
                             <span className="material-symbols-outlined text-sm">arrow_forward</span>
                         </Link>
-                        <Link to="/signup" className="px-10 py-5 rounded-3xl bg-[#d4ff00] text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+                        <Link to="/signup?role=distributor" className="px-10 py-5 rounded-3xl bg-white text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
                             I am a Distributor
                         </Link>
                     </div>
