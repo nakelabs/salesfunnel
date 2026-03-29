@@ -9,6 +9,10 @@ const DistributorDashboard = () => {
     const [activeFilter, setActiveFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [orders, setOrders] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalOrders, setTotalOrders] = useState(0);
+
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,7 +24,7 @@ const DistributorDashboard = () => {
 
     useEffect(() => {
         fetchDashboardData();
-    }, []);
+    }, [page]);
 
     const fetchDashboardData = async () => {
         try {
@@ -28,15 +32,17 @@ const DistributorDashboard = () => {
             setError(null);
 
             const results = await Promise.allSettled([
-                distributorService.getNewOrders(),
+                distributorService.getNewOrders({ page, page_size: 10 }),
                 distributorId ? distributorService.getDistributorProducts(distributorId) : Promise.resolve([]),
             ]);
 
             // Orders
             if (results[0].status === 'fulfilled') {
                 const orderData = results[0].value;
-                const orderList = Array.isArray(orderData) ? orderData : (orderData.orders || orderData.data || []);
+                const orderList = Array.isArray(orderData) ? orderData : (orderData.orders || orderData.data || orderData.items || []);
                 setOrders(orderList);
+                setTotalPages(orderData.total_pages || orderData.pages || 1);
+                setTotalOrders(orderData.total || orderData.total_items || orderList.length);
             } else {
                 console.error('Failed to fetch orders:', results[0].reason);
             }
@@ -74,7 +80,7 @@ const DistributorDashboard = () => {
     };
 
     // Compute stats from real data
-    const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || o.amount || 0), 0);
+    const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total_amount || o.amount || 0), 0);
     const newOrdersCount = orders.filter(o => (o.status || '').toLowerCase() === 'new' || (o.status || '').toLowerCase() === 'pending').length;
     const processingCount = orders.filter(o => (o.status || '').toLowerCase() === 'processing').length;
     const completedCount = orders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.status || '').toLowerCase() === 'delivered').length;
@@ -433,13 +439,19 @@ const DistributorDashboard = () => {
                                 {/* Pagination Footer */}
                                 <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex items-center justify-between">
                                     <p className="text-sm text-slate-500">
-                                        Showing {filteredOrders.length} of {orders.length} orders
+                                        Showing Page {page} of {totalPages} ({totalOrders} total orders)
                                     </p>
                                     <div className="flex gap-2">
-                                        <button className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 font-medium">
+                                        <button 
+                                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                                            disabled={page === 1}
+                                            className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors text-slate-600 font-medium">
                                             Previous
                                         </button>
-                                        <button className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 transition-colors text-slate-600 font-medium">
+                                        <button 
+                                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                            disabled={page === totalPages || totalPages === 0}
+                                            className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors text-slate-600 font-medium">
                                             Next
                                         </button>
                                     </div>

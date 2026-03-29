@@ -17,6 +17,10 @@ const STATUS_CONFIG = {
 const DistributorOrdersPage = () => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalOrders, setTotalOrders] = useState(0);
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,15 +28,17 @@ const DistributorOrdersPage = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [page]);
 
     const fetchOrders = async () => {
         try {
             setLoading(true);
             setError(null);
-            const data = await distributorService.getNewOrders();
-            const orderList = Array.isArray(data) ? data : (data.orders || data.data || []);
+            const data = await distributorService.getNewOrders({ page, page_size: 10 });
+            const orderList = Array.isArray(data) ? data : (data.orders || data.data || data.items || []);
             setOrders(orderList);
+            setTotalPages(data.total_pages || data.pages || 1);
+            setTotalOrders(data.total || data.total_items || orderList.length);
         } catch (err) {
             console.error('Failed to fetch orders:', err);
             setError(err.response?.data?.detail || 'Failed to load orders.');
@@ -208,7 +214,23 @@ const DistributorOrdersPage = () => {
 
                         {/* Footer */}
                         <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex items-center justify-between">
-                            <p className="text-sm text-slate-500">Showing {filteredOrders.length} of {orders.length} orders</p>
+                            <p className="text-sm text-slate-500">
+                                Showing Page {page} of {totalPages} ({totalOrders} total orders)
+                            </p>
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors text-slate-600 font-medium">
+                                    Previous
+                                </button>
+                                <button 
+                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={page === totalPages || totalPages === 0}
+                                    className="px-4 py-2 text-sm border border-slate-200 rounded-lg bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors text-slate-600 font-medium">
+                                    Next
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
