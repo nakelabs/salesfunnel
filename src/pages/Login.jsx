@@ -62,8 +62,8 @@ const Login = () => {
             {/* Left Side - Artistic Background */}
             <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
                 <img
-                    src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=2000"
-                    alt="Abstract Art"
+                    src="/images/image.png"
+                    alt="SalesFunnel Platform"
                     className="absolute inset-0 w-full h-full object-cover"
                 />
                 {/* Gradient Overlay */}
