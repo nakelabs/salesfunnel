@@ -2,10 +2,12 @@ import { Routes, Route } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import Header from './components/Header'
 import Hero from './components/Hero'
+import Marquee from './components/Marquee'
 import Features from './components/Features'
 import PerformanceInsights from './components/PerformanceInsights'
 import HowItWorks from './components/HowItWorks'
 import UserRoles from './components/UserRoles'
+import FAQ from './components/FAQ'
 import Footer from './components/Footer'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
@@ -48,10 +50,12 @@ function HomePage() {
 
       <main className="flex-grow">
         <Hero />
+        <Marquee />
         <Features />
         {/* <PerformanceInsights /> */}
         <HowItWorks />
         <UserRoles />
+        <FAQ />
       </main>
       <Footer />
     </div>
