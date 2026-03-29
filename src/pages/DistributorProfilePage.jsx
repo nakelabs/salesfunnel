@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DistributorNavbar from '../components/DistributorNavbar';
-import { User, Lock, Users, UserPlus, Bell, CreditCard, Download, Trash2, Edit2, Check, X, ChevronDown } from 'lucide-react';
+import { User, Lock, Users, UserPlus, Bell, CreditCard, Download, Trash2, Edit2, Check, X, ChevronDown, LogOut } from 'lucide-react';
 
 import profileService from '../services/profile.service';
+import authService from '../services/auth.service';
 
 const DistributorProfilePage = () => {
     const [activeSection, setActiveSection] = useState('profile');
@@ -206,6 +207,12 @@ const DistributorProfilePage = () => {
                                         </button>
                                     );
                                 })}
+                                <div className="pt-2 mt-2 border-t border-slate-100">
+                                    <button onClick={() => authService.logout()} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                        <LogOut size={18} />
+                                        Log Out
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>

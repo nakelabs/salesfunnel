@@ -65,7 +65,7 @@ const ReviewPage = () => {
 
             const payload = {
                 notes: deliveryDetails.instructions || "",
-                delivery_address: fullAddress,
+                delivery_address: isDelivery ? fullAddress : "",
                 is_delivery: isDelivery,
                 contact_name: deliveryDetails.name || "",
                 contact_phone_no: deliveryDetails.phone || ""

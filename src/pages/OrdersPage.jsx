@@ -84,9 +84,9 @@ const OrdersPage = () => {
                         <h2 className="text-3xl font-black tracking-tight text-slate-900">Order Dashboard</h2>
                         <p className="text-slate-500 text-base">Welcome back, Apex Wholesalers. Here is an overview of your procurement status.</p>
                     </div>
-                    <button className="flex items-center justify-center h-11 px-6 rounded-lg bg-primary hover:bg-blue-600 text-white shadow-sm transition-all font-semibold">
+                    <Link to="/dashboard" className="flex items-center justify-center h-11 px-6 rounded-lg bg-primary hover:bg-blue-600 text-white shadow-sm transition-all font-semibold">
                         Create New Order
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Stats Cards */}
@@ -263,48 +263,7 @@ const OrdersPage = () => {
                     </div>
                 </div>
 
-                {/* Action Required Section */}
-                <section className="bg-white rounded-xl shadow-lg border border-primary/20 overflow-hidden relative">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
-                    <div className="p-6">
-                        <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-6">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <h3 className="text-lg font-bold text-slate-900">Action Required: Order #ORD-7782</h3>
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                        Pending Payment
-                                    </span>
-                                </div>
-                                <p className="text-slate-500 text-sm mb-4">
-                                    Please complete the payment transfer or upload your proof of payment to proceed with shipping.
-                                </p>
-                                <div className="flex flex-wrap gap-4 text-sm">
-                                    <div className="text-slate-700">
-                                        <span className="font-semibold">Due Date:</span> Nov 16, 2023
-                                    </div>
-                                    <div className="text-slate-700">
-                                        <span className="font-semibold">Account:</span> **** 4580
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div className="flex-1 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-end">
-                                <div className="flex-1 max-w-md border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary hover:bg-slate-50 transition-colors">
-                                    <p className="text-sm font-medium text-slate-900 mb-1">Upload Proof of Payment</p>
-                                    <p className="text-xs text-slate-500">PDF, JPG or PNG (Max 5MB)</p>
-                                </div>
-                                <div className="flex flex-col gap-2 min-w-[140px]">
-                                    <button className="w-full flex items-center justify-center h-10 px-4 rounded-lg bg-primary hover:bg-blue-600 text-white text-sm font-bold shadow-sm transition-all">
-                                        Pay Online
-                                    </button>
-                                    <button className="w-full flex items-center justify-center h-10 px-4 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold transition-all">
-                                        View Invoice
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </main>
         </div>
     );
