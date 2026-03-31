@@ -76,13 +76,11 @@ const PaymentsPage = () => {
         return 'info';
     };
 
-    const formatDateTime = (date, time) => {
+    const formatDate = (date) => {
         if (!date) return '—';
         try {
-            const d = new Date(`${date}T${time || '00:00:00'}`);
-            return d.toLocaleString('en-NG', {
-                year: 'numeric', month: 'short', day: 'numeric',
-                hour: '2-digit', minute: '2-digit'
+            return new Date(date + 'T00:00:00').toLocaleDateString('en-NG', {
+                year: 'numeric', month: 'short', day: 'numeric'
             });
         } catch {
             return date;
@@ -247,9 +245,8 @@ const PaymentsPage = () => {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className="text-sm text-slate-600">
-                                                    {formatDateTime(payment.date, payment.time)}
-                                                </span>
+                                                <p className="text-sm text-slate-700 font-medium">{formatDate(payment.date)}</p>
+                                                <p className="text-xs text-slate-400">{payment.time || '—'}</p>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-700 select-all">
