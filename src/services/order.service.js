@@ -22,6 +22,12 @@ const orderService = {
     getStats: async () => {
         const response = await api.get('/orders/stats');
         return response.data;
+    },
+
+    // Get wholesaler dashboard stats
+    getDashboardStats: async () => {
+        const response = await api.get('/v1/wholesaler/dashboard');
+        return response.data;
     }
 };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import DistributorNavbar from '../components/DistributorNavbar';
 import distributorService from '../services/distributor.service';
 import authService from '../services/auth.service';
@@ -17,6 +17,8 @@ const DistributorDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [updatingOrderId, setUpdatingOrderId] = useState(null);
+    const [dashboardStats, setDashboardStats] = useState(null);
+    const [statsLoading, setStatsLoading] = useState(true);
     const navigate = useNavigate();
 
     const user = authService.getCurrentUser();
@@ -25,6 +27,21 @@ const DistributorDashboard = () => {
     useEffect(() => {
         fetchDashboardData();
     }, [page]);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            setStatsLoading(true);
+            try {
+                const data = await distributorService.getDashboardStats();
+                setDashboardStats(data);
+            } catch (err) {
+                console.error('Failed to fetch distributor dashboard stats:', err);
+            } finally {
+                setStatsLoading(false);
+            }
+        };
+        fetchStats();
+    }, []);
 
     const fetchDashboardData = async () => {
         try {
@@ -79,32 +96,38 @@ const DistributorDashboard = () => {
         }
     };
 
-    // Compute stats from real data
-    const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total_amount || o.amount || 0), 0);
-    const newOrdersCount = orders.filter(o => (o.status || '').toLowerCase() === 'new' || (o.status || '').toLowerCase() === 'pending').length;
-    const processingCount = orders.filter(o => (o.status || '').toLowerCase() === 'processing').length;
-    const completedCount = orders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.status || '').toLowerCase() === 'delivered').length;
+    // ── Stats from /v1/distributor/dashboard ──────────────────────
+    const apiRevenue = dashboardStats?.total_revenue ?? 0;
+    const apiTotalProducts = dashboardStats?.total_products ?? products.length;
+    const apiOrdersByStatus = dashboardStats?.orders_by_status ?? {};
+    const apiMonthlyTrend = dashboardStats?.monthly_revenue_trend ?? [];
 
-    // Trend data for mini charts (empty placeholder — server doesn't provide time-series)
-    const revenueData = [];
-    const ordersData = [];
-    const dispatchData = [];
-    const paymentsData = [];
+    // Derive order counts: prefer API orders_by_status, fall back to local computation
+    const newOrdersCount = apiOrdersByStatus.pending ?? apiOrdersByStatus.new ??
+        orders.filter(o => ['new','pending'].includes((o.status||'').toLowerCase())).length;
+    const processingCount = apiOrdersByStatus.processing ??
+        orders.filter(o => (o.status||'').toLowerCase() === 'processing').length;
+    const completedCount = (apiOrdersByStatus.completed ?? 0) + (apiOrdersByStatus.delivered ?? 0) ||
+        orders.filter(o => ['completed','delivered'].includes((o.status||'').toLowerCase())).length;
+    const paidCount = apiOrdersByStatus.paid ?? 0;
 
     const stats = [
-        { label: 'Total Revenue', value: `₦${totalRevenue.toLocaleString()}`, data: revenueData, color: '#3b82f6' },
-        { label: 'New Orders', value: newOrdersCount.toString(), data: ordersData, color: '#10b981' },
-        { label: 'Products', value: products.length.toString(), data: dispatchData, color: '#8b5cf6' },
-        { label: 'Completed', value: completedCount.toString(), data: paymentsData, color: '#f59e0b' },
+        { label: 'Total Revenue', value: statsLoading ? '…' : `₦${Number(apiRevenue).toLocaleString()}`, data: apiMonthlyTrend.map(m => ({ month: m.month, value: m.revenue })), color: '#3b82f6' },
+        { label: 'New Orders', value: statsLoading ? '…' : String(newOrdersCount), data: [], color: '#10b981' },
+        { label: 'Products', value: statsLoading ? '…' : String(apiTotalProducts), data: [], color: '#8b5cf6' },
+        { label: 'Completed', value: statsLoading ? '…' : String(completedCount), data: [], color: '#f59e0b' },
     ];
 
-    // Large chart data (computed from orders if any)
-    const monthlyRevenueData = [];
-    const orderDistributionData = orders.length > 0 ? [
-        { name: 'New', value: newOrdersCount, color: '#3b82f6' },
-        { name: 'Processing', value: processingCount, color: '#f59e0b' },
+    // Revenue Trend chart — uses monthly_revenue_trend from API
+    const monthlyRevenueData = apiMonthlyTrend;
+
+    // Order Distribution pie — built from orders_by_status
+    const orderDistributionData = [
+        { name: 'Paid', value: paidCount, color: '#3b82f6' },
+        { name: 'Pending', value: newOrdersCount, color: '#f59e0b' },
         { name: 'Completed', value: completedCount, color: '#10b981' },
-    ].filter(d => d.value > 0) : [];
+        { name: 'Processing', value: processingCount, color: '#8b5cf6' },
+    ].filter(d => d.value > 0);
 
     const filters = [
         { id: 'all', label: 'All Orders', badge: orders.length || null },
@@ -204,21 +227,31 @@ const DistributorDashboard = () => {
 
                                     {/* Mini Chart */}
                                     {stat.data.length > 0 && (
-                                        <div className="h-16 -mb-2 -mx-2">
+                                        <div className="h-20 -mb-2 -mx-2 mt-3">
                                             <ResponsiveContainer width="100%" height="100%">
-                                                <AreaChart data={stat.data}>
+                                                <AreaChart data={stat.data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                                                     <defs>
                                                         <linearGradient id={`gradient-${index}`} x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor={stat.color} stopOpacity={0.3} />
+                                                            <stop offset="5%" stopColor={stat.color} stopOpacity={0.25} />
                                                             <stop offset="95%" stopColor={stat.color} stopOpacity={0} />
                                                         </linearGradient>
                                                     </defs>
+                                                    <XAxis dataKey="month" hide />
+                                                    <YAxis hide />
+                                                    <Tooltip
+                                                        formatter={(value) => [`₦${Number(value).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`, 'Revenue']}
+                                                        labelStyle={{ fontSize: 11, fontWeight: 600, color: '#1e293b' }}
+                                                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: 11, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.08)' }}
+                                                        cursor={{ stroke: stat.color, strokeWidth: 1, strokeDasharray: '3 2' }}
+                                                    />
                                                     <Area
                                                         type="monotone"
                                                         dataKey="value"
                                                         stroke={stat.color}
                                                         strokeWidth={2}
                                                         fill={`url(#gradient-${index})`}
+                                                        dot={{ r: 2.5, fill: stat.color, strokeWidth: 0 }}
+                                                        activeDot={{ r: 4, fill: stat.color, strokeWidth: 2, stroke: '#fff' }}
                                                     />
                                                 </AreaChart>
                                             </ResponsiveContainer>
@@ -239,19 +272,41 @@ const DistributorDashboard = () => {
                                 <div className="h-64">
                                     {monthlyRevenueData.length > 0 ? (
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={monthlyRevenueData}>
+                                            <AreaChart data={monthlyRevenueData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
                                                 <defs>
                                                     <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.25} />
                                                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                                     </linearGradient>
                                                 </defs>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                                                <XAxis
+                                                    dataKey="month"
+                                                    tick={{ fontSize: 11, fill: '#94a3b8', fontFamily: 'inherit' }}
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                />
+                                                <YAxis
+                                                    tickFormatter={(v) => `₦${Number(v).toLocaleString('en-NG', { notation: 'compact', maximumFractionDigits: 1 })}`}
+                                                    tick={{ fontSize: 11, fill: '#94a3b8', fontFamily: 'inherit' }}
+                                                    axisLine={false}
+                                                    tickLine={false}
+                                                    width={72}
+                                                />
+                                                <Tooltip
+                                                    formatter={(value) => [`₦${Number(value).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`, 'Revenue']}
+                                                    labelStyle={{ fontSize: 12, fontWeight: 600, color: '#1e293b' }}
+                                                    contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                    cursor={{ stroke: '#3b82f6', strokeWidth: 1, strokeDasharray: '4 2' }}
+                                                />
                                                 <Area
                                                     type="monotone"
                                                     dataKey="revenue"
                                                     stroke="#3b82f6"
-                                                    strokeWidth={3}
+                                                    strokeWidth={2.5}
                                                     fill="url(#revenueGradient)"
+                                                    dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }}
+                                                    activeDot={{ r: 5, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
                                                 />
                                             </AreaChart>
                                         </ResponsiveContainer>

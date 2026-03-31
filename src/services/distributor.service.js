@@ -43,6 +43,20 @@ const distributorService = {
         return response.data;
     },
 
+    // ─── Dashboard ───────────────────────────────────────────────
+
+    // GET /v1/distributor/dashboard — Get Distributor Dashboard Stats
+    getDashboardStats: async () => {
+        const response = await api.get('/v1/distributor/dashboard');
+        return response.data;
+    },
+
+    // GET /v1/distributor/payments — Get Distributor Payments (paginated)
+    getPayments: async (params = {}) => {
+        const response = await api.get('/v1/distributor/payments', { params });
+        return response.data;
+    },
+
     // ─── Order Endpoints ─────────────────────────────────────────
 
     // GET /v1/distributor/orders/new — Get New Distributor Orders

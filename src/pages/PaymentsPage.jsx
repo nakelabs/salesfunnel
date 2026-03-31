@@ -1,179 +1,181 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import React, { useState, useEffect } from 'react';
 import DistributorNavbar from '../components/DistributorNavbar';
+import distributorService from '../services/distributor.service';
 
 const PaymentsPage = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [payments, setPayments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
+    const PAGE_SIZE = 10;
 
-    const payments = [];
-
-    // Chart Data
-    const revenueData = [];
-    const pendingData = [];
-    const verifiedData = [];
-
-    const stats = {
-        totalRevenue: 0,
-        revenueChange: '+0%',
-        pendingVerifications: 0,
-        verifiedToday: 0,
-        verifiedChange: '+0%'
+    const fetchPayments = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await distributorService.getPayments({ page, page_size: PAGE_SIZE });
+            setPayments(data.payments || []);
+            setTotal(data.total || 0);
+            setTotalPages(data.total_pages || 1);
+        } catch (err) {
+            console.error('Failed to fetch payments:', err);
+            setError('Failed to load payments. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
+    useEffect(() => {
+        fetchPayments();
+    }, [page]);
+
+    // Derive quick stats from the current page of payments
+    const totalRevenue = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+    const pendingCount = payments.filter(p => (p.status || '').toLowerCase() === 'pending').length;
+    const completedCount = payments.filter(p => (p.status || '').toLowerCase() === 'completed').length;
+
     const tabs = [
-        { id: 'all', name: 'All', count: 142 },
-        { id: 'unverified', name: 'Unverified', count: 18 },
-        { id: 'verified', name: 'Verified', count: null },
-        { id: 'flagged', name: 'Flagged', count: null }
+        { id: 'all', name: 'All' },
+        { id: 'pending', name: 'Pending' },
+        { id: 'completed', name: 'Completed' },
+        { id: 'failed', name: 'Failed' },
     ];
 
     const filteredPayments = payments.filter(payment => {
         const matchesSearch = searchQuery === '' ||
-            payment.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            payment.wholesaler.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            payment.reference.toLowerCase().includes(searchQuery.toLowerCase());
+            (payment.order_number || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (payment.wholesaler_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (payment.reference_number || '').toLowerCase().includes(searchQuery.toLowerCase());
 
-        const matchesTab = activeTab === 'all' || payment.status === activeTab;
+        const matchesTab = activeTab === 'all' ||
+            (payment.status || '').toLowerCase() === activeTab;
 
         return matchesSearch && matchesTab;
     });
 
-    const formatPrice = (amount) => `₦${amount.toLocaleString()}`;
+    const formatPrice = (amount) =>
+        `₦${Number(amount || 0).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`;
 
     const getStatusBadgeClasses = (status) => {
-        const classes = {
-            unverified: 'bg-amber-100 text-amber-800',
-            verified: 'bg-emerald-100 text-emerald-800',
-            flagged: 'bg-red-100 text-red-800'
-        };
-        return classes[status] || '';
+        const s = (status || '').toLowerCase();
+        if (s === 'completed') return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+        if (s === 'pending') return 'bg-amber-100 text-amber-700 border-amber-200';
+        if (s === 'failed') return 'bg-red-100 text-red-700 border-red-200';
+        return 'bg-slate-100 text-slate-600 border-slate-200';
     };
 
-    const getStatusText = (status) => {
-        return status.charAt(0).toUpperCase() + status.slice(1);
+    const getStatusIcon = (status) => {
+        const s = (status || '').toLowerCase();
+        if (s === 'completed') return 'check_circle';
+        if (s === 'pending') return 'hourglass_top';
+        if (s === 'failed') return 'cancel';
+        return 'info';
+    };
+
+    const formatDateTime = (date, time) => {
+        if (!date) return '—';
+        try {
+            const d = new Date(`${date}T${time || '00:00:00'}`);
+            return d.toLocaleString('en-NG', {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        } catch {
+            return date;
+        }
     };
 
     return (
         <div className="bg-slate-50 min-h-screen" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
-            {/* Navbar */}
             <DistributorNavbar />
 
-            {/* Main Content */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
                 {/* Page Header */}
                 <div className="mb-6">
                     <h2 className="text-2xl font-bold text-slate-900">Payments</h2>
-                    <p className="text-sm text-slate-500 mt-1">Monitor and verify all wholesaler bank transfers</p>
+                    <p className="text-sm text-slate-500 mt-1">All payments received from wholesalers</p>
                 </div>
 
-                {/* Stats Section */}
+                {/* Error Banner */}
+                {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+                        <span className="material-symbols-outlined text-red-500">error</span>
+                        <p className="text-sm text-red-700 flex-1">{error}</p>
+                        <button onClick={fetchPayments} className="text-sm font-semibold text-red-600 hover:text-red-800">
+                            Retry
+                        </button>
+                    </div>
+                )}
+
+                {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     {/* Total Revenue */}
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between h-44">
-                        <div className="px-6 pt-6">
-                            <div className="flex justify-between items-start mb-2">
-                                <p className="text-slate-500 text-sm font-medium">Total Revenue</p>
-                                <span className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-sm">trending_up</span>
-                                    {stats.revenueChange}
-                                </span>
-                            </div>
-                            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{formatPrice(stats.totalRevenue)}</h3>
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="material-symbols-outlined text-blue-500 text-xl">payments</span>
+                            <p className="text-slate-500 text-sm font-medium">Total Revenue</p>
                         </div>
-                        <div className="h-16 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={revenueData}>
-                                    <defs>
-                                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <Area type="monotone" dataKey="value" stroke="#3b82f6" fill="url(#colorRevenue)" strokeWidth={2} />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
+                        {loading ? (
+                            <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+                        ) : (
+                            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{formatPrice(totalRevenue)}</h3>
+                        )}
+                        <p className="text-xs text-slate-400 mt-1">From this page of payments</p>
                     </div>
 
-                    {/* Pending Verifications */}
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between h-44">
-                        <div className="px-6 pt-6">
-                            <p className="text-slate-500 text-sm font-medium">Pending Verifications</p>
-                            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{stats.pendingVerifications}</h3>
+                    {/* Pending */}
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="material-symbols-outlined text-amber-500 text-xl">hourglass_top</span>
+                            <p className="text-slate-500 text-sm font-medium">Pending Payments</p>
                         </div>
-                        <div className="h-16 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={pendingData}>
-                                    <defs>
-                                        <linearGradient id="colorPending" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <Area type="monotone" dataKey="value" stroke="#f59e0b" fill="url(#colorPending)" strokeWidth={2} />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
+                        {loading ? (
+                            <div className="w-8 h-8 border-2 border-amber-200 border-t-amber-500 rounded-full animate-spin" />
+                        ) : (
+                            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{pendingCount}</h3>
+                        )}
+                        <p className="text-xs text-slate-400 mt-1">Awaiting settlement</p>
                     </div>
 
-                    {/* Verified Today */}
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between h-44">
-                        <div className="px-6 pt-6">
-                            <div className="flex justify-between items-start mb-2">
-                                <p className="text-slate-500 text-sm font-medium">Verified Today</p>
-                                <span className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-sm">trending_up</span>
-                                    {stats.verifiedChange}
-                                </span>
-                            </div>
-                            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{stats.verifiedToday}</h3>
+                    {/* Completed */}
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="material-symbols-outlined text-emerald-500 text-xl">check_circle</span>
+                            <p className="text-slate-500 text-sm font-medium">Completed Payments</p>
                         </div>
-                        <div className="h-16 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={verifiedData}>
-                                    <defs>
-                                        <linearGradient id="colorVerified" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <Area type="monotone" dataKey="value" stroke="#10b981" fill="url(#colorVerified)" strokeWidth={2} />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
+                        {loading ? (
+                            <div className="w-8 h-8 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
+                        ) : (
+                            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{completedCount}</h3>
+                        )}
+                        <p className="text-xs text-slate-400 mt-1">Successfully settled</p>
                     </div>
                 </div>
 
                 {/* Filters & Table */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-6">
+                    {/* Tab Bar + Search */}
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between p-4 gap-4 border-b border-slate-200">
-                        {/* Tabs */}
-                        <div className="flex gap-6">
+                        <div className="flex gap-6 overflow-x-auto">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 pb-2 px-1 transition-colors text-sm font-semibold ${activeTab === tab.id
+                                    onClick={() => { setActiveTab(tab.id); setPage(1); }}
+                                    className={`whitespace-nowrap flex items-center gap-2 pb-2 px-1 transition-colors text-sm font-semibold ${activeTab === tab.id
                                         ? 'text-primary border-b-2 border-primary'
                                         : 'text-slate-500 hover:text-slate-700'
                                         }`}
                                 >
-                                    <span>{tab.name}</span>
-                                    {tab.count && (
-                                        <span className={`px-2 py-0.5 rounded text-xs ${activeTab === tab.id
-                                            ? 'bg-primary/10 text-primary'
-                                            : 'bg-slate-100'
-                                            }`}>
-                                            {tab.count}
-                                        </span>
-                                    )}
+                                    {tab.name}
                                 </button>
                             ))}
                         </div>
 
-                        {/* Search Bar */}
                         <div className="w-full lg:max-w-md">
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
@@ -184,105 +186,109 @@ const PaymentsPage = () => {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="block w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    placeholder="Search by reference or wholesaler..."
+                                    placeholder="Search by order, reference or wholesaler..."
                                 />
                             </div>
                         </div>
                     </div>
 
-                    {/* Payment Table */}
+                    {/* Table */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50 border-b border-slate-200">
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Transaction ID
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Wholesaler
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                                        Amount
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Date
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Reference
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
-                                        Action
-                                    </th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Order #</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Wholesaler</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Amount</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date & Time</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Reference</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-200">
-                                {filteredPayments.map((payment, index) => (
-                                    <tr key={index} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <p className="text-sm font-medium text-slate-900">{payment.id}</p>
-                                            <p className="text-xs text-slate-500">Order: {payment.order}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-sm font-semibold text-slate-900">{payment.wholesaler}</p>
-                                            <p className="text-xs text-slate-500">{payment.location}</p>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <p className="text-sm font-bold text-slate-900">
-                                                {formatPrice(payment.amount)}
-                                            </p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-sm text-slate-600">{payment.date}</p>
-                                            <p className="text-xs text-slate-500">{payment.time}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-700">
-                                                {payment.reference}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClasses(payment.status)}`}>
-                                                {getStatusText(payment.status)}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            {payment.status === 'unverified' && (
-                                                <button className="bg-primary text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
-                                                    Verify
-                                                </button>
-                                            )}
-                                            {payment.status === 'verified' && (
-                                                <button className="text-slate-400 hover:text-slate-600">
-                                                    <span className="material-symbols-outlined">visibility</span>
-                                                </button>
-                                            )}
-                                            {payment.status === 'flagged' && (
-                                                <button className="bg-slate-100 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors">
-                                                    Review
-                                                </button>
-                                            )}
+                            <tbody className="divide-y divide-slate-100">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-12 text-center">
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                                                <p className="text-sm text-slate-400">Loading payments...</p>
+                                            </div>
                                         </td>
                                     </tr>
-                                ))}
+                                ) : filteredPayments.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-16 text-center">
+                                            <span className="material-symbols-outlined text-5xl text-slate-300 block mb-3">receipt_long</span>
+                                            <p className="text-slate-500 font-medium">No payments found</p>
+                                            <p className="text-sm text-slate-400 mt-1">Try adjusting your search or filter</p>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredPayments.map((payment, index) => (
+                                        <tr key={payment.reference_number || index} className="hover:bg-slate-50/60 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <span className="text-sm font-mono font-semibold text-slate-900">
+                                                    {payment.order_number || '—'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold flex-shrink-0">
+                                                        {(payment.wholesaler_name || 'W')[0].toUpperCase()}
+                                                    </div>
+                                                    <span className="text-sm font-medium text-slate-900">
+                                                        {payment.wholesaler_name || '—'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <span className="text-sm font-bold text-slate-900">
+                                                    {formatPrice(payment.amount)}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-sm text-slate-600">
+                                                    {formatDateTime(payment.date, payment.time)}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-700 select-all">
+                                                    {payment.reference_number || '—'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold ${getStatusBadgeClasses(payment.status)}`}>
+                                                    <span className="material-symbols-outlined text-[13px]">
+                                                        {getStatusIcon(payment.status)}
+                                                    </span>
+                                                    {(payment.status || '—').charAt(0).toUpperCase() + (payment.status || '').slice(1)}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
 
                     {/* Pagination */}
                     <div className="px-6 py-4 flex items-center justify-between border-t border-slate-200 bg-slate-50">
-                        <p className="text-sm text-slate-500">Showing 1 to 4 of 142 entries</p>
+                        <p className="text-sm text-slate-500">
+                            Page {page} of {totalPages} &nbsp;·&nbsp; {total} total payments
+                        </p>
                         <div className="flex gap-2">
-                            <button className="px-3 py-1 border border-slate-200 rounded text-sm disabled:opacity-50 bg-white hover:bg-slate-50" disabled>
+                            <button
+                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                disabled={page === 1}
+                                className="px-4 py-1.5 border border-slate-200 rounded-lg text-sm bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors text-slate-600 font-medium"
+                            >
                                 Previous
                             </button>
-                            <button className="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
-                            <button className="px-3 py-1 border border-slate-200 rounded text-sm hover:bg-slate-50 bg-white">
-                                2
-                            </button>
-                            <button className="px-3 py-1 border border-slate-200 rounded text-sm hover:bg-slate-50 bg-white">
+                            <button
+                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                disabled={page === totalPages || totalPages === 0}
+                                className="px-4 py-1.5 border border-slate-200 rounded-lg text-sm bg-white hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors text-slate-600 font-medium"
+                            >
                                 Next
                             </button>
                         </div>

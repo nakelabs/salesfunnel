@@ -12,6 +12,8 @@ const OrdersPage = () => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalOrders, setTotalOrders] = useState(0);
+    const [dashboardStats, setDashboardStats] = useState(null);
+    const [statsLoading, setStatsLoading] = useState(true);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -37,9 +39,25 @@ const OrdersPage = () => {
         }
     };
 
+    const fetchDashboardStats = async () => {
+        setStatsLoading(true);
+        try {
+            const data = await orderService.getDashboardStats();
+            setDashboardStats(data);
+        } catch (err) {
+            console.error('Failed to fetch dashboard stats:', err);
+        } finally {
+            setStatsLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchOrders();
     }, [page, activeFilter]);
+
+    useEffect(() => {
+        fetchDashboardStats();
+    }, []);
 
     // Handle search manually or by API if supported. For now, client-side if missing API param.
     const filteredOrders = orders.filter(order => 
@@ -91,39 +109,57 @@ const OrdersPage = () => {
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Orders in Progress */}
                     <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between h-full group hover:border-primary/50 transition-colors">
-                        <div className="mb-4">
+                        <div className="mb-4 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-primary text-xl">inventory</span>
                             <p className="text-slate-600 font-medium text-sm">Orders in Progress</p>
                         </div>
                         <div className="flex items-end gap-3">
-                            <p className="text-3xl font-bold text-slate-900">0</p>
-                            <span className="text-emerald-600 text-sm font-semibold mb-1">
-                                +0
-                            </span>
+                            {statsLoading ? (
+                                <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                            ) : (
+                                <p className="text-3xl font-bold text-slate-900">
+                                    {dashboardStats?.orders_in_progress ?? 0}
+                                </p>
+                            )}
+                            <span className="text-blue-500 text-sm font-semibold mb-1">PAID status</span>
                         </div>
                     </div>
 
+                    {/* Action Required */}
                     <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between h-full group hover:border-amber-400 transition-colors">
-                        <div className="mb-4">
+                        <div className="mb-4 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-amber-500 text-xl">warning</span>
                             <p className="text-slate-600 font-medium text-sm">Action Required (Unpaid)</p>
                         </div>
                         <div className="flex items-end gap-3">
-                            <p className="text-3xl font-bold text-slate-900">0</p>
-                            <span className="text-amber-600 text-sm font-semibold mb-1">
-                                -
-                            </span>
+                            {statsLoading ? (
+                                <div className="w-8 h-8 border-2 border-amber-300 border-t-amber-500 rounded-full animate-spin" />
+                            ) : (
+                                <p className="text-3xl font-bold text-slate-900">
+                                    {dashboardStats?.action_required_unpaid ?? 0}
+                                </p>
+                            )}
+                            <span className="text-amber-600 text-sm font-semibold mb-1">PENDING status</span>
                         </div>
                     </div>
 
+                    {/* Revenue this Month */}
                     <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between h-full group hover:border-emerald-400 transition-colors">
-                        <div className="mb-4">
-                            <p className="text-slate-600 font-medium text-sm">Completed this Month</p>
+                        <div className="mb-4 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-emerald-500 text-xl">payments</span>
+                            <p className="text-slate-600 font-medium text-sm">Revenue this Month</p>
                         </div>
                         <div className="flex items-end gap-3">
-                            <p className="text-3xl font-bold text-slate-900">₦0</p>
-                            <span className="text-emerald-600 text-sm font-semibold mb-1">
-                                +0%
-                            </span>
+                            {statsLoading ? (
+                                <div className="w-8 h-8 border-2 border-emerald-300 border-t-emerald-500 rounded-full animate-spin" />
+                            ) : (
+                                <p className="text-3xl font-bold text-slate-900">
+                                    ₦{parseFloat(dashboardStats?.completed_this_month_revenue ?? 0).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+                                </p>
+                            )}
+                            <span className="text-emerald-600 text-sm font-semibold mb-1">Completed</span>
                         </div>
                     </div>
                 </div>
