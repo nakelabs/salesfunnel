@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import WholesalerNavbar from '../components/WholesalerNavbar';
 import orderService from '../services/order.service';
 import profileService from '../services/profile.service';
 
 const OrdersPage = () => {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
     const [orders, setOrders] = useState([]);
@@ -102,7 +103,7 @@ const OrdersPage = () => {
     };
 
     return (
-        <div className="bg-background-light min-h-screen text-slate-900 font-display transition-colors duration-200" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+        <div className="bg-white min-h-screen text-slate-900 font-display transition-colors duration-200" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
             {/* Shared Navbar */}
             <WholesalerNavbar />
 
@@ -232,7 +233,7 @@ const OrdersPage = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-slate-50 border-b border-slate-200">
+                                <tr className="bg-white border-b border-slate-200">
                                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Order ID</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
                                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Distributor</th>
@@ -251,7 +252,11 @@ const OrdersPage = () => {
                                         <td colSpan="6" className="px-6 py-8 text-center text-slate-500">No orders found.</td>
                                     </tr>
                                 ) : filteredOrders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-slate-50 transition-colors group">
+                                    <tr 
+                                        key={order.id} 
+                                        onClick={() => navigate(`/orders/${order.id}`)}
+                                        className="hover:bg-slate-50 transition-colors group cursor-pointer"
+                                    >
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="text-sm font-bold text-slate-900">{order.order_number || order.id.substring(0, 8)}</span>
                                         </td>
@@ -260,7 +265,7 @@ const OrdersPage = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className={`size-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-bold mr-2`}>
+                                                <div className={`size-6 rounded flex items-center justify-center border border-slate-200 text-slate-600 text-xs font-bold mr-2`}>
                                                     {order.distributor_name ? order.distributor_name.charAt(0).toUpperCase() : 'D'}
                                                 </div>
                                                 <span className="text-sm text-slate-900 font-medium">{order.distributor_name || 'Unknown'}</span>
@@ -290,7 +295,7 @@ const OrdersPage = () => {
                     </div>
 
                     {/* Pagination */}
-                    <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+                    <div className="px-6 py-4 border-t border-slate-200 bg-white flex items-center justify-between">
                         <span className="text-sm text-slate-500">
                             Showing Page {page} of {totalPages} ({totalOrders} total orders)
                         </span>

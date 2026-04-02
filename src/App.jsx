@@ -16,6 +16,7 @@ import PendingApproval from './pages/PendingApproval'
 import WholesalerDashboard from './pages/WholesalerDashboard'
 import DistributorDashboard from './pages/DistributorDashboard'
 import OrdersPage from './pages/OrdersPage'
+import WholesalerOrderDetailPage from './pages/WholesalerOrderDetailPage'
 import ProductDetail from './pages/ProductDetail'
 import CartPage from './pages/CartPage'
 import ShippingPage from './pages/ShippingPage'
@@ -74,6 +75,7 @@ function App() {
         <Route path="/dashboard" element={<WholesalerDashboard />} />
         <Route path="/distributor-dashboard" element={<DistributorDashboard />} />
         <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/orders/:id" element={<WholesalerOrderDetailPage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout/shipping" element={<ShippingPage />} />

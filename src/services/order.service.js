@@ -8,7 +8,7 @@ const orderService = {
 
     // Get order details
     getById: async (id) => {
-        const response = await api.get(`/orders/${id}`);
+        const response = await api.get(`/v1/wholesaler/orders/${id}`);
         return response.data;
     },
 
