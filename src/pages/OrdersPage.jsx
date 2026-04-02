@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import WholesalerNavbar from '../components/WholesalerNavbar';
 import orderService from '../services/order.service';
+import profileService from '../services/profile.service';
 
 const OrdersPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -14,6 +15,7 @@ const OrdersPage = () => {
     const [totalOrders, setTotalOrders] = useState(0);
     const [dashboardStats, setDashboardStats] = useState(null);
     const [statsLoading, setStatsLoading] = useState(true);
+    const [profileData, setProfileData] = useState(null);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -51,12 +53,22 @@ const OrdersPage = () => {
         }
     };
 
+    const fetchProfile = async () => {
+        try {
+            const data = await profileService.getProfile();
+            setProfileData(data);
+        } catch (err) {
+            console.error('Failed to fetch profile:', err);
+        }
+    };
+
     useEffect(() => {
         fetchOrders();
     }, [page, activeFilter]);
 
     useEffect(() => {
         fetchDashboardStats();
+        fetchProfile();
     }, []);
 
     // Handle search manually or by API if supported. For now, client-side if missing API param.
@@ -100,7 +112,7 @@ const OrdersPage = () => {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                     <div className="flex flex-col gap-2">
                         <h2 className="text-3xl font-black tracking-tight text-slate-900">Order Dashboard</h2>
-                        <p className="text-slate-500 text-base">Welcome back, Apex Wholesalers. Here is an overview of your procurement status.</p>
+                        <p className="text-slate-500 text-base">Welcome back, {profileData?.wholesaler_profile?.business_name || profileData?.distributor_profile?.business_name || profileData?.full_name || 'Wholesaler'}. Here is an overview of your procurement status.</p>
                     </div>
                     <Link to="/dashboard" className="flex items-center justify-center h-11 px-6 rounded-lg bg-primary hover:bg-blue-600 text-white shadow-sm transition-all font-semibold">
                         Create New Order
@@ -149,7 +161,7 @@ const OrdersPage = () => {
                     <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between h-full group hover:border-emerald-400 transition-colors">
                         <div className="mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined text-emerald-500 text-xl">payments</span>
-                            <p className="text-slate-600 font-medium text-sm">Revenue this Month</p>
+                            <p className="text-slate-600 font-medium text-sm">Month Expenditure</p>
                         </div>
                         <div className="flex items-end gap-3">
                             {statsLoading ? (

@@ -33,18 +33,20 @@ const ProductDetail = () => {
     }, [id]);
 
     const handleQuantityChange = (change) => {
-        setQuantity(Math.max(1, quantity + change));
+        let currentQty = parseInt(quantity, 10) || 0;
+        setQuantity(Math.max(1, currentQty + change));
     };
 
     const handleAddToCart = () => {
-        if (product && quantity > 0) {
+        const qtyToAdd = parseInt(quantity, 10) || 0;
+        if (product && qtyToAdd > 0) {
             const productId = product.id || product.product_id;
             addToCart({
                 ...product,
                 id: productId,
                 price: product.price_per_case || product.price || 0,
                 image: product.image_url || '',
-            }, quantity);
+            }, qtyToAdd);
         }
     };
 
@@ -290,8 +292,14 @@ const ProductDetail = () => {
                                             <input
                                                 className="h-11 w-full border-0 bg-transparent p-0 text-center text-base font-semibold text-slate-900 focus:ring-0"
                                                 type="number"
-                                                value={quantity}
-                                                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                                value={quantity === 0 ? '' : quantity}
+                                                onFocus={() => {
+                                                    if (quantity === 1) setQuantity(0);
+                                                }}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    setQuantity(val === '' ? 0 : Math.max(0, parseInt(val, 10) || 0));
+                                                }}
                                             />
                                             <button
                                                 onClick={() => handleQuantityChange(1)}
