@@ -1,41 +1,60 @@
 import { Link } from 'react-router-dom';
 
+
+
+
+
 export default function Hero() {
     return (
-        <section className="relative pt-32 lg:pt-48 pb-20 overflow-hidden bg-white">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+        <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
 
-            <div className="absolute inset-0 pointer-events-none z-0 hidden lg:block">
-                <svg className="w-full h-full opacity-30" height="100%" preserveAspectRatio="none" width="100%" xmlns="http://www.w3.org/2000/svg">
-                    <path className="connection-line stroke-primary/30" d="M 200,300 C 200,400 400,400 600,600" fill="none" strokeWidth="2"></path>
-                    <path className="connection-line stroke-primary/30" d="M 1200,300 C 1200,400 1000,400 800,600" fill="none" strokeWidth="2"></path>
-                    <circle cx="200" cy="300" fill="#137fec" r="4"></circle>
-                    <circle cx="1200" cy="300" fill="#137fec" r="4"></circle>
-                </svg>
+            {/* Full-bleed background illustration */}
+            <div className="absolute inset-0 z-0 bg-[#f5f4f0]">
+                <img
+                    src="/images/hero_dot_wave.png"
+                    alt="Abstract Wave"
+                    className="w-full h-full object-cover object-center mix-blend-multiply opacity-90"
+                />
+                {/* Simple light overlay to ensure text readability */}
+                <div className="absolute inset-0 bg-[#f5f4f0]/30 backdrop-blur-[2px]" />
             </div>
 
-            <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="text-center max-w-4xl mx-auto mb-16">
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tight text-slate-900 mb-6 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-                        Restock Faster. <br />
-                        <span className="bg-[#137fec] px-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg text-white inline-block mt-2">Sell More.</span>
+            {/* Main hero content */}
+            <div className="relative z-10 flex-1 flex flex-col justify-center pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+                <div className="max-w-xl">
+                    {/* Badge
+                    <div className="mb-6 animate-[fadeIn_0.8s_ease-out]">
+                        <span className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md border border-slate-200 text-slate-800 text-xs font-bold rounded-full px-4 py-1.5 shadow-sm">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span>
+                            #1 B2B Platform in Nigeria
+                        </span>
+                    </div> */}
+
+                    {/* Main Heading */}
+                    <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-black uppercase tracking-tight leading-[1.05] mb-6 animate-[fadeIn_1s_ease-out]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        Restock Faster.
+                        <br />
+                        Manage. Sell&nbsp;More.
                     </h1>
-                    <p className="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-                        SalesFunnel automates restocking and payments for Nigerian businesses, speeding up deliveries while keeping your cash flow secure.
+
+                    {/* Subtitle */}
+                    <p className="text-slate-600 font-medium text-base sm:text-lg mb-10 leading-relaxed animate-[fadeIn_1.2s_ease-out]">
+                        SalesFunnel automates restocking and payments for Nigerian businesses speeding up deliveries while keeping your cash flow secure.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link to="/signup?role=wholesaler" className="px-10 py-5 rounded-3xl bg-[#137fec] text-white font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
-                            I am a Wholesaler
-                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                        </Link>
-                        <Link to="/signup?role=distributor" className="px-10 py-5 rounded-3xl bg-white text-black font-black text-lg border-4 border-black hover:scale-105 transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
-                            I am a Distributor
+                    {/* CTA */}
+                    <div className="animate-[fadeIn_1.4s_ease-out]">
+                        <Link
+                            to="/signup"
+                            className="inline-flex items-center gap-2 bg-black text-white font-bold text-sm px-7 py-3.5 border border-[#3b82f6] hover:bg-[#0d1a2d] tracking-widest uppercase transition-all"
+                            style={{ clipPath: 'polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px)' }}
+                        >
+                            Get Started Free
                         </Link>
                     </div>
                 </div>
-
             </div>
+
         </section>
     );
 }

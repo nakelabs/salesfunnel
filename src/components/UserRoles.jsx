@@ -1,78 +1,104 @@
 import { Link } from 'react-router-dom';
 
+const roles = [
+    {
+        tag: 'For Wholesalers',
+        title: 'Restock Your Shop',
+        description: 'Access best prices, reduce downtime, and manage your inventory from your phone. Compare distributors, pay securely, and track deliveries in real time.',
+        bullets: [
+            'Compare distributor prices instantly',
+            'Order history & quick re-order',
+            'Escrow-protected payments',
+            'Real-time delivery tracking',
+        ],
+        cta: 'Sign Up as Wholesaler',
+        link: '/signup?role=wholesaler',
+        accent: '#5b6af0',
+    },
+    {
+        tag: 'For Distributors',
+        title: 'Expand Your Reach',
+        description: 'Sell to thousands of verified wholesalers, get paid instantly on delivery confirmation, and simplify your logistics operations end-to-end.',
+        bullets: [
+            'Automated payment reconciliation',
+            'Real-time inventory management',
+            'Driver dispatch & delivery tracking',
+            'Verified wholesaler network',
+        ],
+        cta: 'Sign Up as Distributor',
+        link: '/signup?role=distributor',
+        accent: '#0f0f14',
+    },
+];
+
 export default function UserRoles() {
     return (
         <section className="py-24 bg-white">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
-                        complete control for <span className="bg-[#137fec] px-2 text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg inline-block rotate-[2deg]">everyone</span>
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                {/* Section Header */}
+                <div className="text-center mb-14">
+                    <span className="inline-block bg-[#5b6af0]/10 text-[#5b6af0] text-xs font-bold rounded-full px-4 py-1.5 mb-4 uppercase tracking-widest">
+                        Who it's for
+                    </span>
+                    <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        Complete control for everyone
                     </h2>
-                    <p className="mt-4 text-lg text-slate-600 font-bold max-w-2xl mx-auto">
-                        Whether you are buying or selling, SalesFunnel gives you the superpowers you need to handle your logistics efficiently.
+                    <p className="mt-3 text-slate-500 text-base max-w-xl mx-auto">
+                        Whether you're buying or selling, SalesFunnel gives you the tools to run your business efficiently.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
-                    {/* Wholesaler Card */}
-                    <div className="relative overflow-visible rounded-3xl bg-[#137fec] p-10 border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-all skew-y-[-2deg]">
-                        <div className="relative z-10 skew-y-[2deg]">
-                            <div className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-xs font-bold text-white mb-6 shadow-md">
-                                FOR RETAILERS
-                            </div>
-                            <h3 className="mb-4 text-3xl font-black text-white" style={{ fontFamily: 'var(--font-heading)' }}>Restock Your Shop</h3>
-                            <p className="mb-8 text-base text-slate-900 leading-relaxed font-bold">
-                                Access best prices, reduce downtime, and manage your inventory from your phone.
-                            </p>
-                            <ul className="space-y-3 mb-10">
-                                <li className="flex items-center gap-3">
-                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#137fec] flex-shrink-0">
-                                        <span className="text-[12px] font-bold">✓</span>
-                                    </div>
-                                    <span className="text-sm text-white font-bold">Compare distributor prices instantly</span>
-                                </li>
-                                <li className="flex items-center gap-3">
-                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#137fec] flex-shrink-0">
-                                        <span className="text-[12px] font-bold">✓</span>
-                                    </div>
-                                    <span className="text-sm text-white font-bold">Order history & quick re-order</span>
-                                </li>
-                            </ul>
-                            <Link to="/signup" className="block w-full rounded-2xl border-4 border-black bg-white px-6 py-4 text-base font-black text-black hover:bg-slate-100 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
-                                Sign Up as Wholesaler
-                            </Link>
-                        </div>
-                    </div>
+                {/* Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {roles.map((role) => (
+                        <div
+                            key={role.tag}
+                            className="relative rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 group"
+                            style={{ background: role.accent === '#5b6af0' ? 'linear-gradient(135deg, #5b6af0 0%, #818cf8 100%)' : '#0f0f14' }}
+                        >
+                            <div className="p-8 sm:p-10">
+                                {/* Tag */}
+                                <span className="inline-block bg-white/15 text-white text-xs font-bold rounded-full px-3 py-1 mb-6 uppercase tracking-wider">
+                                    {role.tag}
+                                </span>
 
-                    {/* Distributor Card */}
-                    <div className="relative overflow-visible rounded-3xl bg-[#137fec] p-10 border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 transition-all skew-y-[2deg]">
-                        <div className="relative z-10 skew-y-[-2deg]">
-                            <div className="inline-flex items-center gap-2 rounded-lg bg-black px-4 py-2 text-xs font-bold text-white mb-6 shadow-md">
-                                FOR SUPPLIERS
+                                {/* Title */}
+                                <h3 className="text-2xl font-black text-white mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {role.title}
+                                </h3>
+
+                                {/* Description */}
+                                <p className="text-white/70 text-sm leading-relaxed mb-7">
+                                    {role.description}
+                                </p>
+
+                                {/* Bullets */}
+                                <ul className="space-y-2.5 mb-10">
+                                    {role.bullets.map((bullet, i) => (
+                                        <li key={i} className="flex items-center gap-2.5">
+                                            <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                                                <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 10" fill="none">
+                                                    <path d="M2 5l2.5 2.5 3.5-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                                </svg>
+                                            </span>
+                                            <span className="text-white/80 text-sm">{bullet}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                {/* CTA */}
+                                <Link
+                                    to={role.link}
+                                    className="inline-flex items-center gap-2 bg-white text-slate-900 font-bold text-sm rounded-full px-6 py-3 hover:bg-white/90 transition-all"
+                                >
+                                    {role.cta}
+                                    <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                </Link>
                             </div>
-                            <h3 className="mb-4 text-3xl font-black text-white" style={{ fontFamily: 'var(--font-heading)' }}>Expand Your Reach</h3>
-                            <p className="mb-8 text-base text-slate-900 leading-relaxed font-bold">
-                                Sell to thousands of verified retailers, get paid instantly, and simplify logistics.
-                            </p>
-                            <ul className="space-y-3 mb-10">
-                                <li className="flex items-center gap-3">
-                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#137fec] flex-shrink-0">
-                                        <span className="text-[12px] font-bold">✓</span>
-                                    </div>
-                                    <span className="text-sm text-white font-bold">Automated payment reconciliation</span>
-                                </li>
-                                <li className="flex items-center gap-3">
-                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-[#137fec] flex-shrink-0">
-                                        <span className="text-[12px] font-bold">✓</span>
-                                    </div>
-                                    <span className="text-sm text-white font-bold">Real-time inventory management</span>
-                                </li>
-                            </ul>
-                            <Link to="/signup" className="block w-full rounded-2xl border-4 border-black bg-white px-6 py-4 text-base font-black text-black hover:bg-slate-100 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
-                                Sign Up as Distributor
-                            </Link>
                         </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </section>

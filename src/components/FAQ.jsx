@@ -1,79 +1,113 @@
 import React, { useState } from 'react';
 
-const FAQ = () => {
-    const [openIndex, setOpenIndex] = useState(null);
+const tabs = ['Wholesaler', 'Distributor'];
 
-    const faqs = [
+const faqsByTab = {
+    Wholesaler: [
         {
-            question: "How do instant payments and escrow work?",
-            answer: "When a wholesaler places an order, their funds are held in a secure escrow account. The funds are only released to the distributor instantly once the delivery is confirmed, protecting both parties."
+            question: "What can wholesalers do in the app?",
+            answer: "Wholesalers can browse distributors, place orders, make secure payments via escrow, track deliveries in real-time, manage order history, and receive instant notifications when something needs attention."
         },
         {
-            question: "Who handles the delivery logistics?",
-            answer: "Distributors manage their own logistics teams, but they are bound by our strict 2-Hour Delivery Service Level Agreement (SLA) for local orders to ensure you get your goods fast."
+            question: "How does escrow payment protection work?",
+            answer: "When you place an order, funds are held in a secure escrow account. They are only released to the distributor once you confirm receipt of your goods — protecting you from fraud or non-delivery."
+        },
+        {
+            question: "Can wholesalers compare prices from different distributors?",
+            answer: "Yes! You can browse multiple distributors, compare pricing, check ratings, and choose the best deal before placing your order."
+        },
+        {
+            question: "How fast is delivery?",
+            answer: "All distributors on SalesFunnel are bound by a strict 2-Hour SLA for local orders. You can track your driver in real-time and receive SMS updates."
+        },
+    ],
+    Distributor: [
+        {
+            question: "How do distributors get paid?",
+            answer: "Immediately upon delivery confirmation. When the wholesaler confirms receipt of intact goods, funds are instantly released from escrow to your wallet — no delays."
         },
         {
             question: "How are distributors vetted?",
-            answer: "Every distributor on SalesFunnel undergoes a rigorous verification process, including background checks, business registration verification, and facility inspections to guarantee authenticity."
+            answer: "Every distributor undergoes a rigorous verification process including background checks, business registration verification, and facility inspections to guarantee authenticity."
         },
         {
-            question: "What if there is an issue with my order?",
-            answer: "Our 24/7 dedicated support team is always available to step in. Because payments are held in escrow, any disputes can be cleanly resolved before funds are transferred."
+            question: "Can distributors manage their inventory?",
+            answer: "Yes — the platform provides full inventory management with low-stock alerts, product listing management, and order fulfillment tracking."
         },
         {
-            question: "How much does it cost to use SalesFunnel?",
-            answer: "Signing up as a wholesaler or distributor is completely free. We take a minimal, transparent transaction fee on completed orders to fund the escrow and platform services."
+            question: "What happens if there's a dispute?",
+            answer: "Our 24/7 support team steps in to mediate. Because funds are in escrow, disputes can be cleanly resolved before any money changes hands."
         },
-        {
-            question: "Can I track my orders in real time?",
-            answer: "Yes! The platform provides a comprehensive dashboard for both wholesalers and distributors to track order statuses from acceptance to final delivery."
-        },
-        {
-            question: "How fast do distributors get paid?",
-            answer: "Immediately. The moment the wholesaler confirms receipt of intact goods, the escrow smart contract instantly settles the funds into the distributor's wallet."
-        }
-    ];
-
-    return (
-        <section className="py-20 bg-slate-50 border-t-4 border-black relative overflow-hidden">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="text-center mb-12">
-                    <h2 className="text-4xl md:text-5xl font-black text-black mb-4 uppercase tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-                        Frequently Asked Questions
-                    </h2>
-                    <p className="text-lg text-slate-600 font-bold max-w-2xl mx-auto">
-                        Everything you need to know about how SalesFunnel protects your business.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-start">
-                    {faqs.map((faq, index) => (
-                        <div 
-                            key={index} 
-                            className={`border-[3px] border-black bg-white rounded-xl transition-all duration-200 cursor-pointer 
-                                ${openIndex === index ? 'shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] -translate-y-1' : 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]'}`}
-                            onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                        >
-                            <div className="p-4 md:p-5 flex justify-between items-center">
-                                <h3 className="text-lg md:text-xl font-black text-black pr-4">{faq.question}</h3>
-                                <div className={`w-8 h-8 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center rounded-lg border-2 border-black font-black text-xl transition-all duration-300 ${openIndex === index ? 'bg-black text-[#d4ff00] rotate-45' : 'bg-white text-black'}`}>
-                                    +
-                                </div>
-                            </div>
-                            <div className={`px-4 md:px-5 overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96 pb-4 md:pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                <p className="text-base text-slate-700 font-semibold leading-relaxed">
-                                    {faq.answer}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            {/* Decorative background blocks */}
-            <div className="absolute top-10 -left-10 w-48 h-48 bg-[#d4ff00] border-4 border-black rounded-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] z-0"></div>
-            <div className="absolute bottom-20 -right-10 w-40 h-40 bg-[#137fec] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] z-0 rotate-12"></div>
-        </section>
-    );
+    ],
 };
 
-export default FAQ;
+export default function FAQ() {
+    const [activeTab, setActiveTab] = useState('Wholesaler');
+    const [openIndex, setOpenIndex] = useState(0);
+    const faqs = faqsByTab[activeTab];
+
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+        setOpenIndex(0);
+    };
+
+    return (
+        <section id="faq" className="py-12 bg-[#f5f4f0]">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
+                    {/* Left: Heading + Tab Switcher */}
+                    <div className="lg:w-80 flex-shrink-0">
+                        {/* Tab Switcher — same as Features */}
+                        <div className="inline-flex bg-white border border-slate-200 rounded-full p-1 gap-1 shadow-sm mb-8">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab}
+                                    onClick={() => handleTabChange(tab)}
+                                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 ${activeTab === tab
+                                            ? 'bg-[#0f0f14] text-white shadow-md'
+                                            : 'text-slate-400 hover:text-slate-700'
+                                        }`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
+
+                        <h2 className="text-4xl sm:text-5xl font-black text-slate-900 leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>
+                            Frequently<br />Asked<br />Questions
+                        </h2>
+                        <p className="mt-4 text-slate-500 text-sm leading-relaxed">
+                            Everything you need to know about SalesFunnel filtered by role.
+                        </p>
+                    </div>
+
+                    {/* Right: FAQ Accordion */}
+                    <div className="flex-1 flex flex-col divide-y divide-slate-200">
+                        {faqs.map((faq, index) => (
+                            <div key={`${activeTab}-${index}`} className="py-5">
+                                <button
+                                    className="w-full flex items-start justify-between gap-4 text-left group"
+                                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                                >
+                                    <span className={`text-base font-semibold transition-colors ${openIndex === index ? 'text-slate-900' : 'text-slate-600 group-hover:text-slate-900'}`}>
+                                        {faq.question}
+                                    </span>
+                                    <span className={`flex-shrink-0 w-7 h-7 rounded-full border border-slate-200 flex items-center justify-center transition-all duration-300 ${openIndex === index ? 'bg-[#0f0f14] border-[#0f0f14] rotate-180' : 'bg-white'}`}>
+                                        <svg className={`w-3.5 h-3.5 transition-colors ${openIndex === index ? 'text-white' : 'text-slate-400'}`} viewBox="0 0 14 14" fill="none">
+                                            <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </span>
+                                </button>
+                                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openIndex === index ? 'max-h-64 mt-3 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    <p className="text-slate-500 text-sm leading-relaxed pr-8">
+                                        {faq.answer}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}

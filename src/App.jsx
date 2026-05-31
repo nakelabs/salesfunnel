@@ -6,7 +6,7 @@ import Marquee from './components/Marquee'
 import Features from './components/Features'
 import PerformanceInsights from './components/PerformanceInsights'
 import HowItWorks from './components/HowItWorks'
-import UserRoles from './components/UserRoles'
+
 import FAQ from './components/FAQ'
 import Footer from './components/Footer'
 import Login from './pages/Login'
@@ -46,16 +46,13 @@ import CodeReset from './pages/admin/CodeReset'
 
 function HomePage() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden font-display bg-background-light text-slate-900 transition-colors duration-200" style={{ fontFamily: "'Josefin Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
       <Header />
 
       <main className="flex-grow">
         <Hero />
-        <Marquee />
         <Features />
-        {/* <PerformanceInsights /> */}
-        <HowItWorks />
-        <UserRoles />
+
         <FAQ />
       </main>
       <Footer />

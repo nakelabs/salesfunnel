@@ -88,7 +88,7 @@ const Login = () => {
             </div>
 
             {/* Right Side - Login Form */}
-            <div className="flex-1 flex items-center justify-center p-8 bg-slate-50 relative overflow-hidden">
+            <div className="flex-1 flex items-center justify-center p-8 bg-[#f5f4f0] relative overflow-hidden">
                 {/* Mobile Logo */}
                 <Link to="/" className="lg:hidden absolute top-6 left-6 flex items-center gap-3 group z-20">
                     <div className="bg-white border-2 border-black p-2 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:-translate-y-0.5 transition-all">
@@ -123,20 +123,22 @@ const Login = () => {
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, userType: 'wholesaler' })}
-                                    className={`px-4 py-3 font-black text-sm border-2 border-black transition-all ${formData.userType === 'wholesaler'
-                                        ? 'bg-[#137fec] text-white rounded-xl shadow-[options_4px_4px_0px_0px_rgba(0,0,0,0.2)] translate-y-[2px]'
-                                        : 'bg-white text-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                                    className={`px-4 py-3 font-bold text-sm tracking-widest uppercase transition-all ${formData.userType === 'wholesaler'
+                                        ? 'bg-black text-white border border-[#3b82f6]'
+                                        : 'bg-transparent text-slate-500 border border-slate-300 hover:border-slate-400'
                                         }`}
+                                    style={{ clipPath: 'polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px)' }}
                                 >
                                     Wholesaler
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, userType: 'distributor' })}
-                                    className={`px-4 py-3 font-black text-sm border-2 border-black transition-all ${formData.userType === 'distributor'
-                                        ? 'bg-[#137fec] text-white rounded-xl shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)] translate-y-[2px]'
-                                        : 'bg-white text-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]'
+                                    className={`px-4 py-3 font-bold text-sm tracking-widest uppercase transition-all ${formData.userType === 'distributor'
+                                        ? 'bg-black text-white border border-[#3b82f6]'
+                                        : 'bg-transparent text-slate-500 border border-slate-300 hover:border-slate-400'
                                         }`}
+                                    style={{ clipPath: 'polygon(8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%, 0% 8px)' }}
                                 >
                                     Distributor
                                 </button>
@@ -200,7 +202,8 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-4 bg-[#137fec] text-white font-black text-lg border-4 border-black rounded-2xl hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                            className="w-full py-4 bg-black text-white font-bold text-base border border-[#3b82f6] hover:bg-[#0d1a2d] tracking-widest uppercase transition-all mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+                            style={{ clipPath: 'polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px)' }}
                         >
                             {isLoading ? 'Logging in...' : 'Login'}
                         </button>
