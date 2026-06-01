@@ -8,16 +8,7 @@ export default function Hero() {
     return (
         <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
 
-            {/* Full-bleed background illustration */}
-            <div className="absolute inset-0 z-0 bg-[#f5f4f0]">
-                <img
-                    src="/images/hero_dot_wave.png"
-                    alt="Abstract Wave"
-                    className="w-full h-full object-cover object-center mix-blend-multiply opacity-90"
-                />
-                {/* Simple light overlay to ensure text readability */}
-                <div className="absolute inset-0 bg-[#f5f4f0]/30 backdrop-blur-[2px]" />
-            </div>
+
 
             {/* Main hero content */}
             <div className="relative z-10 flex-1 flex flex-col justify-center pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">

@@ -285,10 +285,8 @@ const SignUp = () => {
                 </div>
             </div>
 
-            {/* Right Side - Solid Neo-Brutalist Blue with Continuous Scrolling Cards */}
-            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#137fec]">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-[0.1]" style={{ backgroundImage: 'radial-gradient(#000 2px, transparent 2px)', backgroundSize: '32px 32px' }}></div>
+            {/* Right Side - Continuous Scrolling Cards */}
+            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#f5f4f0] border-l-2 border-black">
 
                 {/* Continuous Scrolling Container */}
                 <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
@@ -299,7 +297,7 @@ const SignUp = () => {
                                 <div key={`card-1-${index}`} className="mb-6">
                                     {card.type === 'user' ? (
                                         <div className="bg-white border-4 border-black rounded-2xl p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-[#137fec] font-black text-lg shadow-[2px_2px_0px_0px_rgba(255,255,255,0.4)]">
+                                            <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center text-white font-black text-lg shadow-[2px_2px_0px_0px_rgba(59,130,246,1)] border-2 border-[#3b82f6]">
                                                 {card.name.charAt(0)}
                                             </div>
                                             <div>
@@ -322,21 +320,21 @@ const SignUp = () => {
                                                     <svg viewBox="0 0 200 80" className="w-full h-full">
                                                         <path
                                                             d="M 0,60 Q 40,50 80,40 T 160,10 L 200,5"
-                                                            stroke="#8b5cf6"
+                                                            stroke="#000"
                                                             strokeWidth="3"
                                                             fill="none"
                                                             strokeLinecap="round"
                                                         />
-                                                        <circle cx="200" cy="5" r="4" fill="#8b5cf6" />
+                                                        <circle cx="200" cy="5" r="4" fill="#000" />
                                                     </svg>
                                                 </div>
                                             ) : (
                                                 <div className="h-24 flex items-end gap-2">
-                                                    <div className="flex-1 bg-purple-300 rounded-t" style={{ height: '40%' }}></div>
-                                                    <div className="flex-1 bg-purple-300 rounded-t" style={{ height: '25%' }}></div>
-                                                    <div className="flex-1 bg-purple-400 rounded-t" style={{ height: '60%' }}></div>
-                                                    <div className="flex-1 bg-purple-400 rounded-t" style={{ height: '50%' }}></div>
-                                                    <div className="flex-1 bg-purple-500 rounded-t" style={{ height: '85%' }}></div>
+                                                    <div className="flex-1 bg-black/20 rounded-t border-2 border-black border-b-0" style={{ height: '40%' }}></div>
+                                                    <div className="flex-1 bg-black/30 rounded-t border-2 border-black border-b-0" style={{ height: '25%' }}></div>
+                                                    <div className="flex-1 bg-black/60 rounded-t border-2 border-black border-b-0" style={{ height: '60%' }}></div>
+                                                    <div className="flex-1 bg-black/80 rounded-t border-2 border-black border-b-0" style={{ height: '50%' }}></div>
+                                                    <div className="flex-1 bg-black rounded-t border-2 border-black border-b-0" style={{ height: '85%' }}></div>
                                                 </div>
                                             )}
                                         </div>
@@ -374,21 +372,21 @@ const SignUp = () => {
                                                     <svg viewBox="0 0 200 80" className="w-full h-full">
                                                         <path
                                                             d="M 0,60 Q 40,50 80,40 T 160,10 L 200,5"
-                                                            stroke="#8b5cf6"
+                                                            stroke="#000"
                                                             strokeWidth="3"
                                                             fill="none"
                                                             strokeLinecap="round"
                                                         />
-                                                        <circle cx="200" cy="5" r="4" fill="#8b5cf6" />
+                                                        <circle cx="200" cy="5" r="4" fill="#000" />
                                                     </svg>
                                                 </div>
                                             ) : (
                                                 <div className="h-24 flex items-end gap-2">
-                                                    <div className="flex-1 bg-purple-300 rounded-t" style={{ height: '40%' }}></div>
-                                                    <div className="flex-1 bg-purple-300 rounded-t" style={{ height: '25%' }}></div>
-                                                    <div className="flex-1 bg-purple-400 rounded-t" style={{ height: '60%' }}></div>
-                                                    <div className="flex-1 bg-purple-400 rounded-t" style={{ height: '50%' }}></div>
-                                                    <div className="flex-1 bg-purple-500 rounded-t" style={{ height: '85%' }}></div>
+                                                    <div className="flex-1 bg-black/20 rounded-t border-2 border-black border-b-0" style={{ height: '40%' }}></div>
+                                                    <div className="flex-1 bg-black/30 rounded-t border-2 border-black border-b-0" style={{ height: '25%' }}></div>
+                                                    <div className="flex-1 bg-black/60 rounded-t border-2 border-black border-b-0" style={{ height: '60%' }}></div>
+                                                    <div className="flex-1 bg-black/80 rounded-t border-2 border-black border-b-0" style={{ height: '50%' }}></div>
+                                                    <div className="flex-1 bg-black rounded-t border-2 border-black border-b-0" style={{ height: '85%' }}></div>
                                                 </div>
                                             )}
                                         </div>
