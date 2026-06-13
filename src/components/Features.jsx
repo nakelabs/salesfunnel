@@ -1,6 +1,136 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const tabs = ['Wholesaler', 'Distributor'];
+
+const slides = [
+    { src: '/images/image1.jpeg', fit: 'contain', pos: 'center', bg: '#f8f8f8' },
+    { src: '/images/image2.jpeg', fit: 'cover',   pos: 'top',    bg: '#fff'    },
+    { src: '/images/image3.jpeg', fit: 'cover',   pos: 'top',    bg: '#fff'    },
+    { src: '/images/image4.jpeg', fit: 'cover',   pos: 'top',    bg: '#fff'    },
+    { src: '/images/image5.jpeg', fit: 'cover',   pos: 'top',    bg: '#fff'    },
+    { src: '/images/image6.jpeg', fit: 'cover',   pos: 'center', bg: '#fff'    },
+    { src: '/images/image7.jpeg', fit: 'cover',   pos: 'top',    bg: '#fff'    },
+];
+
+const SLIDE_DURATION = 3000; // ms per slide
+
+function PhoneSlideshow() {
+    const [current, setCurrent] = useState(0);
+    const [prev, setPrev] = useState(null);
+    const [progress, setProgress] = useState(0);
+
+    const goTo = useCallback((index) => {
+        setPrev(current);
+        setCurrent(index);
+        setProgress(0);
+    }, [current]);
+
+    const next = useCallback(() => {
+        goTo((current + 1) % slides.length);
+    }, [current, goTo]);
+
+    const back = useCallback(() => {
+        goTo((current - 1 + slides.length) % slides.length);
+    }, [current, goTo]);
+
+    // Auto-advance
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrent(c => {
+                setPrev(c);
+                setProgress(0);
+                return (c + 1) % slides.length;
+            });
+        }, SLIDE_DURATION);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Progress bar
+    useEffect(() => {
+        setProgress(0);
+        const start = performance.now();
+        let raf;
+        const tick = (now) => {
+            const elapsed = now - start;
+            setProgress(Math.min((elapsed / SLIDE_DURATION) * 100, 100));
+            if (elapsed < SLIDE_DURATION) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+    }, [current]);
+
+    return (
+        <div className="relative w-full h-full select-none">
+            {/* Slide images with crossfade */}
+            {slides.map((slide, i) => (
+                <img
+                    key={slide.src}
+                    src={slide.src}
+                    alt={`App screen ${i + 1}`}
+                    className="absolute inset-0 w-full h-full"
+                    style={{
+                        objectFit: slide.fit,
+                        objectPosition: slide.pos,
+                        background: slide.bg,
+                        opacity: i === current ? 1 : 0,
+                        transition: 'opacity 0.7s ease-in-out',
+                        zIndex: i === current ? 2 : i === prev ? 1 : 0,
+                    }}
+                    draggable={false}
+                />
+            ))}
+
+            {/* Progress strips (Instagram-style) */}
+            <div className="absolute top-8 left-3 right-3 z-10 flex gap-[3px]">
+                {slides.map((_, i) => (
+                    <div key={i} className="flex-1 h-[2px] rounded-full overflow-hidden bg-white/30">
+                        <div
+                            className="h-full bg-white rounded-full"
+                            style={{
+                                width: i < current ? '100%' : i === current ? `${progress}%` : '0%',
+                                transition: i === current ? 'none' : 'width 0.3s ease',
+                            }}
+                        />
+                    </div>
+                ))}
+            </div>
+
+            {/* Prev / Next tap zones — invisible but clickable */}
+            <button
+                onClick={back}
+                aria-label="Previous slide"
+                className="absolute left-0 top-0 w-1/3 h-full z-10 cursor-pointer focus:outline-none"
+            />
+            <button
+                onClick={next}
+                aria-label="Next slide"
+                className="absolute right-0 top-0 w-1/3 h-full z-10 cursor-pointer focus:outline-none"
+            />
+
+            {/* Dot indicators */}
+            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-[5px] z-10">
+                {slides.map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => goTo(i)}
+                        aria-label={`Go to slide ${i + 1}`}
+                        className="focus:outline-none"
+                        style={{
+                            width: i === current ? 18 : 6,
+                            height: 6,
+                            borderRadius: 999,
+                            background: i === current ? '#fff' : 'rgba(255,255,255,0.4)',
+                            transition: 'all 0.35s ease',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                        }}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
 
 const tabContent = {
     Wholesaler: {
@@ -105,11 +235,7 @@ export default function Features() {
                                         <div className="w-2 h-2 rounded-full bg-[#111] shadow-[inset_0_0_2px_rgba(255,255,255,0.2)]"></div>
                                     </div>
 
-                                    <img
-                                        src="/images/dashboard_mockup.png"
-                                        alt="SalesFunnel Dashboard"
-                                        className="w-full h-full object-cover object-top"
-                                    />
+                                    <PhoneSlideshow />
                                 </div>
                             </div>
                         </div>
