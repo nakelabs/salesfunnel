@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DistributorNavbar from '../components/DistributorNavbar';
 import distributorService from '../services/distributor.service';
@@ -23,6 +23,27 @@ const AddProductPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [imageUploading, setImageUploading] = useState(false);
+    const [dragOver, setDragOver] = useState(false);
+    const imageInputRef = useRef(null);
+
+    const handleImageFile = (file) => {
+        if (!file || !file.type.startsWith('image/')) return;
+        setImageUploading(true);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setForm(prev => ({ ...prev, image_url: e.target.result }));
+            setImageUploading(false);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleImageDrop = (e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const file = e.dataTransfer.files[0];
+        handleImageFile(file);
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -238,33 +259,78 @@ const AddProductPage = () => {
                         <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Image & Availability</h3>
 
                         <div className="space-y-4">
+                            {/* Upload zone */}
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Product Image</label>
+                                {form.image_url ? (
+                                    <div className="relative inline-block">
+                                        <img
+                                            src={form.image_url}
+                                            alt="Product preview"
+                                            className="w-40 h-40 object-cover rounded-xl border border-slate-200 shadow-sm"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setForm(prev => ({ ...prev, image_url: '' }))}
+                                            className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow hover:bg-red-600 transition-colors"
+                                            title="Remove image"
+                                        >
+                                            <span className="material-symbols-outlined text-[14px]">close</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => imageInputRef.current?.click()}
+                                            className="mt-2 flex items-center gap-1 text-xs text-primary font-semibold hover:underline"
+                                        >
+                                            <span className="material-symbols-outlined text-[14px]">edit</span>
+                                            Change photo
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div
+                                        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                                        onDragLeave={() => setDragOver(false)}
+                                        onDrop={handleImageDrop}
+                                        onClick={() => imageInputRef.current?.click()}
+                                        className={`flex flex-col items-center justify-center gap-2 w-full h-40 rounded-xl border-2 border-dashed cursor-pointer transition-colors ${
+                                            dragOver ? 'border-primary bg-blue-50' : 'border-slate-200 bg-slate-50 hover:border-primary hover:bg-blue-50/50'
+                                        }`}
+                                    >
+                                        {imageUploading ? (
+                                            <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+                                        ) : (
+                                            <>
+                                                <span className="material-symbols-outlined text-4xl text-slate-300">add_photo_alternate</span>
+                                                <p className="text-sm font-medium text-slate-500">Click or drag & drop an image</p>
+                                                <p className="text-xs text-slate-400">PNG, JPG, WEBP up to 5MB</p>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+                                <input
+                                    ref={imageInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => handleImageFile(e.target.files[0])}
+                                />
+                            </div>
+
+                            {/* URL fallback */}
                             <div>
                                 <label htmlFor="image_url" className="block text-sm font-medium text-slate-700 mb-1">
-                                    Image URL
+                                    Or paste an image URL
                                 </label>
                                 <input
                                     id="image_url"
                                     name="image_url"
                                     type="url"
-                                    value={form.image_url}
+                                    value={form.image_url.startsWith('data:') ? '' : form.image_url}
                                     onChange={handleChange}
                                     placeholder="https://example.com/product-image.jpg"
                                     className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
                                 />
                             </div>
-
-                            {/* Image Preview */}
-                            {form.image_url && (
-                                <div className="mt-2">
-                                    <p className="text-xs text-slate-500 mb-2">Preview:</p>
-                                    <img
-                                        src={form.image_url}
-                                        alt="Product preview"
-                                        className="w-32 h-32 object-cover rounded-lg border border-slate-200"
-                                        onError={(e) => { e.target.style.display = 'none'; }}
-                                    />
-                                </div>
-                            )}
 
                             {/* Availability Toggle */}
                             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">

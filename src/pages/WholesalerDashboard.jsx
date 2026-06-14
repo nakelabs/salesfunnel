@@ -294,7 +294,7 @@ const WholesalerDashboard = () => {
                                     <div key={productId} className="group relative flex flex-col bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
                                         <Link to={`/product/${productId}`} className="block">
                                             {/* Product Image */}
-                                            <div className="relative w-full overflow-hidden bg-slate-100 aspect-square">
+                                            <div className="relative w-full overflow-hidden bg-white aspect-square">
                                                 {getStockBadge(product)}
                                                 {isOutOfStock && (
                                                     <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex items-center justify-center">
@@ -304,11 +304,11 @@ const WholesalerDashboard = () => {
                                                 {imageUrl ? (
                                                     <img
                                                         alt={product.name}
-                                                        className={`h-full w-full object-cover object-center transition-transform duration-300 ${isOutOfStock ? 'grayscale' : 'group-hover:scale-105'}`}
+                                                        className={`h-full w-full object-contain transition-transform duration-300 ${isOutOfStock ? 'grayscale' : 'group-hover:scale-105'}`}
                                                         src={imageUrl}
                                                     />
                                                 ) : (
-                                                    <div className="flex items-center justify-center h-full">
+                                                    <div className="flex items-center justify-center h-full bg-slate-50">
                                                         <span className="material-symbols-outlined text-5xl text-slate-300">inventory_2</span>
                                                     </div>
                                                 )}
