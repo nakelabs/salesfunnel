@@ -1,2 +1,2 @@
 SALESFUNNEL BUILD V1 INVESTOR TEST 
-HOSTED ON VERCEL TEMPORARY https://salesfunnel-alpha.vercel.app/
+HOSTED ON VERCEL TEMPORARY slaesfunnel.africa 
