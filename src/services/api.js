@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Default config
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'https://salesfunnel-b.onrender.com',
+    baseURL: import.meta.env.VITE_API_BASE_URL || 'https://salesfunnel-b-mluk.onrender.com',
     headers: {
         'Content-Type': 'application/json',
     },
