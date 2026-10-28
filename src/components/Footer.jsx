@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
     return (
-        <section className="px-4 sm:px-6 lg:px-8 pb-8 bg-[#f5f4f0]">
-            <div className="max-w-7xl mx-auto bg-[#0f0f14] rounded-[3rem] px-8 py-12 sm:p-14 lg:p-20 flex flex-col">
+        <section className="px-4 sm:px-6 lg:px-8 pb-8 bg-black border-t border-white/10 pt-8">
+            <div className="max-w-7xl mx-auto bg-[#0f0f14] border border-white/10 rounded-[3rem] px-8 py-12 sm:p-14 lg:p-20 flex flex-col">
                 
                 {/* Top Section: CTA */}
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">

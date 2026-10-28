@@ -46,7 +46,7 @@ import CodeReset from './pages/admin/CodeReset'
 
 function HomePage() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden" style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-black text-white" style={{ fontFamily: "'Google Sans', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
       <Header />
 
       <main className="flex-grow">
