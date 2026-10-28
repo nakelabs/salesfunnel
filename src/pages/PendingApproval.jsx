@@ -1,164 +1,110 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { CheckCircle2, Clock, Mail, Headphones, ShieldCheck, ArrowRight } from 'lucide-react';
 
 const PendingApproval = () => {
     return (
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light">
+        <div
+            className="min-h-screen w-full flex flex-col bg-[#f8fafc] text-slate-900 font-display antialiased"
+            style={{ fontFamily: '"Google Sans", "Plus Jakarta Sans", system-ui, sans-serif' }}
+        >
             {/* Header */}
-            <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 bg-white px-6 py-4 lg:px-10">
-                <div className="flex items-center gap-4 text-slate-900">
-                    <img src="/images/logo.png" alt="SalesFunnel" className="h-12 w-auto" />
-                </div>
-                <div className="hidden sm:flex text-sm font-medium text-slate-500">
-                    <span>Need help? <a className="text-primary hover:underline" href="#">Contact Support</a></span>
+            <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200/80">
+                <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+                    <Link to="/" className="flex items-center gap-2">
+                        <img src="/images/logo.png" alt="SalesFunnel" className="h-8 w-auto object-contain" />
+                    </Link>
+                    <div className="text-xs text-slate-500 font-medium">
+                        Need assistance? <a href="mailto:support@salesfunnel.com" className="text-blue-600 font-semibold hover:underline">Contact Support</a>
+                    </div>
                 </div>
             </header>
 
             {/* Main Content */}
-            <main className="flex flex-1 flex-col justify-center py-10 px-4 sm:px-6 lg:px-8">
-                <div className="mx-auto w-full max-w-2xl">
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 sm:p-12 text-center">
+            <main className="flex-1 flex flex-col items-center justify-center p-6 sm:p-10">
+                <div className="max-w-xl w-full">
+                    <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs p-8 sm:p-10 text-center">
                         {/* Success Icon */}
-                        <div className="flex justify-center mb-6">
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-green-500/20 rounded-full blur-2xl"></div>
-                                <div className="relative bg-green-100 rounded-full p-6">
-                                    <span className="material-symbols-outlined text-6xl text-green-600">check_circle</span>
-                                </div>
-                            </div>
+                        <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center mx-auto mb-6 shadow-2xs">
+                            <CheckCircle2 size={32} className="stroke-[2.5]" />
                         </div>
 
                         {/* Heading */}
-                        <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
-                            Application Submitted Successfully!
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+                            Application Submitted
                         </h1>
-
-                        <p className="text-lg text-slate-600 mb-8">
-                            Thank you for submitting your application to join SalesFunnel
+                        <p className="text-sm text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">
+                            Thank you for submitting your wholesale account verification details. Our statutory compliance team is reviewing your documentation.
                         </p>
 
                         {/* Status Card */}
-                        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 mb-8 text-left">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-blue-500 rounded-full p-2 mt-1">
-                                    <span className="material-symbols-outlined text-white text-xl">schedule</span>
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-lg font-bold text-blue-900 mb-2">What Happens Next?</h3>
-                                    <ul className="space-y-3 text-sm text-blue-800">
-                                        <li className="flex items-start gap-2">
-                                            <span className="material-symbols-outlined text-blue-600 text-lg mt-0.5">done</span>
-                                            <span>Our team will review your application and documents</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="material-symbols-outlined text-blue-600 text-lg mt-0.5">done</span>
-                                            <span>We'll verify your business information with relevant authorities</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="material-symbols-outlined text-blue-600 text-lg mt-0.5">done</span>
-                                            <span>You'll receive an email notification once your account is approved</span>
-                                        </li>
-                                        <li className="flex items-start gap-2">
-                                            <span className="material-symbols-outlined text-blue-600 text-lg mt-0.5">done</span>
-                                            <span>The review process typically takes 24-48 hours</span>
-                                        </li>
-                                    </ul>
-                                </div>
+                        <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 mb-6 text-left space-y-3">
+                            <div className="flex items-center gap-2 text-xs font-bold text-slate-900 uppercase tracking-wider">
+                                <Clock size={16} className="text-blue-600" />
+                                <span>Verification Timeline</span>
                             </div>
+                            <ul className="text-xs text-slate-600 space-y-2">
+                                <li className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 shrink-0" />
+                                    <span>CAC & TIN automated registry lookup takes <strong>12-24 hours</strong>.</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 shrink-0" />
+                                    <span>You will receive an automated confirmation email as soon as your account is activated.</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 shrink-0" />
+                                    <span>Once approved, wholesale catalog pricing and escrow checkout will be immediately unlocked.</span>
+                                </li>
+                            </ul>
                         </div>
 
-                        {/* Timeline */}
-                        <div className="mb-8">
-                            <h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wide">Expected Timeline</h3>
-                            <div className="flex items-center justify-center gap-4">
-                                <div className="flex flex-col items-center">
-                                    <div className="bg-green-500 rounded-full w-12 h-12 flex items-center justify-center mb-2">
-                                        <span className="material-symbols-outlined text-white">upload</span>
-                                    </div>
-                                    <span className="text-xs font-medium text-slate-600">Submitted</span>
-                                    <span className="text-xs text-slate-500">Now</span>
+                        {/* Contact & Support Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 text-left">
+                            <div className="p-4 rounded-xl border border-slate-200 bg-white">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Mail size={16} className="text-blue-600" />
+                                    <span className="text-xs font-bold text-slate-900">Check Email</span>
                                 </div>
-
-                                <div className="h-0.5 w-16 bg-slate-300"></div>
-
-                                <div className="flex flex-col items-center">
-                                    <div className="bg-slate-300 rounded-full w-12 h-12 flex items-center justify-center mb-2">
-                                        <span className="material-symbols-outlined text-slate-600">fact_check</span>
-                                    </div>
-                                    <span className="text-xs font-medium text-slate-600">Under Review</span>
-                                    <span className="text-xs text-slate-500">12-24 hrs</span>
-                                </div>
-
-                                <div className="h-0.5 w-16 bg-slate-300"></div>
-
-                                <div className="flex flex-col items-center">
-                                    <div className="bg-slate-300 rounded-full w-12 h-12 flex items-center justify-center mb-2">
-                                        <span className="material-symbols-outlined text-slate-600">verified</span>
-                                    </div>
-                                    <span className="text-xs font-medium text-slate-600">Approved</span>
-                                    <span className="text-xs text-slate-500">24-48 hrs</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Info Cards */}
-                        <div className="grid md:grid-cols-2 gap-4 mb-8">
-                            <div className="bg-slate-50 rounded-lg p-4 text-left">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <span className="material-symbols-outlined text-primary">email</span>
-                                    <h4 className="font-bold text-slate-900">Check Your Email</h4>
-                                </div>
-                                <p className="text-sm text-slate-600">
-                                    We've sent a confirmation email with your application reference number.
+                                <p className="text-[11px] text-slate-500 leading-relaxed">
+                                    We sent an application tracking reference to your registered email.
                                 </p>
                             </div>
-
-                            <div className="bg-slate-50 rounded-lg p-4 text-left">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <span className="material-symbols-outlined text-primary">headset_mic</span>
-                                    <h4 className="font-bold text-slate-900">Need Help?</h4>
+                            <div className="p-4 rounded-xl border border-slate-200 bg-white">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Headphones size={16} className="text-blue-600" />
+                                    <span className="text-xs font-bold text-slate-900">Priority Support</span>
                                 </div>
-                                <p className="text-sm text-slate-600">
-                                    Contact our support team if you have any questions about your application.
+                                <p className="text-[11px] text-slate-500 leading-relaxed">
+                                    Reach our compliance desk at support@salesfunnel.com.
                                 </p>
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        {/* Actions */}
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
                             <Link
                                 to="/"
-                                className="px-8 py-3 bg-primary text-white rounded-lg font-bold hover:bg-blue-600 transition-all shadow hover:shadow-md"
+                                className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.99]"
                             >
-                                Return to Homepage
+                                <span>Return to Homepage</span>
+                                <ArrowRight size={14} />
                             </Link>
-                            <a
-                                href="mailto:support@salesfunnel.com"
-                                className="px-8 py-3 bg-slate-100 text-slate-700 rounded-lg font-bold hover:bg-slate-200 transition-all"
+                            <Link
+                                to="/login"
+                                className="px-6 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center transition-colors"
                             >
-                                Contact Support
-                            </a>
+                                Sign In with Existing Account
+                            </Link>
                         </div>
                     </div>
 
-                    {/* Additional Info */}
-                    <div className="mt-8 text-center">
-                        <p className="text-sm text-slate-500">
-                            <span className="material-symbols-outlined text-xs align-middle">lock</span>
-                            {' '}Your information is secure and encrypted. We never share your data with third parties.
-                        </p>
+                    <div className="mt-6 text-center text-xs text-slate-400 flex items-center justify-center gap-1.5">
+                        <ShieldCheck size={14} className="text-emerald-600" />
+                        <span>SalesFunnel Verified Wholesale Protocol</span>
                     </div>
                 </div>
             </main>
-
-            {/* Footer */}
-            <footer className="border-t border-slate-200 py-6">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <p className="text-center text-sm text-slate-500">
-                        © 2026 SalesFunnel. All rights reserved.
-                    </p>
-                </div>
-            </footer>
         </div>
     );
 };

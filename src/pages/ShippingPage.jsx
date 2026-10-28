@@ -9,7 +9,6 @@ const ShippingPage = () => {
     const { cartItems, getCartTotal, isCartLoading } = useCart();
     const [selectedAddress, setSelectedAddress] = useState('business');
     const [selectedShipping, setSelectedShipping] = useState('delivery');
-    const [timeRemaining, setTimeRemaining] = useState(14 * 60 + 32);
 
     const [businessAddress, setBusinessAddress] = useState('');
     const [profileLoading, setProfileLoading] = useState(true);
@@ -41,29 +40,9 @@ const ShippingPage = () => {
         }).catch(() => { }).finally(() => setProfileLoading(false));
     }, []);
 
-    // Countdown timer
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setTimeRemaining(prev => {
-                if (prev <= 0) {
-                    clearInterval(timer);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
-
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    };
-
     const shippingMethods = [
-        { id: 'delivery', name: 'Delivery', icon: 'local_shipping', duration: 'Delivered to your address', fee: 0 },
+        { id: 'delivery', name: 'Direct Doorstep Delivery', icon: 'local_shipping', duration: 'Dispatched directly to your address', fee: 0 },
+        { id: 'pickup', name: 'Self Warehouse Pickup', icon: 'warehouse', duration: 'Pick up from regional distribution center', fee: 0 },
     ];
 
     const subtotal = getCartTotal();
@@ -72,14 +51,10 @@ const ShippingPage = () => {
     const shippingFee = selectedShipping === 'pickup' ? 0 : (shippingMethods.find(m => m.id === selectedShipping)?.fee || 0);
     const total = subtotal + vat + shippingFee;
 
-    const formatPrice = (price) => `₦${price.toLocaleString()}`;
+    const formatPrice = (price) => `₦${Number(price || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-    const getDeliveryAddress = () => {
-        if (selectedAddress === 'business') return businessAddress;
-        return [customAddress.street, customAddress.city, customAddress.state].filter(Boolean).join(', ');
-    };
-
-    const handleProceed = () => {
+    const handleProceed = (e) => {
+        e.preventDefault();
         const deliveryDetails = {
             address: selectedAddress === 'business' ? 'Business Address' : customAddress.street || 'Custom Address',
             city: selectedAddress === 'business' ? businessAddress : [customAddress.city, customAddress.state].filter(Boolean).join(', '),
@@ -102,8 +77,8 @@ const ShippingPage = () => {
 
     if (isCartLoading) {
         return (
-            <div className="min-h-screen font-display flex items-center justify-center bg-background-light">
-                <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+                <div className="w-10 h-10 border-3 border-blue-600/30 border-t-blue-600 rounded-full animate-spin"></div>
             </div>
         );
     }
@@ -112,357 +87,284 @@ const ShippingPage = () => {
         return null;
     }
 
+    const steps = [
+        { num: 1, label: 'Cart', status: 'completed' },
+        { num: 2, label: 'Shipping', status: 'current' },
+        { num: 3, label: 'Review', status: 'upcoming' },
+        { num: 4, label: 'Payment', status: 'upcoming' },
+    ];
+
     return (
-        <div className="bg-background-light min-h-screen font-display">
+        <div
+            className="bg-[#f8fafc] min-h-screen text-slate-900 font-display flex flex-col antialiased"
+            style={{ fontFamily: '"Google Sans", "Plus Jakarta Sans", system-ui, sans-serif' }}
+        >
             {/* Shared Navbar */}
             <WholesalerNavbar />
 
-            {/* Main Content */}
-            <main className="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8">
-                {/* Progress Indicator */}
-                <div className="mb-8 max-w-3xl mx-auto">
-                    <div className="flex flex-col gap-3">
-                        <div className="flex justify-between items-end mb-1">
-                            <p className="text-primary font-semibold text-sm uppercase tracking-wider">STEP 2 OF 4</p>
-                            <p className="text-slate-500 text-sm font-medium">Shipping Information</p>
-                        </div>
-                        <div className="relative h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                            <div className="absolute top-0 left-0 h-full bg-primary rounded-full transition-all duration-500" style={{ width: '50%' }}></div>
-                        </div>
-                        <div className="flex justify-between text-xs font-medium text-slate-400 mt-1">
-                            <span className="text-primary">Cart</span>
-                            <span className="text-slate-900 font-bold">Shipping</span>
-                            <span>Review</span>
-                            <span>Payment</span>
-                        </div>
+            {/* Stepper */}
+            <div className="bg-white border-b border-slate-200/80 sticky top-16 z-20 shadow-2xs">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+                    <div className="flex items-center justify-between max-w-2xl mx-auto">
+                        {steps.map((step, idx) => {
+                            const isCurrent = step.status === 'current';
+                            const isCompleted = step.status === 'completed';
+                            return (
+                                <React.Fragment key={step.num}>
+                                    <div className="flex items-center gap-2">
+                                        <div
+                                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                                                isCurrent
+                                                    ? 'bg-slate-900 text-white shadow-xs'
+                                                    : isCompleted
+                                                    ? 'bg-emerald-600 text-white'
+                                                    : 'bg-slate-100 text-slate-400 border border-slate-200'
+                                            }`}
+                                        >
+                                            {isCompleted ? (
+                                                <span className="material-symbols-outlined text-[14px]">check</span>
+                                            ) : (
+                                                step.num
+                                            )}
+                                        </div>
+                                        <span
+                                            className={`text-xs font-semibold hidden sm:inline-block ${
+                                                isCurrent ? 'text-slate-900' : 'text-slate-400'
+                                            }`}
+                                        >
+                                            {step.label}
+                                        </span>
+                                    </div>
+                                    {idx < steps.length - 1 && (
+                                        <div
+                                            className={`flex-1 h-0.5 mx-3 rounded-full ${
+                                                isCompleted ? 'bg-emerald-500' : 'bg-slate-200'
+                                            }`}
+                                        />
+                                    )}
+                                </React.Fragment>
+                            );
+                        })}
                     </div>
                 </div>
+            </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                    {/* Left Column */}
-                    <div className="lg:col-span-8 space-y-6">
-                        <div className="flex flex-col gap-1">
-                            <h1 className="text-slate-900 text-3xl font-black">Shipping Details</h1>
-                            <p className="text-slate-500 text-base">Select your delivery address and preferred shipping method.</p>
+            {/* Main Content */}
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <form onSubmit={handleProceed} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Shipping Form Left Column */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <div>
+                            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Delivery & Fulfillment</h1>
+                            <p className="text-slate-500 text-sm mt-0.5">Select your destination address and dispatch preferences.</p>
                         </div>
 
-                        {/* Shipping Method Section */}
-                        <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                            <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">local_shipping</span>
-                                    <h3 className="text-slate-900 font-bold text-lg">Shipping Method</h3>
-                                </div>
-                            </div>
-                            <div className="p-6 grid gap-4 sm:grid-cols-2">
-                                {/* Delivery Option */}
-                                <label
-                                    className={`relative flex flex-col p-4 cursor-pointer rounded-lg border-2 transition-colors h-full ${selectedShipping === 'delivery'
-                                        ? 'border-primary bg-blue-50/30'
-                                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                        }`}
-                                >
-                                    <div className="flex justify-between items-start mb-2">
-                                        <span className={`material-symbols-outlined text-2xl ${selectedShipping === 'delivery' ? 'text-primary' : 'text-slate-400'}`}>
-                                            local_shipping
-                                        </span>
-                                        <input
-                                            type="radio"
-                                            name="shipping_method"
-                                            checked={selectedShipping === 'delivery'}
-                                            onChange={() => setSelectedShipping('delivery')}
-                                            className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
-                                        />
-                                    </div>
-                                    <span className="block text-sm font-bold text-slate-900 mb-1">Delivery</span>
-                                    <span className="block text-xs text-slate-500 mb-3">Delivered to your address</span>
-                                    <div className="mt-auto pt-2 border-t border-slate-200 flex justify-between items-center">
-                                        <span className="text-xs font-medium text-slate-500">Fee</span>
-                                        <span className="text-sm font-bold text-green-600">Free</span>
-                                    </div>
-                                </label>
-
-                                {/* Self Pickup Option */}
-                                <label
-                                    className={`relative flex flex-col p-4 cursor-pointer rounded-lg border-2 transition-colors h-full ${selectedShipping === 'pickup'
-                                        ? 'border-primary bg-blue-50/30'
-                                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                        }`}
-                                >
-                                    <div className="flex justify-between items-start mb-2">
-                                        <span className={`material-symbols-outlined text-2xl ${selectedShipping === 'pickup' ? 'text-primary' : 'text-slate-400'}`}>
-                                            storefront
-                                        </span>
-                                        <input
-                                            type="radio"
-                                            name="shipping_method"
-                                            checked={selectedShipping === 'pickup'}
-                                            onChange={() => setSelectedShipping('pickup')}
-                                            className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
-                                        />
-                                    </div>
-                                    <span className="block text-sm font-bold text-slate-900 mb-1">Self Pickup</span>
-                                    <span className="block text-xs text-slate-500 mb-3">Pick up from warehouse</span>
-                                    <div className="mt-auto pt-2 border-t border-slate-200 flex justify-between items-center">
-                                        <span className="text-xs font-medium text-slate-500">Fee</span>
-                                        <span className="text-sm font-bold text-green-600">Free</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </section>
-
-                        {/* Delivery Address Section — only shown when delivery is selected */}
-                        {selectedShipping === 'delivery' && (
-                            <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                                <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
-                                    <div className="flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-primary">location_on</span>
-                                        <h3 className="text-slate-900 font-bold text-lg">Delivery Address</h3>
-                                    </div>
-                                </div>
-                                <div className="p-6 grid gap-4">
-                                    {/* Business Address Option */}
-                                    <label
-                                        className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-colors ${selectedAddress === 'business'
-                                            ? 'border-primary bg-blue-50/30'
-                                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        {/* Shipping Method Cards */}
+                        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+                            <h3 className="text-sm font-bold text-slate-900 mb-3.5 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-blue-600 text-[18px]">local_shipping</span>
+                                <span>Fulfillment Method</span>
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {shippingMethods.map((m) => {
+                                    const isSelected = selectedShipping === m.id;
+                                    return (
+                                        <div
+                                            key={m.id}
+                                            onClick={() => setSelectedShipping(m.id)}
+                                            className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                                                isSelected
+                                                    ? 'border-slate-900 bg-slate-50/70 shadow-xs'
+                                                    : 'border-slate-200 hover:border-slate-300 bg-white'
                                             }`}
-                                    >
-                                        <div className="flex items-center h-5">
-                                            <input
-                                                type="radio"
-                                                name="address"
-                                                checked={selectedAddress === 'business'}
-                                                onChange={() => setSelectedAddress('business')}
-                                                className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
-                                            />
-                                        </div>
-                                        <div className="ml-3 text-sm flex-1">
-                                            <div className="flex justify-between">
-                                                <span className="font-bold text-slate-900 block">Business Address</span>
-                                                {selectedAddress === 'business' && (
-                                                    <span className="material-symbols-outlined text-primary">check_circle</span>
-                                                )}
+                                        >
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-slate-700 text-[20px]">{m.icon}</span>
+                                                    <span className="text-xs font-bold text-slate-900">{m.name}</span>
+                                                </div>
+                                                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-slate-900' : 'border-slate-300'}`}>
+                                                    {isSelected && <div className="w-2 h-2 rounded-full bg-slate-900" />}
+                                                </div>
                                             </div>
-                                            <span className="text-slate-500 block mt-1">
-                                                {profileLoading ? 'Loading...' : (businessAddress || 'No business address on file — please update your profile')}
-                                            </span>
+                                            <p className="text-[11px] text-slate-500">{m.duration}</p>
+                                            <span className="text-[11px] font-bold text-emerald-600 mt-2">Free Dispatch</span>
                                         </div>
-                                    </label>
+                                    );
+                                })}
+                            </div>
+                        </div>
 
-                                    {/* Custom Address Option */}
-                                    <label
-                                        className={`relative flex items-start p-4 cursor-pointer rounded-lg border-2 transition-colors ${selectedAddress === 'custom'
-                                            ? 'border-primary bg-blue-50/30'
-                                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                                            }`}
-                                    >
-                                        <div className="flex items-center h-5">
-                                            <input
-                                                type="radio"
-                                                name="address"
-                                                checked={selectedAddress === 'custom'}
-                                                onChange={() => setSelectedAddress('custom')}
-                                                className="h-4 w-4 text-primary border-slate-300 focus:ring-primary"
-                                            />
-                                        </div>
-                                        <div className="ml-3 text-sm flex-1">
-                                            <div className="flex justify-between">
-                                                <span className="font-bold text-slate-900 block">Use a Different Address</span>
-                                                {selectedAddress === 'custom' && (
-                                                    <span className="material-symbols-outlined text-primary">check_circle</span>
-                                                )}
-                                            </div>
-                                            <span className="text-slate-500 block mt-1">Enter a custom delivery address</span>
-                                        </div>
-                                    </label>
+                        {/* Address Selection */}
+                        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+                            <h3 className="text-sm font-bold text-slate-900 mb-3.5 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-blue-600 text-[18px]">location_on</span>
+                                <span>Delivery Destination</span>
+                            </h3>
 
-                                    {/* Custom Address Form */}
+                            {/* Saved Address Option */}
+                            <div className="space-y-3">
+                                <div
+                                    onClick={() => setSelectedAddress('business')}
+                                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                                        selectedAddress === 'business'
+                                            ? 'border-slate-900 bg-slate-50/70 shadow-xs'
+                                            : 'border-slate-200 hover:border-slate-300 bg-white'
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-xs font-bold text-slate-900">Registered Business Address</span>
+                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedAddress === 'business' ? 'border-slate-900' : 'border-slate-300'}`}>
+                                            {selectedAddress === 'business' && <div className="w-2 h-2 rounded-full bg-slate-900" />}
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-slate-600 mt-1">
+                                        {profileLoading ? 'Loading address…' : (businessAddress || 'No saved address found on profile.')}
+                                    </p>
+                                </div>
+
+                                {/* Custom Address Option */}
+                                <div
+                                    onClick={() => setSelectedAddress('custom')}
+                                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                                        selectedAddress === 'custom'
+                                            ? 'border-slate-900 bg-slate-50/70 shadow-xs'
+                                            : 'border-slate-200 hover:border-slate-300 bg-white'
+                                    }`}
+                                >
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-xs font-bold text-slate-900">Ship to Another Address / Warehouse</span>
+                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedAddress === 'custom' ? 'border-slate-900' : 'border-slate-300'}`}>
+                                            {selectedAddress === 'custom' && <div className="w-2 h-2 rounded-full bg-slate-900" />}
+                                        </div>
+                                    </div>
+
                                     {selectedAddress === 'custom' && (
-                                        <div className="border border-slate-200 rounded-lg p-5 bg-slate-50/50 grid md:grid-cols-2 gap-4 mt-1">
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">Street Address</label>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-200">
+                                            <div className="sm:col-span-2">
                                                 <input
                                                     type="text"
+                                                    required={selectedAddress === 'custom'}
+                                                    placeholder="Street Address or Warehouse Plot"
                                                     value={customAddress.street}
                                                     onChange={(e) => setCustomAddress({ ...customAddress, street: e.target.value })}
-                                                    placeholder="e.g. 12 Broad Street"
-                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-blue-500 focus:outline-none"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
                                                 <input
                                                     type="text"
+                                                    required={selectedAddress === 'custom'}
+                                                    placeholder="City / Area"
                                                     value={customAddress.city}
                                                     onChange={(e) => setCustomAddress({ ...customAddress, city: e.target.value })}
-                                                    placeholder="e.g. Lagos"
-                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-blue-500 focus:outline-none"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">State</label>
                                                 <input
                                                     type="text"
+                                                    required={selectedAddress === 'custom'}
+                                                    placeholder="State (e.g. Lagos, Abuja)"
                                                     value={customAddress.state}
                                                     onChange={(e) => setCustomAddress({ ...customAddress, state: e.target.value })}
-                                                    placeholder="e.g. Lagos State"
-                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
-                                                />
-                                            </div>
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium text-slate-700 mb-1">Landmark (Optional)</label>
-                                                <input
-                                                    type="text"
-                                                    value={customAddress.landmark}
-                                                    onChange={(e) => setCustomAddress({ ...customAddress, landmark: e.target.value })}
-                                                    placeholder="e.g. Opposite GTBank"
-                                                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                                                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-blue-500 focus:outline-none"
                                                 />
                                             </div>
                                         </div>
                                     )}
                                 </div>
-                            </section>
-                        )}
-
-                        {/* Contact Person Section */}
-                        <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                            <div className="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
-                                <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">person</span>
-                                    <h3 className="text-slate-900 font-bold text-lg">Contact Person</h3>
-                                </div>
                             </div>
-                            <div className="p-6 grid md:grid-cols-2 gap-6">
+                        </div>
+
+                        {/* Recipient Contact Details */}
+                        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs">
+                            <h3 className="text-sm font-bold text-slate-900 mb-3.5 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-blue-600 text-[18px]">person</span>
+                                <span>Receiving Contact</span>
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="contact-name">
-                                        Full Name
-                                    </label>
+                                    <label className="block font-semibold text-slate-700 mb-1">Receiving Manager Name</label>
                                     <input
-                                        className="w-full rounded-lg border-slate-300 bg-white text-slate-900 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                                        id="contact-name"
                                         type="text"
+                                        required
+                                        placeholder="Full Name"
                                         value={contactInfo.name}
                                         onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })}
+                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:outline-none"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="contact-phone">
-                                        Phone Number
-                                    </label>
+                                    <label className="block font-semibold text-slate-700 mb-1">Phone Number for Driver</label>
                                     <input
-                                        className="w-full rounded-lg border-slate-300 bg-white text-slate-900 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                                        id="contact-phone"
                                         type="tel"
+                                        required
+                                        placeholder="e.g. 08012345678"
                                         value={contactInfo.phone}
                                         onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:outline-none"
                                     />
                                 </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="delivery-notes">
-                                        Delivery Instructions (Optional)
-                                    </label>
-                                    <textarea
-                                        className="w-full rounded-lg border-slate-300 bg-white text-slate-900 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                                        id="delivery-notes"
-                                        placeholder="Gate code, directions, etc."
-                                        rows="2"
+                                <div className="sm:col-span-2">
+                                    <label className="block font-semibold text-slate-700 mb-1">Delivery Notes / Gate Code (Optional)</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Warehouse Gate B, Call before arrival"
                                         value={contactInfo.instructions}
                                         onChange={(e) => setContactInfo({ ...contactInfo, instructions: e.target.value })}
-                                    ></textarea>
+                                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:outline-none"
+                                    />
                                 </div>
-                            </div>
-                        </section>
-                    </div>
-
-                    {/* Right Column - Order Summary */}
-                    <div className="lg:col-span-4">
-                        <div className="sticky top-24 space-y-4">
-                            {/* Stock Reserved Alert */}
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-3">
-                                <span className="material-symbols-outlined text-amber-600 shrink-0">timer</span>
-                                <div>
-                                    <p className="text-sm font-semibold text-amber-800">Stock Reserved</p>
-                                    <p className="text-xs text-amber-700">
-                                        Items in your cart are reserved for {formatTime(timeRemaining)} mins.
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Order Summary */}
-                            <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
-                                <div className="p-6">
-                                    <h3 className="text-slate-900 font-bold text-lg mb-4">Order Summary</h3>
-
-                                    <div className="mb-4 pb-4 border-b border-slate-200">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
-                                                {cartItems.length} ITEMS
-                                            </span>
-                                            <Link to="/cart" className="text-xs text-primary hover:underline">
-                                                View Cart
-                                            </Link>
-                                        </div>
-                                        <div className="flex -space-x-2 overflow-hidden">
-                                            {cartItems.slice(0, 3).map((item, index) => (
-                                                <img
-                                                    key={index}
-                                                    alt={item.name}
-                                                    className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover"
-                                                    src={item.image}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-3 mb-6">
-                                        <div className="flex justify-between text-slate-600">
-                                            <span>Subtotal</span>
-                                            <span>{formatPrice(subtotal)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-slate-600">
-                                            <span>Shipping</span>
-                                            <span>{shippingFee === 0 ? <span className="text-green-600 font-semibold">Free</span> : formatPrice(shippingFee)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-slate-600">
-                                            <span>VAT (7.5%)</span>
-                                            <span>{formatPrice(vat)}</span>
-                                        </div>
-                                        <div className="h-px bg-slate-200 my-2"></div>
-                                        <div className="flex justify-between items-baseline">
-                                            <span className="text-slate-900 font-bold text-lg">Total</span>
-                                            <span className="text-2xl font-black text-slate-900 tracking-tight">
-                                                {formatPrice(total)}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        onClick={handleProceed}
-                                        className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-md transition-all transform active:scale-[0.99] flex items-center justify-center gap-2"
-                                    >
-                                        <span>Proceed to Review</span>
-                                        <span className="material-symbols-outlined">arrow_forward</span>
-                                    </button>
-                                </div>
-
-                                <div className="bg-slate-50 px-6 py-4 text-center border-t border-slate-200">
-                                    <Link to="/cart" className="text-primary text-sm font-medium hover:underline">
-                                        Return to cart
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <div className="text-center pt-2">
-                                <p className="text-sm text-slate-500">Need help with shipping?</p>
-                                <a className="text-sm font-medium text-slate-900 hover:text-primary transition-colors" href="#">
-                                    Contact Wholesale Support
-                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    {/* Order Summary Sidebar */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sticky top-36">
+                            <h2 className="text-base font-bold text-slate-900 mb-5">Order Breakdown</h2>
+
+                            <div className="space-y-3 text-xs pb-5 border-b border-slate-150">
+                                <div className="flex justify-between text-slate-600">
+                                    <span>Items ({cartItems.reduce((acc, i) => acc + i.quantity, 0)} cases)</span>
+                                    <span className="font-bold text-slate-900">{formatPrice(subtotal)}</span>
+                                </div>
+                                <div className="flex justify-between text-slate-600">
+                                    <span>Fulfillment</span>
+                                    <span className="text-emerald-600 font-bold">Free</span>
+                                </div>
+                                <div className="flex justify-between text-slate-600">
+                                    <span>VAT (7.5%)</span>
+                                    <span className="font-semibold text-slate-900">{formatPrice(vat)}</span>
+                                </div>
+                            </div>
+
+                            <div className="py-5 border-b border-slate-150">
+                                <div className="flex justify-between items-baseline mb-1">
+                                    <span className="text-sm font-bold text-slate-900">Total Payable</span>
+                                    <span className="text-2xl font-black text-slate-900">{formatPrice(total)}</span>
+                                </div>
+                                <p className="text-[11px] text-slate-400 text-right">Escrow secured</p>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full mt-6 py-3 px-4 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                            >
+                                <span>Continue to Review Order</span>
+                                <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                            </button>
+
+                            <Link
+                                to="/cart"
+                                className="w-full mt-2.5 py-2 text-center text-xs font-semibold text-slate-500 hover:text-slate-800 block"
+                            >
+                                Back to Cart
+                            </Link>
+                        </div>
+                    </div>
+                </form>
             </main>
         </div>
     );

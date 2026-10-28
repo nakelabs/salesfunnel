@@ -29,10 +29,7 @@ export default function Hero() {
                     >
                         Restock.
                         <br />
-                        Manage.{' '}
-                        <span className="font-normal text-[#d8b4fe]">
-                            Scale.
-                        </span>
+                        Manage. Scale.
                     </h1>
 
                     {/* Subtitle - Google Sans with relaxed line height */}
